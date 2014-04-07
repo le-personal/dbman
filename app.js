@@ -10,6 +10,12 @@ var app = module.exports = exports = express();
 var path = require("path");
 var mvc = require("expressjsmvc");
 var flash = require("express-flash");
+var passport = require("passport");
+
+var RedisStore = require('connect-redis')(express);
+var redisOptions = {
+	host: "localhost",
+}
 
 // Alloy all configuration to be available in app.config
 app.config = config;
@@ -26,10 +32,27 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.cookieParser('keyboard cat'));
-app.use(express.session({ cookie: { maxAge: 60000 }}));
+app.use(express.session({ 
+	store: new RedisStore(redisOptions),
+	secret: config.secret,
+	cookie: { 
+		expires: new Date(Date.now() + 3600000),
+		maxAge: 3600000
+	}
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(flash());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
 
 /** 
  * Autodetect all views in components 

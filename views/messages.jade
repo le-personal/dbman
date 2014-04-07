@@ -1,0 +1,16 @@
+- if (messages.info)
+  div.alert.alert-info
+    span= messages.info
+    button(type="button", class="close", data-dismiss="alert", aria-hidden="true") &times;
+- if (messages.success)
+  div.alert.alert-success
+    span= messages.success
+    button(type="button", class="close", data-dismiss="alert", aria-hidden="true") &times;
+- if (messages.warning)
+  div.alert.alert-warning
+    span= messages.warning
+    button(type="button", class="close", data-dismiss="alert", aria-hidden="true") &times;
+- if (messages.error)
+  div.alert.alert-danger
+    span= messages.error
+    button(type="button", class="close", data-dismiss="alert", aria-hidden="true") &times;

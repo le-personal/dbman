@@ -1,0 +1,15 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+				form(role="form", method="post", action="/servers/" + server._id + "/delete")
+					div.form-group
+						p This action cannot be undone.
+					div.form-group
+						button(type="submit").btn.btn-danger Confirm removal
+						&nbsp;
+						a(href="/servers").btn.btn-default Cancel

@@ -1,0 +1,40 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+		div.row
+			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+				ul.nav.nav-pills.nav-stacked
+					li.active
+						a(href="/servers") Servers
+					li
+						a(href="/servers/add") Add server
+			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+				include /messages
+				if(servers.length > 0)
+					table.table.table-hover.table-bordered.table-striped
+						thead
+							tr
+								th Name
+								th IP
+								th OS
+								th(colspan=3)
+						tbody
+							each server in servers
+								tr
+									td #{server.name}
+									td #{server.ip}
+									td #{server.os}
+									td
+										a(href="/servers/" + server._id).btn.btn-xs.btn-primary View
+										&nbsp;
+										a(href="/servers/" + server._id + "/edit").btn.btn-xs.btn-info Edit
+										&nbsp;
+										a(href="/servers/" + server._id + "/delete").btn.btn-xs.btn-danger Delete
+				else
+					div.alert.alert-info
+						p No servers added

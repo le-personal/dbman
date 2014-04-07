@@ -11,8 +11,10 @@
     "mongoose": "*",
     "socket.io": "*",
     "moment": "*",
+    "passport": "*",
     "express-flash": "0.0.2",
     "includemvc": "*",
-    "jade": "*"
+    "jade": "*",
+    "connect-redis": "1.4.7"
   }
 }

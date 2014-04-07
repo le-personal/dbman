@@ -1,0 +1,63 @@
+extends /layout
+
+block content
+  div.container
+    div.row
+      div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+        h1!= title
+        hr
+    div.row
+      div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+        ul.nav.nav-pills.nav-stacked
+          li
+            a(href="/servers") Servers
+          li.active
+            a(href="/servers/add") Add server
+      div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+        include /messages
+        form(role="form", method="post", action="/servers/add")
+          div.form-group
+            label(for="name") Server Name *
+            input(type="text", name="name", id="form-input-name", placeholder="Enter a name for this server").form-control
+          div.form-group
+            label(for="ip") IP *
+            input(type="text", name="ip", id="form-input-ip", placeholder="Enter the IP or hostname of this server").form-control
+          div.form-group 
+            label(for="ssh_username") SSH Username *
+            input(type="text", name="ssh_username", id="form-input-ssh_username", placeholder="Enter the ssh username to use to connect to this server").form-control
+          div.form-group 
+            label(for="ssh_keypath") SSH Public Key Path *
+            input(type="text", name="ssh_keypath", id="form-input-ssh_keypath", placeholder="Enter the ssh username to use to connect to this server").form-control
+          div.form-group 
+            label(for="ssh_port") SSH Port *
+            input(type="text", name="ssh_port", id="form-input-ssh_port", placeholder="Enter the ssh port", value="22").form-control
+          div.form-group 
+            label(for="os") Operating System *
+            select(name="os").form-control
+              options
+                option(value="ubuntu:12.04") Ubuntu 12.04
+                option(value="ubuntu:12.10") Ubuntu 12.10
+                option(value="ubuntu:13.04") Ubuntu 13.04
+                option(value="ubuntu:13.10") Ubuntu 13.10
+                option(value="centos:5") Centos 5
+                option(value="centos:6") Centos 6
+          div.well
+            div.form-group
+              label(for="type") Service Type *
+              select(name="service[0][type]").form-control
+                options
+                  option(value="mysql") MySQL
+                  option(value="mongodb") MongoDB
+            div.form-group
+              label(for="username") Username *
+              input(type="text", name="service[0][username]", id="form-input-username", placeholder="Enter a username for this service", value="root").form-control
+              div.help-block If you do not enter one, one will be created for you
+            div.form-group
+              label(for="password") Password *
+              input(type="password", name="service[0][password]", id="form-input-password", placeholder="Enter the password associated with the username").form-control
+              div.help-block If you do not enter one, one will be created for you
+            div.form-group
+              label(for="port") Port *
+              input(type="text", name="service[0][port]", id="form-input-port", placeholder="Enter the port for this service", value="3306").form-control
+          div.form-group
+            button(type="submit", id="form-login-button").btn.btn-primary Create server
