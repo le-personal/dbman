@@ -15,6 +15,8 @@ block content
 						a(href="/servers/add") Add server
 			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
 				include /messages
+				div.btn-group
+					a(href="/servers/" + server._id + "/test").btn.btn-primary Test connection
 				h3 Server information
 				table.table.table-striped
 					tr

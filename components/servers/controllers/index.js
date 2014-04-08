@@ -2,6 +2,8 @@ var include = require("includemvc");
 var Model = include.model("servers");
 var Secure = include.lib("secure");
 var secure = new Secure();
+var SSH = include.lib("ssh");
+var app = include.app();
 
 exports.getServers = function(req, res) {
 	Model.find(function(err, results) {
@@ -129,8 +131,34 @@ exports.postDeleteServer = function(req, res) {
 	})
 }
 
-exports.testConnection = function(req, res) {
-	var id = req.params.id;
+exports.getTestServer = function(req, res) {
+	var id = req.params.id;	
 
-	
+	Model.findOne({_id: id})
+	.exec(function(err, result) {
+		if(err) {
+			res.redirect("/404");
+		}
+		if(result) {
+			var options = {
+				host: result.ip,
+				port: result.ssh_port,
+				username: result.ssh_username,
+				privateKey: result.ssh_keyPath
+			}
+
+			var connection = new SSH(options);
+			connection.testConnection(id);
+
+			app.on("ssh:testConnection:data:" + id, function(response) {
+				var render = {
+					title: "Test connection for " + result.name,
+					data: response.data,
+					type: response.extended
+				}
+
+				res.render("testServerConnection", render);
+			})
+		}
+	});
 }

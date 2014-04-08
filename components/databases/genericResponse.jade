@@ -1,0 +1,15 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				include /messages
+				h3 Data
+				hr
+				div.data #{data}
+				

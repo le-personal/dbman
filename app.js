@@ -43,9 +43,15 @@ app.use(express.session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
+app.use(function(req, res, next) {
+	res.locals.user = req.user;
+	res.locals.isUser = req.user ? true : false;
+	next();
+})
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -53,6 +59,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
   done(null, user);
 });
+
 
 /** 
  * Autodetect all views in components 
@@ -66,3 +73,4 @@ components.forEach(function(component) {
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
+
