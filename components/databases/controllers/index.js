@@ -5,6 +5,20 @@ var Server = include.model("servers");
 var app = include.app();
 var util = require("util");
 
+exports.getCreateDatabase = function(req, res) {
+	Server.find()
+	.exec(function(err, servers) {
+		if(err) throw err;
+		if(servers) {
+			
+		}
+	});
+}
+
+exports.postCreateDatabase = function(req, res) {
+
+}
+
 exports.listMySQLDatabases = function(req, res) {
 	var serverId = req.params.id;
 
@@ -16,36 +30,33 @@ exports.listMySQLDatabases = function(req, res) {
 		if(server) {
 			console.log(server);
 
-			server.services.forEach(function(service) {
-				if(service.type === "mysql") {
-					console.log(service);
-					var mysql = new MySQL({
-						hostname: server.ip,
-						username: service.username,
-						password: service.password,
-						port: service.port
-					});
-					
-					var connection = new SSH({
-						host: server.ip,
-						port: server.ssh_port,
-						username: server.ssh_username,
-						privateKey: server.ssh_keyPath
-					});
+			if(server.service.type === "mysql") {
+				var mysql = new MySQL({
+					hostname: server.ip,
+					username: server.service.username,
+					password: server.service.password,
+					port: server.service.port
+				});
+				
+				var connection = new SSH({
+					host: server.ip,
+					port: server.ssh_port,
+					username: server.ssh_username,
+					privateKey: server.ssh_keyPath
+				});
 
-					connection.execute(serverId, mysql.showDatabases());
+				connection.execute(serverId, mysql.showDatabases());
 
-					app.on("ssh:execute:data:" + serverId, function(data) {
-						var render = {
-							title: "List Databases on server " + server.name,
-							server: server,
-							data: util.format("%s", data.data)
-						}
+				app.on("ssh:execute:data:" + serverId, function(data) {
+					var render = {
+						title: "List Databases on server " + server.name,
+						server: server,
+						data: util.format("%s", data.data)
+					}
 
-						res.render("genericResponse", render);
-					});
-				}
-			});
+					res.render("genericResponse", render);
+				});
+			}
 		}
 	});
 }

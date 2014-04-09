@@ -44,20 +44,20 @@ block content
           div.well
             div.form-group
               label(for="type") Service Type *
-              select(name="service[0][type]").form-control
+              select(name="service[type]").form-control
                 options
                   option(value="mysql") MySQL
                   option(value="mongodb") MongoDB
             div.form-group
               label(for="username") Username *
-              input(type="text", name="service[0][username]", id="form-input-username", placeholder="Enter a username for this service", value="root").form-control
+              input(type="text", name="service[username]", id="form-input-username", placeholder="Enter a username for this service", value="root").form-control
               div.help-block If you do not enter one, one will be created for you
             div.form-group
               label(for="password") Password *
-              input(type="password", name="service[0][password]", id="form-input-password", placeholder="Enter the password associated with the username").form-control
+              input(type="password", name="service[password]", id="form-input-password", placeholder="Enter the password associated with the username").form-control
               div.help-block If you do not enter one, one will be created for you
             div.form-group
               label(for="port") Port *
-              input(type="text", name="service[0][port]", id="form-input-port", placeholder="Enter the port for this service", value="3306").form-control
+              input(type="text", name="service[port]", id="form-input-port", placeholder="Enter the port for this service", value="3306").form-control
           div.form-group
             button(type="submit", id="form-login-button").btn.btn-primary Create server

@@ -1,10 +1,11 @@
 doctype html
 html
-  head
-    title= title
-    include styles
-  body
-    include header
-    block content
-    include scripts
-    block scripts
+	head
+		title= title
+		include styles
+	body
+		include header
+		div#page
+			block content
+		include scripts
+		block scripts

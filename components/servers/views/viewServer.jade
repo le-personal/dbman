@@ -40,15 +40,15 @@ block content
 
 				h3 Services
 				hr
-				each service in server.services
-					h4 #{service.type}
-					table.table.table-striped
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Service type:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{service.type}
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Username:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{service.username}
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Port:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{service.port}
+
+				h4 #{server.service.type}
+				table.table.table-striped
+					tr
+						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Service type:
+						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.type}
+					tr
+						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Username:
+						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.username}
+					tr
+						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Port:
+						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.port}

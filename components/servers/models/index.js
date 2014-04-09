@@ -10,12 +10,12 @@ var Server = mongoose.model("Server", {
 	os: String,
 	created: {type: Date, default: Date.now},
 	author: {type: Schema.Types.ObjectId, ref: "User"},
-	services: [{
+	service: {
 		type: {type: String},
 		username: {type: String},
 		password: {type: String},
 		port: {type: String}
-	}]
+	}
 });
 
 module.exports = Server;

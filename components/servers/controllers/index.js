@@ -39,21 +39,13 @@ exports.postAddServer = function(req, res) {
 			ssh_port: body.ssh_port,
 			os: body.os,
 			author: user,
-		}
-		
-		var services = []
-		body.service.forEach(function(service) {
-			var add = {
-				type: service.type,
-				username: service.username,
-				password: secure.encrypt(service.password),
-				port: service.port
+			service: {
+				type: body.service.type,
+				username: body.service.username,
+				password: secure.encrypt(body.service.password),
+				port: body.service.port
 			}
-
-			services.push(add);
-		})
-
-		server.services = services;
+		}
 
 		var model = new Model(server);
 		model.save(function(err, result) {
@@ -83,8 +75,6 @@ exports.getServer = function(req, res) {
 				title: result.name,
 				server: result
 			}
-
-			console.log(result);
 
 			res.render("viewServer", render);
 		}
