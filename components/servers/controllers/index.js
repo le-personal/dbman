@@ -127,9 +127,11 @@ exports.getTestServer = function(req, res) {
 	Model.findOne({_id: id})
 	.exec(function(err, result) {
 		if(err) {
-			res.redirect("/404");
+			res.send(404);
 		}
 		if(result) {
+			res.send(200);
+
 			var options = {
 				host: result.ip,
 				port: result.ssh_port,
@@ -138,17 +140,7 @@ exports.getTestServer = function(req, res) {
 			}
 
 			var connection = new SSH(options);
-			connection.testConnection(id);
-
-			app.on("ssh:testConnection:data:" + id, function(response) {
-				var render = {
-					title: "Test connection for " + result.name,
-					data: response.data,
-					type: response.extended
-				}
-
-				res.render("testServerConnection", render);
-			})
+			connection.execute(id, "ps aux");
 		}
 	});
 }

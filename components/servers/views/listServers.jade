@@ -1,5 +1,8 @@
 extends /layout
 
+block templates
+	include /genericResponse
+
 block content
 	div.container
 		div.row
@@ -14,26 +17,27 @@ block content
 					li
 						a(href="/servers/add") Add server
 			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
-				include /messages
-				if(servers.length > 0)
-					table.table.table-hover.table-bordered.table-striped
-						thead
-							tr
-								th Name
-								th IP
-								th OS
-								th Actions
-						tbody
-							each server in servers
+				div#content
+					include /messages
+					if(servers.length > 0)
+						table.table.table-hover.table-bordered.table-striped
+							thead
 								tr
-									td #{server.name}
-									td #{server.ip}
-									td #{server.os}
-									td
-										div.btn-group
-											a(href="/servers/" + server._id).btn.btn-xs.btn-primary View
-											a(href="/servers/" + server._id + "/edit").btn.btn-xs.btn-info Edit
-											a(href="/servers/" + server._id + "/delete").btn.btn-xs.btn-danger Delete
-				else
-					div.alert.alert-info
-						p No servers added
+									th Name
+									th IP
+									th OS
+									th Actions
+							tbody
+								each server in servers
+									tr
+										td #{server.name}
+										td #{server.ip}
+										td #{server.os}
+										td
+											div.btn-group
+												a(href="/servers/" + server._id).btn.btn-xs.btn-primary View
+												a(href="/servers/" + server._id + "/edit").btn.btn-xs.btn-info Edit
+												a(href="/servers/" + server._id + "/delete").btn.btn-xs.btn-danger Delete
+					else
+						div.alert.alert-info
+							p No servers added

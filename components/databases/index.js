@@ -14,6 +14,6 @@ app.post("/databases/add", isUser, isAdmin, controller.postCreateDatabase);
 
 
 app.get("/databases/:id", controller.getDatabase);
-app.get("/databases/:id/tables", controller.showTables);
+app.get("/api/databases/:id/tables", controller.showTables);
 
 app.get("/databases/:serverid/databases", isUser, isAdmin, controller.listMySQLDatabases);

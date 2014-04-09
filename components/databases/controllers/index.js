@@ -6,6 +6,7 @@ var app = include.app();
 var util = require("util");
 var models = include.model("databases");
 var Database = models.Database;
+var Connection = include.lib("connection");
 
 exports.getDatabases = function(req, res) {
 	Database.find()
@@ -200,15 +201,13 @@ exports.listMySQLDatabases = function(req, res) {
 
 				connection.execute(serverId, mysql.showDatabases());
 
-				app.on("ssh:execute:data:" + serverId, function(data) {
-					var render = {
-						title: "List Databases on server " + server.name,
-						server: server,
-						data: util.format("%s", data.data)
-					}
+				var render = {
+					title: "List Databases on server " + server.name,
+					server: server,
+					data: "Nothing to show here"
+				}
 
-					res.render("genericResponse", render);
-				});
+				res.render("genericResponse", render);
 			}
 		}
 	});
@@ -224,11 +223,13 @@ exports.showTables = function(req, res) {
 		var server = database.server;
 
 		if(err) {
-			res.redirect("/404");
+			res.send(404);
 		}
 
 		if(database) {
 			if(database.database_type == "mysql") {
+				res.send(200);
+				
 				var mysql = new MySQL({
 					hostname: server.ip,
 					username: server.service.username,
@@ -236,35 +237,23 @@ exports.showTables = function(req, res) {
 					port: server.service.port
 				});
 				
-				var connection = new SSH({
-					host: server.ip,
-					port: server.ssh_port,
-					username: server.ssh_username,
-					privateKey: server.ssh_keyPath
-				});
+				var connection = new Connection(database._id, server);
+				connection.execute(mysql.showTables(database.database_name));
+				
+				// var render = {
+				// 	title: "Show tables from database " + database.database_name,
+				// 	server: server,
+				// 	data: "Nothing to show here"
+				// }
 
-				connection.execute(database._id, mysql.showTables(database.database_name));
-
-				app.on("ssh:execute:data:" + database._id, function(data) {
-					app.emit("test", data);
-				});
-
-				app.emit("test", "data");
-
-				var render = {
-					title: "Show tables from database " + database.database_name,
-					server: server,
-					data: "Nothing to show here"
-				}
-
-				res.render("genericResponse", render);
 			}
 			else {
-				res.redirect("/404");
+				res.send(404);
+				// res.redirect("/404");
 			}
 		}
 		else {
-			res.redirect("/404");
+			res.send(404);
 		}
 	});
 }

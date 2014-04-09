@@ -18,4 +18,4 @@ app.post("/servers/:id/edit", isUser, isAdmin, controller.postEditServer);
 app.get("/servers/:id/delete", isUser, isAdmin, controller.getDeleteServer);
 app.post("/servers/:id/delete", isUser, isAdmin, controller.postDeleteServer);
 
-app.get("/servers/:id/test", isUser, isAdmin, controller.getTestServer);
+app.get("/api/servers/:id/test", isUser, isAdmin, controller.getTestServer);

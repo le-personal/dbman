@@ -15,6 +15,7 @@
     "express-flash": "0.0.2",
     "includemvc": "*",
     "jade": "*",
-    "connect-redis": "1.4.7"
+    "connect-redis": "1.4.7",
+    "ssh2": "*"
   }
 }

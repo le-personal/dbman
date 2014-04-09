@@ -1,5 +1,8 @@
 extends /layout
 
+block templates
+	include /genericResponse
+
 block content
 	div.container
 		div.row
@@ -16,39 +19,40 @@ block content
 			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
 				include /messages
 				div.btn-group
-					a(href="/servers/" + server._id + "/test").btn.btn-primary Test connection
-				h3 Server information
-				table.table.table-striped
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Name:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.name}
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 IP:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.ip}
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 SSH Username:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.ssh_username}
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 OS:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.os}
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.created}
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.author.fullName}
+					a(href="#testServer/" + server._id).btn.btn-primary Test connection
+				div#content
+					h3 Server information
+					table.table.table-striped
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Name:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.name}
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 IP:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.ip}
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 SSH Username:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.ssh_username}
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 OS:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.os}
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.created}
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.author.fullName}
 
-				h3 Services
-				hr
+					h3 Services
+					hr
 
-				h4 #{server.service.type}
-				table.table.table-striped
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Service type:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.type}
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Username:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.username}
-					tr
-						td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Port:
-						td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.port}
+					h4 #{server.service.type}
+					table.table.table-striped
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Service type:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.type}
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Username:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.username}
+						tr
+							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Port:
+							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.service.port}
