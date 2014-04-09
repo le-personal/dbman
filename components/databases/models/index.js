@@ -3,10 +3,12 @@ var Schema = mongoose.Schema;
 
 var Database = mongoose.model("Database", {
 	database_name: String,
-	database_type: String.
+	database_type: String,
 	created: {type: Date, default: Date.now},
 	database_user: String,
+	database_password: String,
 	server: {type: Schema.Types.ObjectId, ref: "Server"},
+	author: {type: Schema.Types.ObjectId, ref: "User"},
 	permissions: {
 		edit: [{type: Schema.Types.ObjectId, ref: "User"}],
 		export: [{type: Schema.Types.ObjectId, ref: "User"}],

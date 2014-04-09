@@ -1,0 +1,33 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+		div.row
+			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+				ul.nav.nav-pills.nav-stacked
+					li
+						a(href="/databases") Databases
+					li.active
+						a(href="/databases/add") Add database
+			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+				include /messages
+				form(role="form", method="post", action="/databases/add")
+					div.form-group
+						label(for="database_name") Database name *
+						input(type="text", name="database_name", id="form-input-name", placeholder="Enter a name for this database").form-control
+					div.form-group 
+						label(for="server") Server *
+						select(name="server").form-control
+							options
+							each server in servers
+								option(value="#{server._id}") #{server.name}
+					div.form-group
+						div.checkbox
+							label
+								<input type="checkbox" name="createDatabase"> Create the database?
+					div.form-group
+						button(type="submit", id="form-login-button").btn.btn-primary Create database

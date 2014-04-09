@@ -18,8 +18,14 @@ MySQL.prototype.showDatabases = function() {
 	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
 }
 
+MySQL.prototype.showTables = function(database) {
+	var command = '"SHOW TABLES FROM '+ database +'"';
+
+	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
+}
+
 MySQL.prototype.createDatabase = function(database) {
-	return 'mysqladmin -u' + this.username + " -p" + this.password + " --port " + this.port + " CREATE DATABASE " + database;
+	return 'mysqladmin -u' + this.username + " -p" + this.password + " --port " + this.port + " CREATE " + database;
 }
 
 MySQL.prototype.createUser = function(database, user, password) {

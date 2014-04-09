@@ -1,0 +1,43 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+		div.row
+			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+				ul.nav.nav-pills.nav-stacked
+					li.active
+						a(href="/databases") Databases
+					li
+						a(href="/databases/add") Add database
+			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+				include /messages
+				if(databases.length > 0)
+					table.table.table-hover.table-bordered.table-striped
+						thead
+							tr
+								th Name
+								th Server
+								th Type
+								th Locked
+								th Actions
+						tbody
+							each database in databases
+								tr
+									td 
+										a(href="/databases/#{database._id}") #{database.database_name}
+									td 
+										a(href="/databases/#{database.server._id}/databases") #{database.server.name}
+									td #{database.database_type}
+									td #{database.isLocked}
+									td
+										div.btn-group
+											a(href="/databases/" + database._id).btn.btn-xs.btn-primary View
+											a(href="/databases/" + database._id + "/edit").btn.btn-xs.btn-info Edit
+											a(href="/databases/" + database._id + "/delete").btn.btn-xs.btn-danger Delete
+				else
+					div.alert.alert-info
+						p No databases added
