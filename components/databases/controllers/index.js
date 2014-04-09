@@ -246,8 +246,10 @@ exports.showTables = function(req, res) {
 				connection.execute(database._id, mysql.showTables(database.database_name));
 
 				app.on("ssh:execute:data:" + database._id, function(data) {
-					console.log(data);
+					app.emit("test", data);
 				});
+
+				app.emit("test", "data");
 
 				var render = {
 					title: "Show tables from database " + database.database_name,
