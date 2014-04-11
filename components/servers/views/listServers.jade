@@ -1,7 +1,21 @@
 extends /layout
 
+block scripts
+	script(src="/javascripts/Models/Server.js")
+	script(src="/javascripts/Collections/Servers.js")
+	script(src="/javascripts/Views/ServersView.js")
+	script(src="/javascripts/Routers/ServersRouter.js")
+	script().
+		(function() {
+			var app = new App.Routers.ServersRouter();
+			Backbone.history.start({pushState: false});
+		})();
+
 block templates
 	include /genericResponse
+	include /message
+	include viewServer
+	include addServer
 
 block content
 	div.container
@@ -14,11 +28,11 @@ block content
 				ul.nav.nav-pills.nav-stacked
 					li.active
 						a(href="/servers") Servers
-					li
-						a(href="/servers/add") Add server
+					li.add
+						a(href="/servers#add") Add server
 			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+				div#message
 				div#content
-					include /messages
 					if(servers.length > 0)
 						table.table.table-hover.table-bordered.table-striped
 							thead
@@ -35,9 +49,9 @@ block content
 										td #{server.os}
 										td
 											div.btn-group
-												a(href="/servers/" + server._id).btn.btn-xs.btn-primary View
-												a(href="/servers/" + server._id + "/edit").btn.btn-xs.btn-info Edit
-												a(href="/servers/" + server._id + "/delete").btn.btn-xs.btn-danger Delete
+												a(href="/servers#view/" + server._id).btn.btn-xs.btn-primary View
+												a(href="/servers#edit/" + server._id).btn.btn-xs.btn-info Edit
+												a(href="/servers#delete/" + server._id).btn.btn-xs.btn-danger Delete
 					else
 						div.alert.alert-info
 							p No servers added

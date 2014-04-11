@@ -7,7 +7,7 @@ App.Routers.AppRouter = Backbone.Router.extend({
 		"databases/:id": "databaseView",
 		"tables/:id": "databaseShowTables",
 		"servers": "serversList",
-		"server/:id": "serverView",
+		"/servers/:id": "serverView",
 		"testServer/:id": "testServer"
 	},
 	databasesList: function() {
@@ -25,12 +25,26 @@ App.Routers.AppRouter = Backbone.Router.extend({
 	testServer: function(id) {
 		new App.Views.TestServerConnection({el: "div#content", id: id});
 	},
-	serverView: function(id) {
+	viewServer: function(id) {
 		console.log("View server");
+	}
+});
+
+App.Views.Message = Backbone.View.extend({
+	el: $("#message"),
+	template: _.template($("#messageTemplate").html()),
+	initialize: function(data) {
+		this.type = data.type;
+		this.message = data.message;
+
+		this.render();
+	},
+	render: function() {
+		this.$el.html(this.template({type: this.type, message: this.message}));
 	}
 });
 
 (function() {
 	new App.Routers.AppRouter();
-	Backbone.history.start({pushState: false});
+	// Backbone.history.start({pushState: false});
 })();

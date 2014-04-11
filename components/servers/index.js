@@ -5,12 +5,16 @@ var isAdmin = include.lib("isAdmin", "users");
 
 var controller = include.controller("servers");
 
+app.get("/api/servers/:id", isUser, controller.getAPIServer);
+app.get("/api/servers", isUser, controller.getAPIServers);
+app.post("/api/servers", isUser, isAdmin, controller.postAPIAddServer);
+
+
+
+
 app.get("/servers", isUser, controller.getServers);
 
-app.get("/servers/add", isUser, isAdmin, controller.getAddServer);
-app.post("/servers/add", isUser, isAdmin, controller.postAddServer);
 
-app.get("/servers/:id", isUser, controller.getServer);
 
 app.get("/servers/:id/edit", isUser, isAdmin, controller.getEditServer);
 app.post("/servers/:id/edit", isUser, isAdmin, controller.postEditServer);

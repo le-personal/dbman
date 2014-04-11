@@ -18,15 +18,20 @@ exports.getServers = function(req, res) {
 	});
 }
 
-exports.getAddServer = function(req, res) {
-	var render = {
-		title: "Add server"
-	}
 
-	res.render("addServer", render);
+exports.getAPIServers = function(req, res) {
+	Model.find(function(err, results) {
+		if(err) throw err;
+		if(results) {
+			res.send(200, results);
+		}
+		else {
+			res.send(500);
+		}
+	});	
 }
 
-exports.postAddServer = function(req, res) {
+exports.postAPIAddServer = function(req, res) {
 	var body = req.body;
 	console.log(body);
 	var user = req.user;
@@ -51,32 +56,26 @@ exports.postAddServer = function(req, res) {
 		model.save(function(err, result) {
 			if(err) throw err;
 			if(result) {
-				req.flash("success", "The server was added successfully");
-				res.redirect("/servers");
+				res.send(201, result);
 			}	
 		});
 	}
 	else {
-		req.flash("error", "All fields are required");
-		res.redirect("/servers/add");
+		res.send(406);
 	}
 }
 
-exports.getServer = function(req, res) {
+exports.getAPIServer = function(req, res) {
 	var id = req.params.id;
 	Model.findOne({_id: id})
 	.populate("author")
 	.exec(function(err, result) {
 		if(err) {
-			res.redirect("/404");
+			res.send(404);
 		}
 		if(result) {
-			var render = {
-				title: result.name,
-				server: result
-			}
-
-			res.render("viewServer", render);
+			console.log(result);
+			res.send(200, result);
 		}
 	});
 }
