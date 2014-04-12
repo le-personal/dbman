@@ -33,7 +33,6 @@ exports.getAPIServers = function(req, res) {
 
 exports.postAPIAddServer = function(req, res) {
 	var body = req.body;
-	console.log(body);
 	var user = req.user;
 	if(body.name && body.ip && body.ssh_username && body.ssh_keypath && body.ssh_port && body.os) {
 		var server = {
@@ -74,7 +73,6 @@ exports.getAPIServer = function(req, res) {
 			res.send(404);
 		}
 		if(result) {
-			console.log(result);
 			res.send(200, result);
 		}
 	});
@@ -120,26 +118,36 @@ exports.postDeleteServer = function(req, res) {
 	})
 }
 
-exports.getTestServer = function(req, res) {
-	var id = req.params.id;	
+exports.postTestServer = function(req, res) {
+	var id = req.body.id;
 
-	Model.findOne({_id: id})
-	.exec(function(err, result) {
-		if(err) {
-			res.send(404);
-		}
-		if(result) {
-			res.send(200);
-
-			var options = {
-				host: result.ip,
-				port: result.ssh_port,
-				username: result.ssh_username,
-				privateKey: result.ssh_keyPath
+	if(req.body.id) {
+		Model.findOne({_id: id})
+		.exec(function(err, result) {
+			if(err) {
+				res.send(404);
 			}
+			if(result) {
+				var options = {
+					host: result.ip,
+					port: result.ssh_port,
+					username: result.ssh_username,
+					privateKey: result.ssh_keyPath
+				}
 
-			var connection = new SSH(options);
-			connection.execute(id, "ps aux");
-		}
-	});
+				// async version
+				var connection = new SSH(options);
+				connection.executeAsync(id, "ps aux", function(stderr, stdout) {
+					res.send(200, {stdout: stdout, stderr: stderr});
+				});
+				
+				// sync version 
+				//connection.execute(id, "ps aux");
+				//res.send(200, true);
+			}
+		});
+	}
+	else {
+		res.send(406);
+	}
 }

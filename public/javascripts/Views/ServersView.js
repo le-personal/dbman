@@ -29,8 +29,6 @@ App.Views.AddServer = Backbone.View.extend({
 		this.render();
 		this.changeTitle();
 		this.changeActiveMenu();
-
-
 	},
 	changeTitle: function() {
 		$("h1").text("Add server");
@@ -71,6 +69,54 @@ App.Views.AddServer = Backbone.View.extend({
 				// app.navigate("/");
 			}
 		});
+	}
+});
+
+App.Views.TestConnectionServer = Backbone.View.extend({
+	id: null,
+	template: _.template($("#genericResponse").html()),
+	dataTemplate: _.template($("#genericData").html()),
+	initialize: function(data) {
+		this.id = data.id;
+		this.listen();
+		this.render();
+		this.changeTitle();
+	},
+	changeTitle: function() {
+		$("h1").text("Test connection to server");
+	},
+	listen: function() {
+		// it will listen for an event in case we used a Sync / event based call
+		var self = this;
+		App.io.on("ssh:execute:data:" + self.id, function(data) {
+			self.$el.html(self.dataTemplate({stdout: data.stdout}));
+		})
+	},
+	render: function() {
+		var self = this;
+		this.$el.html(this.template());
+
+		// create a new model
+		var model = new App.Models.Server();
+
+		// call testConnection and pass the id
+		// the model will make a post request passing the id in the body
+		model.testConnection(this.id);
+
+		// the model will fire a success or error event on completion
+		model.on("testConnection:success", function(data) {
+			// once we have the response we can display the data of stdout
+			// if we made a Sync operation, we use the method listen
+			self.$el.html(self.dataTemplate({stdout: data.stdout}));
+			new App.Views.Message({
+				type: "success", 
+				message: "The server successfully returned a response"
+			});
+		})
+
+		model.on("testConnection:error", function() {
+			console.log("error");
+		})
 	}
 });
 

@@ -8,6 +8,7 @@ var controller = include.controller("servers");
 app.get("/api/servers/:id", isUser, controller.getAPIServer);
 app.get("/api/servers", isUser, controller.getAPIServers);
 app.post("/api/servers", isUser, isAdmin, controller.postAPIAddServer);
+app.post("/api/servers/test", isUser, isAdmin, controller.postTestServer);
 
 
 
@@ -21,5 +22,3 @@ app.post("/servers/:id/edit", isUser, isAdmin, controller.postEditServer);
 
 app.get("/servers/:id/delete", isUser, isAdmin, controller.getDeleteServer);
 app.post("/servers/:id/delete", isUser, isAdmin, controller.postDeleteServer);
-
-app.get("/api/servers/:id/test", isUser, isAdmin, controller.getTestServer);

@@ -16,4 +16,15 @@ App.Models.Server = Backbone.Model.extend({
 			port: ''
 		}
 	},
+	testConnection: function(id) {
+		var self = this;
+		var url = this.urlRoot;
+		jQuery.post(url + "/test", {id: id}, function(response) {
+			if(response) {
+				self.trigger("testConnection:success", response);
+			}
+		}, "json").fail(function() {
+			self.trigger("testConnection:error");
+		});
+	}
 });

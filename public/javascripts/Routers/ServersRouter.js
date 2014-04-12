@@ -5,7 +5,7 @@ App.Routers.ServersRouter = Backbone.Router.extend({
 		"": "listServers",
 		"add": "addServer",
 		"view/:id": "viewServer",
-		"test/:id": "testServer",
+		"testConnection/:id": "testConnectionServer",
 		"edit/:id": "editServer"
 	},
 	listServers: function() {
@@ -17,8 +17,8 @@ App.Routers.ServersRouter = Backbone.Router.extend({
 	addServer: function(id) {
 		new App.Views.AddServer({el: "div#content", id: id});
 	},
-	testServer: function(id) {
-
+	testConnectionServer: function(id) {
+		new App.Views.TestConnectionServer({el: "div#content", id: id});
 	},
 	editServer: function(id) {
 		new App.Views.EditServer({el: "div#content", id: id});
