@@ -123,3 +123,28 @@ App.Views.TestConnectionServer = Backbone.View.extend({
 App.Views.EditServer = Backbone.View.extend({
 
 });
+
+App.Views.DeleteServer = Backbone.View.extend({
+	id: null,
+	initialize: function(data) {
+		this.id = data.id;
+		this.render();
+	},
+	render: function() {
+		var self = this;
+		var model = new App.Models.Server({id: this.id});
+
+		model.destroy({
+			success: function() {
+				$(".server-" + self.id).hide().remove();
+				new App.Views.Message({
+					type: "success",
+					message: "Removed the server successfully"
+				});
+			},
+			error: function() {
+				console.log("Error");
+			}
+		});
+	}
+});

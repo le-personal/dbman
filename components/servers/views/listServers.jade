@@ -43,7 +43,7 @@ block content
 									th Actions
 							tbody
 								each server in servers
-									tr
+									tr(class="server-#{server._id}")
 										td #{server.name}
 										td #{server.ip}
 										td #{server.os}
