@@ -3,17 +3,25 @@ var app = include.app();
 var isUser = include.lib("isUser", "users");
 var isAdmin = include.lib("isAdmin", "users");
 var controller = include.controller("databases");
+var api = include("databases", "controllers", "api");
 
-// app.get("/databases/:id/export", controller.getExportDatabase);
-// app.get("/databases/:id/backups", controller.getDatabaseBackups);
-// app.get("/databases/:id/restore", controller.getDatabaseRestore);
+
 
 app.get("/databases", isUser, isAdmin, controller.getDatabases);
-app.get("/databases/add", isUser, isAdmin, controller.getCreateDatabase);
-app.post("/databases/add", isUser, isAdmin, controller.postCreateDatabase);
+app.get("/api/databases", isUser, isAdmin, api.getDatabases);
+app.get("/api/databases/:id", isUser, isAdmin, api.getDatabase);
+app.post("/api/databases", isUser, isAdmin, api.postDatabase);
 
 
-app.get("/databases/:id", controller.getDatabase);
-app.get("/api/databases/:id/tables", controller.showTables);
 
-app.get("/databases/:serverid/databases", isUser, isAdmin, controller.listMySQLDatabases);
+
+
+
+// app.get("/databases/add", isUser, isAdmin, controller.getCreateDatabase);
+// app.post("/databases/add", isUser, isAdmin, controller.postCreateDatabase);
+
+
+// app.get("/databases/:id", controller.getDatabase);
+// app.get("/api/databases/:id/tables", controller.showTables);
+
+// app.get("/databases/:serverid/databases", isUser, isAdmin, controller.listMySQLDatabases);

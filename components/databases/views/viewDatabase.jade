@@ -1,51 +1,33 @@
-extends /layout
-
-block templates
-	include /genericResponse
-
-block content
-	div.container
-		div.row
-			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
-				h1!= title
-				hr
-		div.row
-			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
-				ul.nav.nav-pills.nav-stacked
-					li.active
-						a(href="/databases") Databases
-					li
-						a(href="/databases/add") Add database
-			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
-				include /messages
-				div.btn-group
-					a(href="#tables/" + database._id).btn.btn-primary Tables
-				div#content
-					h3 Database information
-					table.table.table-striped
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{database.database_name}
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{database.created}
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{database.author.fullName}
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{database.isLocked}
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database user:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{database.database_user}
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Allowed hosts:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{database.allowedHosts}
-					h3 Server information
-					table.table.table-striped
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.name}	
-						tr
-							td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
-							td.col-lg-9.col-md-9.col-sm-9.col-xs-9 #{server.ip}						
+script(type="text/template", id="viewDatabaseTemplate")
+	div.btn-group
+		<a href="#showTables/<%= database._id %>" class="btn btn-primary">Show tables</a>
+	div#content
+		h3 Database information
+		table.table.table-striped
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
+					strong <%= database.database_name %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.created %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.author.fullName %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.isLocked %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database user:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.database_user %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Allowed hosts:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.allowedHosts %>
+		h3 Server information
+		table.table.table-striped
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>	
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>						

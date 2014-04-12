@@ -1,7 +1,23 @@
 extends /layout
 
+block scripts
+	script(src="/javascripts/Models/Database.js")
+	script(src="/javascripts/Collections/Databases.js")
+	script(src="/javascripts/Models/Server.js")
+	script(src="/javascripts/Collections/Servers.js")
+	script(src="/javascripts/Views/DatabasesView.js")
+	script(src="/javascripts/Routers/DatabasesRouter.js")
+	script().
+		(function() {
+			var app = new App.Routers.DatabasesRouter();
+			Backbone.history.start({pushState: false});
+		})();
+
 block templates
 	include /genericResponse
+	include /message
+	include viewDatabase
+	include addDatabase
 
 block content
 	div.container
@@ -14,33 +30,33 @@ block content
 				ul.nav.nav-pills.nav-stacked
 					li.active
 						a(href="/databases") Databases
-					li
-						a(href="/databases/add") Add database
+					li.add
+						a(href="/databases#add") Add database
 			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
-				include /messages
-				if(databases.length > 0)
-					table.table.table-hover.table-bordered.table-striped
-						thead
-							tr
-								th Name
-								th Server
-								th Type
-								th Locked
-								th Actions
-						tbody
-							each database in databases
+				div#message
+				div#content
+					if(databases.length > 0)
+						table.table.table-hover.table-bordered.table-striped
+							thead
 								tr
-									td 
-										a(href="/databases/#{database._id}") #{database.database_name}
-									td 
-										a(href="/databases/#{database.server._id}/databases") #{database.server.name}
-									td #{database.database_type}
-									td #{database.isLocked}
-									td
-										div.btn-group
-											a(href="/databases/" + database._id).btn.btn-xs.btn-primary View
-											a(href="/databases/" + database._id + "/edit").btn.btn-xs.btn-info Edit
-											a(href="/databases/" + database._id + "/delete").btn.btn-xs.btn-danger Delete
-				else
-					div.alert.alert-info
-						p No databases added
+									th Name
+									th Server
+									th Type
+									th Locked
+									th Actions
+							tbody
+								each database in databases
+									tr
+										td 
+											a(href="/databases#view/"+ database._id) #{database.database_name}
+										td #{database.server.name}
+										td #{database.database_type}
+										td #{database.isLocked}
+										td
+											div.btn-group
+												a(href="/databases#view/" + database._id).btn.btn-xs.btn-primary View
+												a(href="/databases#edit/" + database._id).btn.btn-xs.btn-info Edit
+												a(href="/databases#delete/" + database._id).btn.btn-xs.btn-danger Delete
+					else
+						div.alert.alert-info
+							p No databases added
