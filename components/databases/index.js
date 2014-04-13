@@ -12,9 +12,12 @@ app.get("/api/databases", isUser, isAdmin, api.getDatabases);
 app.get("/api/databases/:id", isUser, isAdmin, api.getDatabase);
 app.post("/api/databases", isUser, isAdmin, api.postDatabase);
 
+app.delete("/api/databases/:id", isUser, isAdmin, api.deleteDatabase);
 
 
 
+app.post("/api/databases/showdatabases", isUser, isAdmin, api.postShowDatabases);
+app.post("/api/databases/showtables", isUser, isAdmin, api.postShowTables);
 
 
 // app.get("/databases/add", isUser, isAdmin, controller.getCreateDatabase);

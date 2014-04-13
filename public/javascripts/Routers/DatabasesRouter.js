@@ -7,7 +7,8 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		"view/:id": "viewDatabase",
 		"edit/:id": "editDatabase",
 		"delete/:id": "deleteDatabase",
-		"showTables/:id": "showTables"
+		"showTables/:id": "showTables",
+		"showDatabases/:id": "showDatabases"
 	},
 	listDatabases: function() {
 		
@@ -22,9 +23,12 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		// new App.Views.EditServer({el: "div#content", id: id});
 	},
 	deleteDatabase: function(id) {
-		// new App.Views.DeleteServer({el: "div#content", id: id});
+		new App.Views.DeleteDatabase({el: "div#content", id: id});
 	},
 	showTables: function(id) {
-
+		new App.Views.ShowTables({el: "div#content", id: id});
+	},
+	showDatabases: function(id) {
+		new App.Views.ShowDatabases({el: "div#content", id: id});
 	}
 });

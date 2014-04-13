@@ -46,10 +46,11 @@ block content
 									th Actions
 							tbody
 								each database in databases
-									tr
+									tr(class="database-#{database._id}")
 										td 
 											a(href="/databases#view/"+ database._id) #{database.database_name}
-										td #{database.server.name}
+										td 
+											a(href="/databases#showDatabases/" + database.server._id) #{database.server.name}
 										td #{database.database_type}
 										td #{database.isLocked}
 										td

@@ -2,7 +2,7 @@ var include = require("includemvc");
 var Model = include.model("servers");
 var Secure = include.lib("secure");
 var secure = new Secure();
-var SSH = include.lib("ssh");
+var Connection = include.lib("connection");
 var app = include.app();
 
 exports.getServers = function(req, res) {
@@ -102,26 +102,20 @@ exports.postTestServer = function(req, res) {
 
 	if(req.body.id) {
 		Model.findOne({_id: id})
-		.exec(function(err, result) {
+		.exec(function(err, server) {
 			if(err) {
 				res.send(404);
 			}
-			if(result) {
-				var options = {
-					host: result.ip,
-					port: result.ssh_port,
-					username: result.ssh_username,
-					privateKey: result.ssh_keyPath
-				}
-
+			if(server) {
+				
 				// async version
-				var connection = new SSH(options);
-				connection.executeAsync(id, "ps aux", function(stderr, stdout) {
+				var connection = new Connection(id, server);
+				connection.executeAsync("ps aux", function(stderr, stdout) {
 					res.send(200, {stdout: stdout, stderr: stderr});
 				});
 				
 				// sync version 
-				//connection.execute(id, "ps aux");
+				//connection.execute("ps aux");
 				//res.send(200, true);
 			}
 		});

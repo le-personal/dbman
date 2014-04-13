@@ -4,10 +4,11 @@ var secure = new Secure();
 var app = include.app();
 
 function MySQL(options) {
-	this.hostname = options.hostname;
-	this.username = options.username || "root";
-	this.password = secure.decrypt(options.password);
-	this.port = options.port || "3306";
+	this.hostname = options._server.ip;
+	this.username = options._server.service.username || "root";
+	this.password = secure.decrypt(options._server.service.password);
+	this.port = options._server.service.port || "3306";
+	this.database_name = options.database_name || null;
 }
 
 module.exports = exports = MySQL;
@@ -18,14 +19,21 @@ MySQL.prototype.showDatabases = function() {
 	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
 }
 
-MySQL.prototype.showTables = function(database) {
+MySQL.prototype.showTables = function() {
+	var database = this.database_name;
 	var command = '"SHOW TABLES FROM '+ database +'"';
 
 	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
 }
 
-MySQL.prototype.createDatabase = function(database) {
+MySQL.prototype.createDatabase = function() {
+	var database = this.database_name;
 	return 'mysqladmin -u' + this.username + " -p" + this.password + " --port " + this.port + " CREATE " + database;
+}
+
+MySQL.prototype.dropDatabase = function() {
+	var database = this.database_name;
+	return 'yes | mysqladmin -u' + this.username + " -p" + this.password + " --port " + this.port + " DROP " + database;
 }
 
 MySQL.prototype.createUser = function(database, user, password) {
