@@ -204,3 +204,27 @@ exports.postShowTables = function(req, res) {
 		res.send(404);
 	}
 }
+
+exports.postLockDatabase = function(req, res) {
+	var id = req.body.id;
+	Database.update({_id: id}, {isLocked: true}, function(err, result) {
+		if(err) {
+			res.send(406);
+		}
+		if(result) {
+			res.send(200, true);
+		}
+	});
+}
+
+exports.postUnLockDatabase = function(req, res) {
+	var id = req.body.id;
+	Database.update({_id: id}, {isLocked: false}, function(err, result) {
+		if(err) {
+			res.send(406);
+		}
+		if(result) {
+			res.send(200, true);
+		}
+	});	
+}

@@ -18,7 +18,8 @@ app.delete("/api/databases/:id", isUser, isAdmin, api.deleteDatabase);
 
 app.post("/api/databases/showdatabases", isUser, isAdmin, api.postShowDatabases);
 app.post("/api/databases/showtables", isUser, isAdmin, api.postShowTables);
-
+app.post("/api/databases/lock", isUser, isAdmin, api.postLockDatabase);
+app.post("/api/databases/unlock", isUser, isAdmin, api.postUnLockDatabase);
 
 // app.get("/databases/add", isUser, isAdmin, controller.getCreateDatabase);
 // app.post("/databases/add", isUser, isAdmin, controller.postCreateDatabase);

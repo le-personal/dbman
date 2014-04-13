@@ -38,5 +38,27 @@ App.Models.Database = Backbone.Model.extend({
 		}, "json").fail(function() {
 			self.trigger("showDatabases:error");
 		});
-	}
+	},
+	lockDatabase: function(id) {
+		var self = this;
+		var url = this.urlRoot;
+		jQuery.post(url + "/lock", {id: id}, function(response) {
+			if(response) {
+				self.trigger("lockDatabase:success", response);
+			}
+		}, "json").fail(function() {
+			self.trigger("lockDatabase:error");
+		});
+	},
+	unlockDatabase: function(id) {
+		var self = this;
+		var url = this.urlRoot;
+		jQuery.post(url + "/unlock", {id: id}, function(response) {
+			if(response) {
+				self.trigger("unlockDatabase:success", response);
+			}
+		}, "json").fail(function() {
+			self.trigger("unlockDatabase:error");
+		});
+	},
 });

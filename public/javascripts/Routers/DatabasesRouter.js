@@ -8,7 +8,9 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		"edit/:id": "editDatabase",
 		"delete/:id": "deleteDatabase",
 		"showTables/:id": "showTables",
-		"showDatabases/:id": "showDatabases"
+		"showDatabases/:id": "showDatabases",
+		"lock/:id": "lockDatabase",
+		"unlock/:id": "unlockDatabase",
 	},
 	listDatabases: function() {
 		new App.Views.ListDatabases({el: "div#content"});
@@ -30,5 +32,11 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 	},
 	showDatabases: function(id) {
 		new App.Views.ShowDatabases({el: "div#content", id: id});
+	},
+	lockDatabase: function(id) {
+		new App.Views.LockDatabase({el: "div#content", id: id});
+	},
+	unlockDatabase: function(id) {
+		new App.Views.UnlockDatabase({el: "div#content", id: id});
 	}
 });

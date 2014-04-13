@@ -36,22 +36,25 @@ MySQL.prototype.dropDatabase = function() {
 	return 'yes | mysqladmin -u' + this.username + " -p" + this.password + " --port " + this.port + " DROP " + database;
 }
 
-MySQL.prototype.createUser = function(database, user, password) {
+MySQL.prototype.createUser = function(user, password) {
+	var database = this.database;	
 	var pass = secure.decrypt(password);
 	var command = '"FLUSH PRIVILEGES"';
 	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
 }
 
-MySQL.prototype.assignPermissions = function(database, user, hostname) {
+MySQL.prototype.assignPermissions = function(user, hostname) {
+	var database = this.database;	
 	var command = '"FLUSH PRIVILEGES"';
 	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
 }
 
-MySQL.prototype.flushPrivileges = function(database) {
+MySQL.prototype.flushPrivileges = function() {
 	var command = '"FLUSH PRIVILEGES"';
 	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
 }
 
-MySQL.prototype.dumpDatabase = function(database, filename) {
+MySQL.prototype.dumpDatabase = function(filename) {
+	var database = this.database;
 	return 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " > " + filename; 
 }

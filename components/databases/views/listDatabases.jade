@@ -52,12 +52,17 @@ block content
 										td 
 											a(href="/databases#showDatabases/" + database.server._id) #{database.server.name}
 										td #{database.database_type}
-										td #{database.isLocked}
+										td(class="database-status-#{database._id}") #{database.isLocked}
 										td
 											div.btn-group
+												-if(database.isLocked)
+													a(href="/databases#unlock/" + database._id, class="btn btn-xs btn-warning ") Unlock
+												-if(!database.isLocked)
+													a(href="/databases#lock/" + database._id, class="btn btn-xs btn-success ") Lock
 												a(href="/databases#view/" + database._id).btn.btn-xs.btn-primary View
 												a(href="/databases#edit/" + database._id).btn.btn-xs.btn-info Edit
 												a(href="/databases#delete/" + database._id).btn.btn-xs.btn-danger Delete
+
 					else
 						div.alert.alert-info
 							p No databases added

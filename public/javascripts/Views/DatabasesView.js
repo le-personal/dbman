@@ -217,3 +217,72 @@ App.Views.ShowDatabases = Backbone.View.extend({
 		})
 	}
 });
+
+
+App.Views.LockDatabase = Backbone.View.extend({
+	id: null,
+	initialize: function(data) {
+		this.id = data.id;
+		this.render();
+	},
+	changeStatus: function() {
+		var self = this;
+		$("td.database-status-" + self.id).text("true");
+	},
+	render: function() {
+		var self = this;
+		var model = new App.Models.Database({id: this.id});
+
+		model.lockDatabase(this.id);
+
+		// the model will fire a success or error event on completion
+		model.on("lockDatabase:success", function(data) {
+			// once we have the response we can display the data of stdout
+			// if we made a Sync operation, we use the method listen
+			new App.Views.Message({
+				type: "success", 
+				message: "The database is now locked"
+			});
+
+			this.changeStatus();
+		})
+
+		model.on("lockDatabase:error", function() {
+			console.log("error");
+		})
+	}
+});
+
+App.Views.UnlockDatabase = Backbone.View.extend({
+	id: null,
+	initialize: function(data) {
+		this.id = data.id;
+		this.render();
+	},
+	changeStatus: function() {
+		var self = this;
+		$("td.database-status-" + self.id).text("false");
+	},
+	render: function() {
+		var self = this;
+		var model = new App.Models.Database({id: this.id});
+
+		model.unlockDatabase(this.id);
+
+		// the model will fire a success or error event on completion
+		model.on("unlockDatabase:success", function(data) {
+			// once we have the response we can display the data of stdout
+			// if we made a Sync operation, we use the method listen
+			new App.Views.Message({
+				type: "success", 
+				message: "The database is now unlocked, you can make changes to it"
+			});
+
+			this.changeStatus();
+		})
+
+		model.on("unlockDatabase:error", function() {
+			console.log("error");
+		})
+	}
+});
