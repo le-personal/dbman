@@ -11,7 +11,7 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		"showDatabases/:id": "showDatabases"
 	},
 	listDatabases: function() {
-		
+		new App.Views.ListDatabases({el: "div#content"});
 	},
 	viewDatabase: function(id) {
 		new App.Views.ViewDatabase({el: "div#content", id: id});

@@ -10,7 +10,7 @@ App.Routers.ServersRouter = Backbone.Router.extend({
 		"testConnection/:id": "testConnectionServer",
 	},
 	listServers: function() {
-		
+		new App.Views.ListServers({el: "div#content"});	
 	},
 	viewServer: function(id) {
 		new App.Views.ViewServer({el: "div#content", id: id});

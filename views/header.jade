@@ -14,13 +14,13 @@ div#wrapper
       div.collapse.navbar-collapse#navbar
         -if(user)
           ul.nav.navbar-nav
-            li.active
+            li.home.active
               a(href="/") Home
-            li
+            li.servers
               a(href="/servers") Servers
-            li
+            li.databases
               a(href="/databases") Databases
-            li
+            li.users
               a(href="/admin/users") Users
         ul.nav.navbar-nav.pull-right
           -if(!user)

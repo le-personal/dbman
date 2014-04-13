@@ -1,3 +1,13 @@
+App.Views.ListDatabases = Backbone.View.extend({
+	initialize: function() {
+		this.changeMainMenu();
+	},
+	changeMainMenu: function() {
+		$("#navbar ul.nav > li.active").removeClass("active");
+		$("#navbar ul.nav > li.databases").addClass("active");
+	},
+});
+
 App.Views.ViewDatabase = Backbone.View.extend({
 	id: null,
 	template: _.template($("#viewDatabaseTemplate").html()),

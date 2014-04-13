@@ -1,3 +1,13 @@
+App.Views.ListServers = Backbone.View.extend({
+	initialize: function() {
+		this.changeMainMenu();
+	},
+	changeMainMenu: function() {
+		$("#navbar ul.nav > li.active").removeClass("active");
+		$("#navbar ul.nav > li.servers").addClass("active");
+	},
+});
+
 App.Views.ViewServer = Backbone.View.extend({
 	template: _.template($("#viewServerTemplate").html()),
 	id: null,
