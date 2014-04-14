@@ -7,4 +7,12 @@ script(type="text/template", id="genericResponse")
 script(type="text/template", id="genericData")
 	div.row
 		div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+			<% if(stdout) { %>
+			h3 stdout
 			pre <%= stdout %>
+			<% } %>
+
+			<% if(stderr) { %>
+			h3 stderr
+			pre.alert.alert-danger <%= stderr %>
+			<% } %>

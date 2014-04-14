@@ -3,6 +3,8 @@ extends /layout
 block scripts
 	script(src="/javascripts/Models/Database.js")
 	script(src="/javascripts/Collections/Databases.js")
+	script(src="/javascripts/Models/DatabaseUser.js")
+	script(src="/javascripts/Collections/DatabaseUsers.js")
 	script(src="/javascripts/Models/Server.js")
 	script(src="/javascripts/Collections/Servers.js")
 	script(src="/javascripts/Views/DatabasesView.js")
@@ -18,6 +20,8 @@ block templates
 	include /message
 	include viewDatabase
 	include addDatabase
+	include listDatabaseUsers
+	include addDatabaseUser
 
 block content
 	div.container

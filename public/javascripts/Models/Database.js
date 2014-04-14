@@ -3,8 +3,6 @@ App.Models.Database = Backbone.Model.extend({
 	defaults: {
 		database_name: "",
 		created: '',
-		database_user: "",
-		database_password: '',
 		server: '',
 		author: '',
 		permissions: {
@@ -15,7 +13,6 @@ App.Models.Database = Backbone.Model.extend({
 			remove: []
 		},
 		isLocked: false,
-		allowedHosts: []
 	},
 	showTables: function(id) {
 		var self = this;
@@ -26,6 +23,17 @@ App.Models.Database = Backbone.Model.extend({
 			}
 		}, "json").fail(function() {
 			self.trigger("showTables:error");
+		});
+	},
+	showUsersInDatabase: function(id) {
+		var self = this;
+		var url = this.urlRoot;
+		jQuery.post(url + "/showusersindatabase", {id: id}, function(response) {
+			if(response) {
+				self.trigger("showUsersInDatabase:success", response);
+			}
+		}, "json").fail(function() {
+			self.trigger("showUsersInDatabase:error");
 		});
 	},
 	showDatabases: function(server) {

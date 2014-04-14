@@ -18,13 +18,4 @@ script(type="text/template", id="addDatabaseTemplate")
 					<input type="checkbox" name="createDatabase"> Create the database on the server?
 					<div class="help-block">If not checked, the database will only be registered but not created on the server. Use this option if the database already exists and you want to managed it.</div>
 		div.form-group
-			label(for="database_user") Database user to create *
-			input(type="text", name="database_user", id="form-input-database-user", placeholder="Enter the database user to create").form-control
-		div.form-group
-			label(for="database_password") Password for the database user *
-			input(type="password", name="database_password", id="form-input-database-password", placeholder="Enter the password for the user").form-control
-		div.form-group
-			label(for="allowedhosts") Allowed hosts
-			input(type="text", name="allowedhosts", id="form-input-allowed-hosts", placeholder="Enter the hosts separated by commas, no spaces").form-control
-		div.form-group
 			button(type="submit", id="form-login-button").btn.btn-primary.submit Create database

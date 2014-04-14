@@ -6,7 +6,10 @@ var app = include.app();
 var util = require("util");
 var models = include.model("databases");
 var Database = models.Database;
+var DatabaseUser = models.DatabaseUser;
 var Connection = include.lib("connection");
+var Secure = include.lib("secure");
+var secure = new Secure();
 
 exports.getDatabases = function(req, res) {
 	Database.find()
@@ -35,7 +38,10 @@ exports.getDatabase = function(req, res) {
 			res.send(404);
 		}
 		if(result) {
-			res.send(200, {server: result.server, database: result});
+			DatabaseUser.find({database: result._id})
+			.exec(function(err, users) {
+				res.send(200, {server: result.server, database: result, users: users});
+			});
 		}
 		else {
 			res.send(404);
@@ -145,7 +151,21 @@ exports.deleteDatabase = function(req, res) {
 				console.log(command);
 				connection.executeAsync(command, function(stderr, stdout) {
 					Database.remove({_id: id}, function(err, result) {
-						res.send(200, {stdout: stdout, stderr: stderr});
+						DatabaseUser.find({database: id}, function(err, users) {
+							if(users) {
+								var counter = 0;
+								var total = users.length;
+								users.forEach(function(user) {
+									DatabaseUser.remove({_id: user._id}, function(err, result) {
+										counter++;
+
+										if(counter == total) {
+											res.send(200, {stdout: stdout, stderr: stderr});
+										}
+									})
+								});
+							}
+						})
 					})
 				});
 			}
@@ -205,6 +225,30 @@ exports.postShowTables = function(req, res) {
 	}
 }
 
+exports.postShowUsersInDatabase = function(req, res) {
+	var databaseId = req.body.id;
+
+	if(databaseId) {
+		Database.findOne({_id: databaseId})
+		.populate("server")
+		.exec(function(err, database) {
+			database._server = database.server;
+
+			var mysql = new MySQL(database);
+			var command = mysql.showUsersInDatabase();
+			var connection = new Connection(databaseId, database._server);
+			connection.executeAsync(command, function(stderr, stdout) {
+				console.log(stderr);
+				console.log(stdout);
+				res.send(200, {stdout: stdout, stderr: stderr});
+			});
+		});
+	}
+	else {
+		res.send(404);
+	}
+}
+
 exports.postLockDatabase = function(req, res) {
 	var id = req.body.id;
 	Database.update({_id: id}, {isLocked: true}, function(err, result) {
@@ -227,4 +271,210 @@ exports.postUnLockDatabase = function(req, res) {
 			res.send(200, true);
 		}
 	});	
+}
+
+
+/**
+ Users
+*/
+exports.getDatabaseUsers = function(req, res) {
+	DatabaseUser.find().exec(function(err, users) {
+		if(err) {
+			res.send(406);
+		}
+		if(users) {
+			res.send(200, users);
+		}
+	});
+}
+
+exports.getDatabaseUser = function(req, res) {
+	var id = req.params.id;
+	if(id) {
+		DatabaseUser.findOne({_id: id})
+		.populate("database")
+		.exec(function(err, user) {
+			if(err) {
+				res.send(406);
+			}
+			if(user) {
+				res.send(200, user);
+			}
+		});
+	}
+	else {
+		res.send(404);
+	}
+}
+
+exports.postDatabaseUser = function(req, res) {
+	var body = req.body;
+
+	function getDatabase(id, callback) {
+		Database.findOne({_id: id})
+		.populate("server")
+		.exec(function(err, result) {
+			callback(err, result);
+		});
+	}
+
+	function saveUser(body, callback) {
+		var values = {
+			username: body.username,
+			password: secure.encrypt(body.password),
+			database: body.database,
+			allowedHosts: body.allowedHosts
+		}
+
+		var model = new DatabaseUser(values);
+		model.save(function(err, result) {
+			if(err) {
+				res.send(406, err);
+			}
+			if(result) {
+				callback(null, result);
+			}
+		})
+	};
+
+	function createUser(user, database, callback) {
+		console.log("Creating user");
+		var server = database.server;
+		database._server = server;
+		
+		var connection = new Connection(user._id, server);
+		var mysql = new MySQL(database);
+
+		var hosts = user.allowedHosts;
+
+		// add localhost always
+		hosts.push("localhost");
+		var counter = 0;
+		var total = hosts.length;
+		hosts.forEach(function(host) {
+			// commands
+			var createUserCommand = mysql.createUser(user.username, user.password, host);
+
+			console.log("Executing user command");
+			connection.executeAsync(createUserCommand, function(stderr, stdout) {
+				counter++;
+
+				if(counter == total) {
+					callback();
+				}
+			});
+		});
+	}
+
+	function assignPermissions(user, database, callback) {
+		var server = database.server;
+		database._server = server;
+		
+		var connection = new Connection(user._id, server);
+		var mysql = new MySQL(database);
+
+		var hosts = user.allowedHosts;
+		hosts.push("localhost");
+		var counter = 0;
+		var total = hosts.length;
+		hosts.forEach(function(host) {
+			// define command
+			var assignPermissionsCommand = mysql.assignPermissions(user.username, host);
+			connection.executeAsync(assignPermissionsCommand, function(stderr, stdout) {
+				counter++;
+
+				if(counter == total) {
+					callback();
+				}
+			});
+			
+		});
+	}
+
+	function flush(user, database, callback) {
+		var server = database.server;
+		database._server = server;
+		
+		var connection = new Connection(user._id, server);
+		var mysql = new MySQL(database);
+		var flushCommand = mysql.flushPrivileges();
+		connection.executeAsync(flushCommand, function(stderr, stdout) {
+			callback();
+		});
+	}
+
+	if(body.username && body.password && body.allowedHosts && body.database) {
+		getDatabase(body.database, function(err, database) {
+			if(err) res.send(406, "Invalid database");
+			if(database) {
+				saveUser(body, function(err, newUser) {
+					if(err) res.send(406, err);
+					if(newUser) {
+						res.send(201, newUser);
+						createUser(newUser, database, function() {
+							assignPermissions(newUser, database, function() {
+								flush(newUser, database, function() {
+									console.log("Finished running all commands");
+								});
+							});
+						});
+
+					}
+				})
+			}
+		})
+	}
+	else {
+		res.send(406, "All fields are required");
+	}
+}
+
+
+exports.deleteDatabaseUser = function(req, res) {
+	var id = req.params.id;
+
+	function dropUser(user, database, host, callback) {
+		database._server = database.server;
+		var connection = new Connection(id, database.server);
+		var mysql = new MySQL(database);
+
+		var command = mysql.dropUser(user.username, host);
+		connection.executeAsync(command, function(stderr, stdout) {
+			callback(stderr, stdout);
+		});
+	}
+	
+	if(id) {
+		DatabaseUser.findOne({_id: id})
+		.exec(function(err, user) {
+			if(user) {
+				Database.findOne({_id: user.database})
+				.populate("server")
+				.exec(function(err, database) {				
+					user.allowedHosts.push("localhost");
+					var count = 0;
+					var total = user.allowedHosts.lenght;
+
+					user.allowedHosts.forEach(function(host) {
+						dropUser(user, database, host, function(stderr, stdout) {
+							if(!stderr) {
+								DatabaseUser.remove({_id: id}, function(err, result) {
+									res.send(200, {stdout: stdout, stderr: stderr});
+								})
+							}
+							if(stderr) {
+								res.send(406, stderr);
+							}
+							else {
+								res.send(406, "There was a problem droping the user");
+							}
+						})						
+					});
+				});
+			}
+		});
+	}
+	else {
+		res.send(404);
+	}
 }

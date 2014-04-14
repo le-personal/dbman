@@ -36,17 +36,42 @@ MySQL.prototype.dropDatabase = function() {
 	return 'yes | mysqladmin -u' + this.username + " -p" + this.password + " --port " + this.port + " DROP " + database;
 }
 
-MySQL.prototype.createUser = function(user, password) {
-	var database = this.database;	
+MySQL.prototype.dropUser = function(user, host) {
+	var query = 'DROP USER \'' + user + '\'@\'' + host + '\'';
+	var command = 'mysql' +
+	' -u' + this.username +
+	' -p' + this.password +
+	' --port ' + this.port +
+	' -e "' + query + '"';
+
+	return command;
+}
+
+MySQL.prototype.createUser = function(user, password, hostname) {
+	var database = this.database_name;	
 	var pass = secure.decrypt(password);
-	var command = '"FLUSH PRIVILEGES"';
-	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
+
+	var query = 'CREATE USER \'' + user + '\'@' + '\'' + hostname + '\' IDENTIFIED BY \''+ pass +'\'';
+	var command = 'mysql' +
+	' -u' + this.username +
+	' -p' + this.password +
+	' --port ' + this.port +
+	' -e "' + query + '"';
+
+	return command;
 }
 
 MySQL.prototype.assignPermissions = function(user, hostname) {
-	var database = this.database;	
-	var command = '"FLUSH PRIVILEGES"';
-	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
+	var database = this.database_name;
+	
+	var query = 'GRANT ALL ON ' + database + '.* TO \'' + user + '\'@' + '\'' + hostname +  '\'';
+	var command = 'mysql' +
+	' -u' + this.username +
+	' -p' + this.password +
+	' --port ' + this.port +
+	' -e "' + query + '"';
+
+	return command;
 }
 
 MySQL.prototype.flushPrivileges = function() {
@@ -54,7 +79,21 @@ MySQL.prototype.flushPrivileges = function() {
 	return 'mysql -u' + this.username + " -p" + this.password + " --port " + this.port + " -e" + command;
 }
 
+MySQL.prototype.showUsersInDatabase = function() {
+	var database = this.database_name;
+	
+	var query = 'SELECT host as HOST_ALLOWED, db as DB, user as USER FROM mysql.db WHERE db = \'' + database + '\'';
+	var command = 'mysql' +
+	' -u' + this.username +
+	' -p' + this.password +
+	' --port ' + this.port +
+	' -e "' + query + '"';
+
+	return command;
+}
+
 MySQL.prototype.dumpDatabase = function(filename) {
 	var database = this.database;
 	return 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " > " + filename; 
 }
+

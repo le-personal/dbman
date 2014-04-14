@@ -1,0 +1,23 @@
+script(type="text/template", id="listDatabaseUsers-template")
+	div.btn-group
+		<a href="#showTables/<%= database._id %>" class="btn btn-primary">Show tables</a>
+		<a href="#showTables/<%= database._id %>" class="btn btn-primary">Show database users</a>
+		<a href="#showTables/<%= database._id %>" class="btn btn-primary">Add user</a>
+	div#content
+		h3 Database users
+		table.table.table-striped
+			tbody
+
+script(type="text/template", id="databaseUserRow-template")
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Username:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= user.username %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Allowed hosts
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= user.allowedHosts %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= user.created %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= user._database.database_name %>

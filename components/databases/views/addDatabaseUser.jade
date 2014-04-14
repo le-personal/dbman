@@ -1,0 +1,14 @@
+script(type="text/template", id="addDatabaseUser-template")
+	form(role="form")
+		<input type="hidden" name="database" value="<%= databaseId %>" class="form-control" />
+		div.form-group
+			label(for="username") Username *
+			input(type="text", name="username", id="form-input-database-user", placeholder="Enter the database user to create").form-control
+		div.form-group
+			label(for="password") Password for the database user *
+			input(type="password", name="password", id="form-input-database-password", placeholder="Enter the password for the user").form-control
+		div.form-group
+			label(for="allowedhosts") Allowed hosts
+			input(type="text", name="allowedhosts", id="form-input-allowed-hosts", placeholder="Enter the hosts separated by commas, no spaces").form-control
+		div.form-group
+			button(type="submit", id="form-login-button").btn.btn-primary.submit Create database user
