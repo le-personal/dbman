@@ -10,6 +10,7 @@ var DatabaseUser = models.DatabaseUser;
 var Connection = include.lib("connection");
 var Secure = include.lib("secure");
 var secure = new Secure();
+var File = include.model("files");
 
 exports.getDatabases = function(req, res) {
 	Database.find()
@@ -478,3 +479,74 @@ exports.deleteDatabaseUser = function(req, res) {
 		res.send(404);
 	}
 }
+
+exports.postCreateBackup = function(req, res) {
+	var body = req.body;
+	var files = req.files;
+	console.log(files);
+	console.log(body);
+}
+
+exports.postImportDatabase = function(req, res) {
+	var body = req.body;
+
+	function getDatabase(id, callback) {
+		Database.findOne({_id: id})
+		.populate("server")
+		.exec(function(err, result) {
+			return callback(err, result);
+		});
+	}
+
+	function getFile(id, callback) {
+		File.findOne({_id: id})
+		.exec(function(err, result) {
+			return callback(err, result);
+		})
+	}
+
+	function uploadFileToServer(id, server, file, callback) {
+		var connection = new Connection(id, server);
+		connection.uploadAsync(file, function(err, result) {
+			return callback(err, result);
+		});
+	}
+
+	function runImportProcess(id, database, file) {
+		database._server = database.server;
+		var connection = new Connection(id, database.server);
+		
+		var mysql = new MySQL(database);
+		var command = mysql.importDatabase(file);
+
+		console.log("Executing runImportProcess");
+		console.log(command);
+		connection.execute(command);
+	}
+
+	if(body.id && body.file) {
+		getDatabase(body.id, function(err, database) {
+			var server = database.server;
+			if(err) res.send(500, err);
+			if(database) {
+				getFile(body.file, function(err, file) {
+					if(err) res.send(500, err);
+					if(file) {
+						uploadFileToServer(file._id, server, file, function(err, result) {
+							if(err) res.send(500, err);
+							if(result) {
+								res.send(200, result);
+
+								runImportProcess(file._id, database, file);
+							}
+						});
+					}
+				});
+			}
+		})
+	}
+	else {
+		res.send(406, "A file and a database is needed");
+	}
+}
+

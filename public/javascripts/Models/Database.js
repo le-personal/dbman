@@ -21,8 +21,8 @@ App.Models.Database = Backbone.Model.extend({
 			if(response) {
 				self.trigger("showTables:success", response);
 			}
-		}, "json").fail(function() {
-			self.trigger("showTables:error");
+		}, "json").fail(function(error) {
+			self.trigger("showTables:error", error);
 		});
 	},
 	showUsersInDatabase: function(id) {
@@ -32,8 +32,8 @@ App.Models.Database = Backbone.Model.extend({
 			if(response) {
 				self.trigger("showUsersInDatabase:success", response);
 			}
-		}, "json").fail(function() {
-			self.trigger("showUsersInDatabase:error");
+		}, "json").fail(function(error) {
+			self.trigger("showUsersInDatabase:error", error);
 		});
 	},
 	showDatabases: function(server) {
@@ -43,8 +43,8 @@ App.Models.Database = Backbone.Model.extend({
 			if(response) {
 				self.trigger("showDatabases:success", response);
 			}
-		}, "json").fail(function() {
-			self.trigger("showDatabases:error");
+		}, "json").fail(function(error) {
+			self.trigger("showDatabases:error", error);
 		});
 	},
 	lockDatabase: function(id) {
@@ -54,8 +54,8 @@ App.Models.Database = Backbone.Model.extend({
 			if(response) {
 				self.trigger("lockDatabase:success", response);
 			}
-		}, "json").fail(function() {
-			self.trigger("lockDatabase:error");
+		}, "json").fail(function(response) {
+			self.trigger("lockDatabase:error", response);
 		});
 	},
 	unlockDatabase: function(id) {
@@ -65,8 +65,21 @@ App.Models.Database = Backbone.Model.extend({
 			if(response) {
 				self.trigger("unlockDatabase:success", response);
 			}
-		}, "json").fail(function() {
-			self.trigger("unlockDatabase:error");
+		}, "json").fail(function(response) {
+			self.trigger("unlockDatabase:error", response);
+		});
+	},
+	importDatabase: function(dbid, fileid) {
+		var self = this;
+		var url = this.urlRoot;
+		// the id is needed by the isUnlock library
+		jQuery.post(url + "/import", {id: dbid, file: fileid}, function(response) {
+			if(response) {
+				self.trigger("importDatabase:success", response);
+			}
+		}, "json").fail(function(response) {
+			console.log(response);
+			self.trigger("importDatabase:error", response);
 		});
 	},
 });

@@ -308,7 +308,7 @@ App.Views.LockDatabase = Backbone.View.extend({
 				message: "The database is now locked"
 			});
 
-			this.changeStatus();
+			self.changeStatus();
 		})
 
 		model.on("lockDatabase:error", function() {
@@ -342,7 +342,7 @@ App.Views.UnlockDatabase = Backbone.View.extend({
 				message: "The database is now unlocked, you can make changes to it"
 			});
 
-			this.changeStatus();
+			self.changeStatus();
 		})
 
 		model.on("unlockDatabase:error", function() {
@@ -467,3 +467,174 @@ App.Views.DropUser = Backbone.View.extend({
 		});
 	}
 });
+
+App.Views.ShowBackups = Backbone.View.extend({
+
+});
+
+App.Views.Backup = Backbone.View.extend({
+	id: null,
+	initialize: function(data) {
+		this.id = data.id;
+		this.render();
+	},
+	render: function() {
+
+	}
+});
+
+App.Views.Import = Backbone.View.extend({
+	id: null,
+	fileId: null,
+	database: {},
+	template: _.template($("#importDatabase-template").html()),
+	templateGeneric: _.template($("#genericResponse").html()),
+	dataTemplate: _.template($("#genericData").html()),
+	loaded: 0,
+	events: {
+		"change .fileinput-button": "upload",
+		"click .submit": "save"
+	},
+	initialize: function(data) {
+		this.bind("importDatabase", this.importDatabase);
+		this.id = data.id;
+		this.render();
+	},
+	render: function() {
+		// show form
+		var self = this;
+
+		var model = new App.Models.Database({id: self.id});
+		model.fetch({
+			success: function(model, response) {
+				var database = model.toJSON();
+				self.database = database.database;
+				self.changeTitle();
+				self.$el.html(self.template({database: database.database, server: database.server}));
+			},
+			error: function(model, response) {
+				new App.Views.Message({
+					type: "danger",
+					message: response.responseText
+				});
+			}
+		});
+	},
+	showProgress: function() {
+		$("#progress").removeClass("hidden");
+	},
+	hideProgress: function() {
+		$("#progress").addClass("hidden");
+	},
+	showSubmitButton: function() {
+		$(".submit").removeClass("hidden");
+	},
+	updateProgressBar: function(percentage) {
+		var bar = $("#progress .bar");
+		bar.css('width', percentage + '%').attr("aria-valuenow", percentage);
+	},
+	changeTitle: function() {
+		$("h1").text("Import a database into " + this.database.database_name);
+	},
+	upload: function(e) {
+		e.preventDefault();
+
+		var self = this;
+		self.showProgress();
+
+  	var formData = new FormData();
+    var file = document.getElementById('file').files[0];
+    formData.append('file', file);
+
+    var xhr = new XMLHttpRequest();
+    
+    xhr.upload.onprogress = function(e) {
+      if (e.lengthComputable) {
+        var percentage = (e.loaded / e.total) * 100;
+        self.updateProgressBar(percentage);
+      }
+    };
+    
+    xhr.onerror = function(e) {
+    	new App.Views.Message({type: "danger", message: e.responseText});
+      self.hideProgress();
+    };
+    
+    xhr.onload = function() {
+    	self.updateProgressBar(100);
+      self.hideProgress();
+      
+      var newfile = JSON.parse(this.responseText);
+      $("div.newfile").text("File uploaded: " + newfile.filename);
+      new App.Views.Message({type: "success", message: "File uploaded"});
+      $("span.fileinput-button").hide();
+      $("input#fileid").val(newfile._id);
+      self.fileId = newfile._id;
+
+      self.showSubmitButton();
+    };
+    
+    xhr.open('post', '/api/files', true);
+    xhr.send(formData);
+	},
+	save: function(e) {
+		e.preventDefault();
+		var self = this;
+
+		var fileId = self.fileId;
+		var file = new App.Models.File({id: fileId});
+		file.fetch({
+			success: function(model, response) {
+				// trigger the import step
+				self.trigger("importDatabase", model);
+			},
+			error: function(model, response) {
+
+			}
+		});
+	},
+	importDatabase: function(model) {
+		var self = this;
+
+		var file = model.toJSON();
+	
+		var data = {
+			database: self.id,
+			file: file._id
+		}
+
+		var db = new App.Models.Database();
+
+		// start listening and start empty
+		self.renderGenericTemplate({stdout: false, stderr: false});
+		self.listen();
+
+		db.importDatabase(data.database, data.file);
+
+		db.on("importDatabase:success", function(response) {
+			new App.Views.Message({
+				type: "success",
+				message: "Successfully imported the database"
+			});
+		})
+
+		db.on("importDatabase:error", function(error) {
+			new App.Views.Message({
+				type: "danger",
+				message: error.responseText
+			});
+		})
+	},
+	renderGenericTemplate: function(data) {
+		var self = this;
+		self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
+	},
+	listen: function() {
+		var self = this;
+		App.io.on("ssh:execute:data:" + self.fileId, function(data) {
+			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
+		})
+	}
+});
+
+

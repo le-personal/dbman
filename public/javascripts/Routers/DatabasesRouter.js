@@ -5,7 +5,6 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		"": "listDatabases",
 		"add": "addDatabase",
 		"view/:id": "viewDatabase",
-		"edit/:id": "editDatabase",
 		"delete/:id": "deleteDatabase",
 		"showTables/:id": "showTables",
 		"showDatabases/:id": "showDatabases",
@@ -15,7 +14,10 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		'viewUser/:id': 'viewUser',
 		'addUser/:id': 'addUser',
 		'dropUser/:id': "dropUser",
-		'showUsersInDatabase/:id': 'showUsersInDatabase'
+		'showUsersInDatabase/:id': 'showUsersInDatabase',
+		'showBackups/:id': "showBackups",
+		"backup/:id": "backup",
+		"import/:id": "import"
 	},
 	listDatabases: function() {
 		new App.Views.ListDatabases({el: "div#content"});
@@ -25,9 +27,6 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 	},
 	addDatabase: function() {
 		new App.Views.AddDatabase({el: "div#content"});
-	},
-	editDatabase: function(id) {
-		// new App.Views.EditServer({el: "div#content", id: id});
 	},
 	deleteDatabase: function(id) {
 		new App.Views.DeleteDatabase({el: "div#content", id: id});
@@ -60,5 +59,14 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 	},
 	dropUser: function(id) {
 		new App.Views.DropUser({el: "div#content", id: id});
+	},
+	showBackups: function(id) {
+		new App.Views.ShowBackups({el: "div#content", id: id});
+	},
+	backup: function(id) {
+		new App.Views.Backup({el: "div#content", id: id});
+	},
+	import: function(id) {
+		new App.Views.Import({el: "div#content", id: id});
 	}
 });

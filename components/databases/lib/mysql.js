@@ -1,6 +1,7 @@
 var include = require("includemvc");
 var Secure = include.lib("secure");
 var secure = new Secure();
+var path = require("path");
 var app = include.app();
 
 function MySQL(options) {
@@ -97,3 +98,16 @@ MySQL.prototype.dumpDatabase = function(filename) {
 	return 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " > " + filename; 
 }
 
+MySQL.prototype.importDatabase = function(file) {
+	var database = this.database_name;
+	var filePath = path.join("/tmp", file._id + file.extension);
+
+	var command = 'mysql' +
+		' -u' +this.username +
+		' -p' + this.password +
+		' --port ' + this.port +
+		' ' + database +
+		' < ' + filePath;
+
+	return command;
+}

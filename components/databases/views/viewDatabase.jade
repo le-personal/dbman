@@ -3,6 +3,9 @@ script(type="text/template", id="viewDatabaseTemplate")
 		<a href="#addUser/<%= database._id %>" class="btn btn-primary">Add user</a>
 		<a href="#showTables/<%= database._id %>" class="btn btn-primary">Show tables</a>
 		<a href="#showUsersInDatabase/<%= database._id %>" class="btn btn-primary">Show users</a>
+		<a href="#showBackups/<%= database._id %>" class="btn btn-primary">Show backups</a>
+		<a href="#backup/<%= database._id %>" class="btn btn-primary">Backup</a>
+		<a href="#import/<%= database._id %>" class="btn btn-primary">Import</a>
 	div#content
 		h3 Database information
 		table.table.table-striped

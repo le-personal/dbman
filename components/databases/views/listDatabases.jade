@@ -4,6 +4,7 @@ block scripts
 	script(src="/javascripts/Models/Database.js")
 	script(src="/javascripts/Collections/Databases.js")
 	script(src="/javascripts/Models/DatabaseUser.js")
+	script(src="/javascripts/Models/File.js")
 	script(src="/javascripts/Collections/DatabaseUsers.js")
 	script(src="/javascripts/Models/Server.js")
 	script(src="/javascripts/Collections/Servers.js")
@@ -22,6 +23,7 @@ block templates
 	include addDatabase
 	include listDatabaseUsers
 	include addDatabaseUser
+	include importDatabase
 
 block content
 	div.container
@@ -64,7 +66,6 @@ block content
 												-if(!database.isLocked)
 													a(href="/databases#lock/" + database._id, class="btn btn-xs btn-success ") Lock
 												a(href="/databases#view/" + database._id).btn.btn-xs.btn-primary View
-												a(href="/databases#edit/" + database._id).btn.btn-xs.btn-info Edit
 												a(href="/databases#delete/" + database._id).btn.btn-xs.btn-danger Delete
 
 					else

@@ -1,0 +1,16 @@
+script(type="text/template", id="importDatabase-template")
+	form(role="form", enctype="multipart/form-data", method="post", action="/api/files")
+		div.newfile
+		div(id="progress", class="progress hidden")
+			div(class="progress-bar bar progress-bar-primary" style="width: 0%;", aria-valuenow="0", aria-valuemin="0", aria-valuemax="100")
+		span(class="btn btn-success fileinput-button")
+			i(class="glyphicon glyphicon-plus")
+			span Add file...
+			<input id="file" type="file" name="file">
+		br
+		br
+		div(id="files", class="files")
+		<input type="hidden" name="fileid" id="fileid" />
+		<input type="hidden" name="database" value="<%= database._id %>" class="form-control" />
+		div.form-group
+			button(type="submit", id="form-login-button").btn.btn-primary.submit.hidden Import into database <%= database.database_name %>

@@ -16,12 +16,18 @@ module.exports = exports = function(req, res, next) {
 	Database.findOne({_id: id})
 	.exec(function(err, result) {
 		if(err) res.send(404);
-		if(result.isLocked == false) {
-			// database is unlocked, continue
-			next();
+		if(!result) res.send(404);
+		if(result) {
+			if(result.isLocked == false) {
+				// database is unlocked, continue
+				next();
+			}
+			else {
+				res.send(403, "The database is locked. When a database is locked you can't make any changes to it or perform actions that may be dangerous. The only actions allowed are backups. If you still want to perform actions to this database, you need to unlock it first.")
+			}
 		}
 		else {
-			res.send(403, "The database is locked. When a database is locked you can't make any changes to it or perform actions that may be dangerous. The only actions allowed are backups. If you still want to perform actions to this database, you need to unlock it first.")
+			res.send(404);
 		}
 	});
 }
