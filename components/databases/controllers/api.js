@@ -6,11 +6,14 @@ var app = include.app();
 var util = require("util");
 var models = include.model("databases");
 var Database = models.Database;
+var Backup = models.Backup;
 var DatabaseUser = models.DatabaseUser;
 var Connection = include.lib("connection");
 var Secure = include.lib("secure");
 var secure = new Secure();
 var File = include.model("files");
+var config = app.config;
+var path = require("path");
 
 exports.getDatabases = function(req, res) {
 	Database.find()
@@ -41,7 +44,15 @@ exports.getDatabase = function(req, res) {
 		if(result) {
 			DatabaseUser.find({database: result._id})
 			.exec(function(err, users) {
-				res.send(200, {server: result.server, database: result, users: users});
+				Backup.find({database: result._id})
+				.exec(function(err, backups) {
+					res.send(200, {
+						server: result.server, 
+						database: result, 
+						users: users,
+						backups: backups
+					});
+				})
 			});
 		}
 		else {
@@ -550,3 +561,166 @@ exports.postImportDatabase = function(req, res) {
 	}
 }
 
+exports.getBackups = function(req, res) {
+	Backups.find()
+	.populate()
+	exec(function(err, results) {
+		if(err) res.send(500, err);
+		if(results) res.send(200, results);
+	});
+}
+
+exports.getBackup = function(req, res) {
+	var id = req.body.id;
+
+	if(id) {
+		Backups.findOne({_id: id})
+		.populate()
+		.exec(function(err, result) {
+			if(err) res.send(500, err);
+			if(result) res.send(200, result);
+			else {
+				res.send(404);
+			}
+		});
+	}
+	else {
+		res.send(404);
+	}
+}
+
+exports.postCreateBackup = function(req, res) {
+	var body = req.body;
+	var directoryBackups = "public/backups";
+
+	function getDatabase(id, callback) {
+		Database.findOne({_id: id})
+		.populate("server")
+		.exec(function(err, result) {
+			if(err) res.send(404);
+			else {
+				return callback(err, result);
+			}
+		});
+	}
+
+	function saveBackup(data, callback) {
+		var model = new Backup(data);
+		model.save(function(err, result) {
+			if(err) {
+				res.send(500, err);
+			}
+			if(result) {
+				return callback(err, result);
+			}
+		});
+	}
+
+	function updateStatus(id, status, callback) {
+		Backup.update({_id: id}, {status: status}, function(err, result) {
+			callback(err, result);
+		});
+	}
+
+	function createBackupOnServer(backupid, database, fileName, format, callback) {
+		var connection = new Connection(backupid, database.server);
+		database._server = database.server;
+		var mysql = new MySQL(database);
+
+		var remoteFilename = path.join("/tmp", fileName);
+		var command = mysql.dumpDatabase(remoteFilename, format);
+		connection.executeAsync(command, function(stderr, stdout) {
+			console.log(stderr);
+			console.log(stdout);
+
+			if(stderr) {
+				console.log("Updating status with error");
+				// if there's an error, update status and exit
+				updateStatus(backupid, "error", function(err, response) {
+					res.send(500, stderr);
+					return;
+				})
+			}
+			else {
+				updateStatus(backupid, "created", function(err, response) {
+					return callback(stderr, stdout);
+				})
+			}
+		})
+	}
+
+	/** 
+	 * @param filename string the name and extension of the file
+	 * qparam database object the database object
+	 */
+	function downloadFile(backupid, server, fileName, callback) {
+		var remoteFilename = path.join("/tmp", fileName);
+		var localFilename = path.join(directoryBackups, fileName);
+		var connection = new Connection(backupid, server);
+		connection.downloadAsync(remoteFilename, localFilename, function(stderr, stdout) {
+			var status = stderr ? "error" : "finished";
+			console.log(stderr);
+			console.log(stdout);
+			updateStatus(backupid, status, function(err, result) {
+				return callback(stderr, stdout);
+			})
+		});
+	}
+
+	if(body.name && body.database && body.format) {
+		console.log(body.format);
+		// if(body.format != "sql" || body.format != "sql.gz") {
+		// 	console.log(body.format);
+		// 	res.send(406, "Only sql and tar formats are available");
+		// 	return;
+		// }
+
+		getDatabase(body.database, function(err, database) {
+			var name = body.name + "-" + Date.now();
+
+			// create a file with the name and the extension depending on the format
+			var fileName = name + "." + body.format;
+			var filePath = path.join(directoryBackups, fileName);
+			var databaseType = database.server.service.type;
+			var format = body.format;
+			var url = "/backups/" + fileName;
+
+			var data = {
+				name: name,
+				database: body.database,
+				author: req.user,
+				fileName: fileName,
+				filePath: filePath,
+				type: databaseType,
+				format: format,
+				status: "processing",
+				expires: new Date(Date.now() + 6.048e+8),
+				url: url
+			}
+
+			saveBackup(data, function(err, backup) {
+				if(backup) {
+					createBackupOnServer(backup._id, database, fileName, format, function(stderr, stdout) {
+						console.log("Downloading file");
+						downloadFile(backup._id, database.server, fileName, function(stderr, stdout) {
+							if(stderr) {
+								res.send(500, stderr);
+							}
+							else {
+								res.send(201, backup);
+							}
+						});
+					});
+				}
+			})
+
+		});
+	}
+	else {
+		res.send(406, "Name and database are required");
+	}
+}
+
+exports.deleteBackup = function(req, res) {
+
+}

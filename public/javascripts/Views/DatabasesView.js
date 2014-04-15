@@ -637,4 +637,75 @@ App.Views.Import = Backbone.View.extend({
 	}
 });
 
+App.Views.CreateBackup = Backbone.View.extend({
+	databaseId: null,
+	database: {},
+	template: _.template($("#createBackup-template").html()),
+	downloadLinkTemplate: _.template($("#downloadLink-template").html()),
+	events: {
+		"click .submit": "save"
+	},
+	initialize: function(data) {
+		var self = this;
+		this.databaseId = data.id;
 
+		var database = new App.Models.Database({id: this.databaseId});
+		database.fetch({
+			success: function(model, response) {
+				self.database = response.database;
+				self.render();
+			},
+			error: function(model, error) {
+
+			}
+		});
+	},
+	changeTitle: function() {
+		$("h1").text("Create backup of database " + this.database.database_name);
+	},
+	render: function() {
+		var self = this;
+		self.$el.html(self.template({database: self.database}));
+		self.changeTitle();
+	},
+	save: function(e) {
+		var self = this;
+		e.preventDefault();
+		// gather all values of the form
+		var values = {}
+		var form = $("form").serializeArray();
+		_.each(form, function(element) {
+			values[element.name] = element.value;
+		});
+
+		if(!values.name || !values.format) {
+			new App.Views.Message({
+				type: "danger",
+				message: "Both the name and the format are required"
+			})				
+		}
+		else {
+			var model = new App.Models.Backup();
+			model.save(values, {
+				success: function(model, response) {
+					new App.Views.Message({
+						type: "success",
+						message: "Backup created and registered. You can download it now or you can list the backups to download it."
+					})
+
+					// show download link here
+					self.$el.html(self.downloadLinkTemplate({backup: response}));
+
+					// remove form from the dom
+					$("form").remove();
+				},
+				error: function(model, error) {
+					new App.Views.Message({
+						type: "danger",
+						message: error.responseText
+					})				
+				}
+			});
+		}
+	}
+});

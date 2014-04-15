@@ -93,9 +93,17 @@ MySQL.prototype.showUsersInDatabase = function() {
 	return command;
 }
 
-MySQL.prototype.dumpDatabase = function(filename) {
-	var database = this.database;
-	return 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " > " + filename; 
+MySQL.prototype.dumpDatabase = function(filename, format) {
+	var database = this.database_name;
+	var command = 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " > " + filename; 
+	if(format == "sql") {
+		return command;
+	}
+	if(format == "sql.gz") {
+		command = command + " | gzip > " + filename;
+	}
+
+	return command;
 }
 
 MySQL.prototype.importDatabase = function(file) {

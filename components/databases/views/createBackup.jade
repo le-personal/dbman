@@ -1,0 +1,20 @@
+script(type="text/template", id="createBackup-template")
+	form(role="form")
+		<input type="hidden" name="database" value="<%= database._id %>" class="form-control" />
+		div.form-group
+			label(for="name") Backup name *
+			input(type="text", name="name", id="form-input-name").form-control
+		div.form-group 
+			label(for="format") Format *
+			<select name="format" class="form-control">
+			<options>
+			<option value="sql">.sql</option>
+			<option value="sql.gz">.sql.gz</option>
+			</options>
+			</select>
+		div.form-group
+			button(type="submit", id="form-login-button").btn.btn-primary.submit Create backup
+
+script(type="text/template", id="downloadLink-template")
+	<a href="<%= backup.url %>" class="btn btn-success">Download backup</a>
+	div.help-block Location of file: <%= backup.url %>

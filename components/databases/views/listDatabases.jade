@@ -4,8 +4,10 @@ block scripts
 	script(src="/javascripts/Models/Database.js")
 	script(src="/javascripts/Collections/Databases.js")
 	script(src="/javascripts/Models/DatabaseUser.js")
+	script(src="/javascripts/Models/Backup.js")
 	script(src="/javascripts/Models/File.js")
 	script(src="/javascripts/Collections/DatabaseUsers.js")
+	script(src="/javascripts/Collections/Backups.js")
 	script(src="/javascripts/Models/Server.js")
 	script(src="/javascripts/Collections/Servers.js")
 	script(src="/javascripts/Views/DatabasesView.js")
@@ -24,6 +26,8 @@ block templates
 	include listDatabaseUsers
 	include addDatabaseUser
 	include importDatabase
+	include createBackup
+	include listBackups
 
 block content
 	div.container

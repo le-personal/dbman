@@ -1,0 +1,31 @@
+script(type="text/template", id="listBackups-template")
+	div#content
+		h3 Backups of database <%= database.database_name %>
+		table.table.table-striped
+			tbody
+
+script(type="text/template", id="listBackupsRow-template")
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Name:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.name %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created by:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= user.fullName %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.created %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Type:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.type %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Format:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.format %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Expires:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.expires %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Download:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.download %>
+	tr
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Status:
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.status %>

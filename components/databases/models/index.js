@@ -27,7 +27,7 @@ var Backup = mongoose.model("Backup", {
 	database: {type: Schema.Types.ObjectId, ref: "Database"},
 	type: {type: String},
 	format: {type: String},
-	strategy: {type: String},
+	url: {type: String},
 	status: {type: String},
 	expires: {type: Date}
 });

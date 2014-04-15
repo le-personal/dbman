@@ -15,8 +15,8 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		'addUser/:id': 'addUser',
 		'dropUser/:id': "dropUser",
 		'showUsersInDatabase/:id': 'showUsersInDatabase',
-		'showBackups/:id': "showBackups",
-		"backup/:id": "backup",
+		'listBackups/:id': "listBackups",
+		"createBackup/:id": "createBackup",
 		"import/:id": "import"
 	},
 	listDatabases: function() {
@@ -60,11 +60,11 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 	dropUser: function(id) {
 		new App.Views.DropUser({el: "div#content", id: id});
 	},
-	showBackups: function(id) {
-		new App.Views.ShowBackups({el: "div#content", id: id});
+	listBackups: function(id) {
+		new App.Views.ListBackups({el: "div#content", id: id});
 	},
-	backup: function(id) {
-		new App.Views.Backup({el: "div#content", id: id});
+	createBackup: function(id) {
+		new App.Views.CreateBackup({el: "div#content", id: id});
 	},
 	import: function(id) {
 		new App.Views.Import({el: "div#content", id: id});
