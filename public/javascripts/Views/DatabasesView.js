@@ -709,3 +709,46 @@ App.Views.CreateBackup = Backbone.View.extend({
 		}
 	}
 });
+
+App.Views.ListBackups = Backbone.View.extend({
+	databaseId: null,
+	database: {},
+	backups: {},
+	collection: new App.Collections.Backups(),
+	template: _.template($("#listBackups-template").html()),
+	rowTemplate: _.template($("#listBackupsRow-template").html()),
+	initialize: function(data) {
+		var self = this;
+		self.databaseId = data.id;
+
+		var db = new App.Models.Database({id: self.databaseId});
+		db.fetch({
+			success: function(model, response) {
+				self.database = response.database;
+				self.backups = response.backups;
+
+				self.render();
+
+				console.log("collection");
+				console.log(self.collection);
+				_.each(response.backups, function(backup) {
+					self.collection.add(backup);
+				})
+			},
+			error: function(model, error) {
+				new App.Views.Message({type: "danger", message: error.responseText});
+			}
+		});
+
+		self.collection.on("add", self.renderRow, this);
+	},	
+	render: function() {
+		var self = this;
+		self.$el.html(self.template({database: self.database, backups: self.backups}))
+	},
+	renderRow: function(model) {
+		var self = this;
+		var backup = model.toJSON();
+		$("tbody").prepend(self.rowTemplate({backup: backup}))
+	}
+});

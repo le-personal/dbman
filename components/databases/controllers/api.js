@@ -45,6 +45,7 @@ exports.getDatabase = function(req, res) {
 			DatabaseUser.find({database: result._id})
 			.exec(function(err, users) {
 				Backup.find({database: result._id})
+				.populate("author")
 				.exec(function(err, backups) {
 					res.send(200, {
 						server: result.server, 
