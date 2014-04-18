@@ -29,6 +29,7 @@ var Backup = mongoose.model("Backup", {
 	format: {type: String},
 	url: {type: String},
 	status: {type: String},
+	strategy: {type: String}, // used mainly with mongodb to select if this is a mongodump or a mongoexport
 	expires: {type: Date}
 });
 
