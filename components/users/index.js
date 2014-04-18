@@ -6,6 +6,15 @@ var isUser = include.lib("isUser", "users");
 var isNotUser = include.lib("isNotUser", "users");
 var isAdmin = include.lib("isAdmin", "users");
 
+app.get("/", function(req, res, next) {
+	if(!req.user) {
+		res.redirect("/login");
+	}
+	else {
+		res.redirect("/servers");
+	}
+})
+
 app.get("/login", isNotUser, controller.getLogin);
 app.post("/login", isNotUser, controller.postLogin());
 

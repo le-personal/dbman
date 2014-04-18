@@ -17,6 +17,6 @@
     "jade": "*",
     "connect-redis": "1.4.7",
     "ssh2": "*",
-    "fileupload": "*"
+    "connect-multiparty": "*"
   }
 }
