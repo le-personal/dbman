@@ -1,0 +1,36 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+		div.row
+			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+				ul.nav.nav-pills.nav-stacked
+					li.active
+						a(href="/settings") Settings
+					li
+						a(href="/settings/password") Password
+			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+				include /messages
+				form(role="form", method="post", action="/settings").form-horizontal.well
+					div.form-group
+						label(for="username").control-label.col-lg-2.col-md-2.col-sm-2.col-xs-2 Username:
+						div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+							input(type="textfield", name="username", id="username", value="#{user.username}").form-control
+							div.help-block Enter your username
+					div.form-group
+						label(for="email").control-label.col-lg-2.col-md-2.col-sm-2.col-xs-2 Email:
+						div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+							input(type="textfield", name="email", id="email", value="#{user.email}").form-control
+							div.help-block Enter your email
+					div.form-group
+						label(for="fullName").control-label.col-lg-2.col-md-2.col-sm-2.col-xs-2 Full Name:
+						div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+							input(type="textfield", name="fullName", id="fullName", value="#{user.fullName}").form-control
+							div.help-block Enter your full name
+					div.form-group
+						div.col-lg-10.col-md-10.col-sm-10.col-xs-10.col-lg-offset-2.col-md-offset-2.col-md-offset-2.col-xs-offset-2
+							button(type="submit").btn.btn-primary Save

@@ -1,0 +1,36 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+		div.row
+			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+				ul.nav.nav-pills.nav-stacked
+					li.active
+						a(href="/admin/users") Users
+					li
+						a(href="/admin/users/create") Create user
+			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+				include /messages
+				table.table.table-hover.table-bordered.table-striped
+					thead
+						tr
+							th Username
+							th Name
+							th Email
+							th Group
+							th(colspan=2)
+					tbody
+						each user in users
+							tr
+								td #{user.username}
+								td #{user.fullName}
+								td #{user.email}
+								- var isAdmin = (user.isAdmin === true ? "Administrator" : "User")
+								td #{isAdmin}
+								td 
+									a(href="/admin/users/edit/" + user._id).btn Edit
+									a(href="/admin/users/delete/" + user._id).btn Delete

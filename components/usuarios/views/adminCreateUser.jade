@@ -1,0 +1,36 @@
+extends /layout
+
+block content
+  div.container
+    div.row
+      div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+        h1!= title
+        hr
+    div.row
+      div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+        ul.nav.nav-pills.nav-stacked
+          li
+            a(href="/admin/users") Users
+          li.active
+            a(href="/admin/users/create") Create user
+      div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+        include /messages
+        form(role="form", method="post", action="/admin/users/create")
+          div.form-group
+            label(for="fullName") Full Name *
+            input(type="text", name="fullName", id="form-input-fullname", placeholder="Enter the full name of the new user").form-control
+          div.form-group
+            label(for="username") Username *
+            input(type="text", name="username", id="form-input-username", placeholder="Enter a username").form-control
+          div.form-group 
+            label(for="email") Email *
+            input(type="text", name="email", id="form-input-email", placeholder="Enter the email of the new user").form-control
+          div.form-group
+            label(for="password") Password *
+            input(type="password", name="password", id="form-input-password", placeholder="Enter the password").form-control
+          div.form-group
+            div.checkbox
+              label
+                <input type="checkbox" name="isAdmin"> Add as administrator
+          div.form-group
+            button(type="submit", id="form-login-button").btn.btn-primary Create user

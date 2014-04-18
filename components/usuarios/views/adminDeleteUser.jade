@@ -1,0 +1,24 @@
+extends /layout
+
+block content
+	div.container
+		div.row
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+				h1!= title
+				hr
+		div.row
+			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
+				ul.nav.nav-pills.nav-stacked
+					li.active
+						a(href="/admin/users") Users
+					li
+						a(href="/admin/users/create") Create user
+			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+				include /messages
+				form(role="form", method="post", action="/admin/users/delete/" + user._id)
+					p 
+						strong This action cannot be undone
+					div.form-group
+						button(type="submit").btn.btn-danger Delete user
+						&nbsp;
+						a(href="/admin/users").btn.btn-default Cancel
