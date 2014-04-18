@@ -12,6 +12,7 @@
     "socket.io": "*",
     "moment": "*",
     "passport": "*",
+    "passport-local": "*",
     "express-flash": "0.0.2",
     "includemvc": "*",
     "jade": "*",
