@@ -8,7 +8,7 @@ block content
           h3!= title
           hr
           include /messages
-          form(role="form", method="post", action="/create-first-user")
+          form(role="form", method="post", action="/install/user")
             div.form-group
               label(for="fullname") Full Name *
               input(type="text", name="fullname", id="form-input-fullname", placeholder="Enter your full name").form-control
@@ -25,4 +25,4 @@ block content
               label(for="password2") Confirm Password *
               input(type="password", name="password2", id="form-input-password", placeholder="Confirm your password").form-control
             div.form-group
-              button(type="submit", id="form-login-button").btn.btn-primary Log in
+              button(type="submit", id="form-login-button").btn.btn-primary Finish

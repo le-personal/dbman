@@ -89,69 +89,6 @@ exports.postPassword = function(req, res) {
 }
 
 /** 
- * this 
- */
-exports.getCreateFirstUser = function(req, res) {
-	res.render("createFirstUser", {
-		title: "Create the first user"
-	})
-}
-
-/** 
- * this 
- */
-exports.postCreateFirstUser = function(req, res) {
-	var body = req.body;
-
-	// check if all fields have data
-	if(!body.username || !body.email || !body.fullname || !body.password || !body.password2) {
-		req.flash("error", "All fields are required");
-		res.redirect("/create-first-user");
-	}
-
-	// check if passwords are not equal
-	if(body.password !== body.password2) {
-		req.flash("error", "Both passwords should be equal");
-		res.redirect("/create-first-user");
-	}
-	
-	else {
-		var user = {
-			username: body.username,
-			email: body.email,
-			fullName: body.fullname,
-			password: secure.encrypt(body.password),
-			isAdmin: true
-		}
-
-		var model = new Model(user);
-		model.save(function(err, result) {
-			if(err) {
-				console.log(err);
-				req.flash("error", err);
-				res.redirect("/create-first-user");
-			}
-
-			if(result) {
-				console.log(result);
-				res.redirect("/create-first-user-success");
-			}
-		})
-	}
-}
-
-/** 
- * Success page for the first created user 
- */
-exports.getCreateFirstUserSuccess = function(req, res) {
-	var render = {
-		title: "First user created",
-	}
-
-	res.render("createFirstUserSuccess", render);
-}
-
-/** 
  * Get the settings page 
  */
 exports.getSettings = function(req, res) {

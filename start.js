@@ -10,7 +10,9 @@ if(config.enableIO) {
 	var io = include.lib("socket")(server);
 }
 
-mongoose.connect(config.mongodburi);
+if(config.mongodburi) {
+	mongoose.connect(config.mongodburi);
+}
 
 /** 
  * Load all components enabled in config.components

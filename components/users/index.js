@@ -26,11 +26,6 @@ app.post("/register", controller.postRegister);
 app.get("/password", controller.getPassword);
 app.post("/password", controller.postPassword);
 
-app.get("/create-first-user", firstUserExists, controller.getCreateFirstUser);
-app.post("/create-first-user", firstUserExists, controller.postCreateFirstUser);
-
-app.get("/create-first-user-success", controller.getCreateFirstUserSuccess);
-
 app.get("/settings", isUser, controller.getSettings);
 app.post("/settings", isUser, controller.postSettings);
 app.get("/settings/password", isUser, controller.getSettingsPassword);

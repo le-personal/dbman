@@ -1,14 +1,6 @@
-{
-  "mongodburi": "mongodb://localhost/dbman",
-  "secretKey": "your-secret-key-goes-here",
-  "enableIO": true,
+{  
   "components": [
-    "frontpage",
-    "users",
-    "error",
-    "servers",
-    "databases",
-    "files"
-  ],
-  "directoryUploads": "/home/luis/files/uploads"
+    "installer",
+    "error"
+  ]
 }
