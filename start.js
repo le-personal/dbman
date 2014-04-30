@@ -24,5 +24,5 @@ components.forEach(function(component) {
 });
 
 server.listen(app.get('port'), function(){
-  console.log('Express.js MVC server listening on port ' + app.get('port'));
+  console.log('DB Manager listening on port ' + app.get('port'));
 });

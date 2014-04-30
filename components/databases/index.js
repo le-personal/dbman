@@ -21,6 +21,8 @@ app.post("/api/databases/unlock", isUser, isAdmin, api.postUnLockDatabase);
 app.post("/api/databases/showusersindatabase", isUser, isAdmin, api.postShowUsersInDatabase);
 app.post("/api/databases/import", isUser, isAdmin, isUnlocked, api.postImportDatabase);
 
+app.post("/api/databases/permissions", isAdmin, api.postPermissions);
+
 // users
 app.get("/api/databases/users", isUser, isAdmin, api.getDatabaseUsers);
 app.get("/api/databases/users/:id", isUser, isAdmin, api.getDatabaseUser);

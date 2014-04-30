@@ -8,7 +8,8 @@ exports.getServers = function(req, res) {
 
 		var render = {
 			title: "Servers",
-			servers: results
+			servers: results,
+			json: JSON.stringify(results)
 		}
 
 		res.render("listServers", render);

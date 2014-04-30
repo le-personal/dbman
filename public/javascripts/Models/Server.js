@@ -26,5 +26,6 @@ App.Models.Server = Backbone.Model.extend({
 		}, "json").fail(function() {
 			self.trigger("testConnection:error");
 		});
-	}
+	},
+	idAttribute: "_id"
 });

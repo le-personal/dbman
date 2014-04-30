@@ -16,7 +16,8 @@ block templates
 	include /message
 	include viewServer
 	include addServer
-
+	script(type="text/template", id="servers").
+		!{json}
 block content
 	div.container
 		div.row

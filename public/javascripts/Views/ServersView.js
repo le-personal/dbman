@@ -1,32 +1,51 @@
+function getServersCollection() {
+	// Get te servers prepopulated in a template that prints JSON
+	var servers = _.template($("#servers").html());
+	var collection = new App.Collections.Servers();
+
+	// Add the servers (JSON) to the collection
+	collection.reset(JSON.parse(servers()));
+
+	return collection;
+}
+
 App.Views.ListServers = Backbone.View.extend({
 	initialize: function() {
-		this.changeMainMenu();
-	},
-	changeMainMenu: function() {
-		$("#navbar ul.nav > li.active").removeClass("active");
-		$("#navbar ul.nav > li.servers").addClass("active");
-	},
+		App.loading.hide();
+		new App.Breadcrumb().add([{link: "/servers", title: "Servers"}]);
+	}
 });
 
 App.Views.ViewServer = Backbone.View.extend({
 	template: _.template($("#viewServerTemplate").html()),
 	id: null,
+	collection: getServersCollection(),
 	initialize: function(data) {
 		this.id = data.id;
-		
-		// render the view
+		var self = this;
+
+		// Show the loading
+		App.loading.show();
+
 		this.render();
 	},
 	render: function() {
-		var self = this;
+		var model = this.collection.get(this.id);
+		var server = model.toJSON();
+
+		// Set the title
+		new App.Title().change("Server " + server.name);
+
+		// Set the breadcrumb
+		new App.Breadcrumb().add([
+			{link: "/servers", title: "Servers"},
+			{link: "#view/" + server._id, title: server.name}
+		]);
+
+		// add to DOM
+		this.$el.html(this.template({server: server}));
 		
-		this.model = new App.Models.Server({id: this.id});
-		this.model.fetch({
-			success: function(model) {
-				var server = model.toJSON();
-				self.$el.html(self.template({server: server}));
-			}
-		});
+		App.loading.hide();
 	}
 });
 
@@ -37,22 +56,20 @@ App.Views.AddServer = Backbone.View.extend({
 	},
 	initialize: function() {
 		this.render();
-		this.changeTitle();
-		this.changeActiveMenu();
-	},
-	changeTitle: function() {
-		$("h1").text("Add server");
-	},
-	changeActiveMenu: function() {
-		$("ul.nav > li.active").removeClass("active");
-		$("ul.nav > li.add").addClass("active");
 	},
 	render: function() {
+		new App.Title().change("Add server");
+		new App.Breadcrumb().add([
+			{link: "/servers", title: "Servers"},
+			{link: "/servers#add", title:"Add server"}
+		]);
+
 		this.$el.html(this.template());
 	},
 	save: function(e) {
 		e.preventDefault();
 		var self = this;
+		App.loading.show();
 
 		var data = {
 			name: $('input[name="name"]').val(),
@@ -73,10 +90,12 @@ App.Views.AddServer = Backbone.View.extend({
 		model.save(data, {
 			success: function() {				
 				new App.Views.Message({type: "success", message: "Created"});
+				App.loading.hide();
 			},
 			error: function(model, response, xhr) {
 				new App.Views.Message({type: "danger", message: response.responseText});
 				// app.navigate("/");
+				App.loading.hide();
 			}
 		});
 	}
@@ -86,14 +105,24 @@ App.Views.TestConnectionServer = Backbone.View.extend({
 	id: null,
 	template: _.template($("#genericResponse").html()),
 	dataTemplate: _.template($("#genericData").html()),
+	collection: getServersCollection(),
+	model: null,
 	initialize: function(data) {
+		App.loading.show();
 		this.id = data.id;
+		this.model = this.collection.get(this.id);
+		var server = this.model.toJSON(); 
+
+		new App.Title().change("Test connection to server " + server.name);
+
 		this.listen();
 		this.render();
-		this.changeTitle();
-	},
-	changeTitle: function() {
-		$("h1").text("Test connection to server");
+
+		new App.Breadcrumb().add([
+			{link: "/servers", title: "Servers"},
+			{link: "#view/" + server._id, title: server.name},
+			{link: "#testConnection/" + server._id, title: "Test connection"}
+		]);
 	},
 	listen: function() {
 		// it will listen for an event in case we used a Sync / event based call
@@ -106,8 +135,7 @@ App.Views.TestConnectionServer = Backbone.View.extend({
 		var self = this;
 		this.$el.html(this.template());
 
-		// create a new model
-		var model = new App.Models.Server();
+		var model = this.model;
 
 		// call testConnection and pass the id
 		// the model will make a post request passing the id in the body
@@ -117,15 +145,18 @@ App.Views.TestConnectionServer = Backbone.View.extend({
 		model.on("testConnection:success", function(data) {
 			// once we have the response we can display the data of stdout
 			// if we made a Sync operation, we use the method listen
-			self.$el.html(self.dataTemplate({stdout: data.stdout}));
+			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
 			new App.Views.Message({
 				type: "success", 
 				message: "The server successfully returned a response"
 			});
+
+			App.loading.hide();
 		})
 
 		model.on("testConnection:error", function() {
 			console.log("error");
+			App.loading.hide();
 		})
 	}
 });
@@ -137,6 +168,8 @@ App.Views.EditServer = Backbone.View.extend({
 App.Views.DeleteServer = Backbone.View.extend({
 	id: null,
 	initialize: function(data) {
+		App.loading.show();
+
 		this.id = data.id;
 		this.render();
 	},
@@ -151,9 +184,13 @@ App.Views.DeleteServer = Backbone.View.extend({
 					type: "success",
 					message: "Removed the server successfully"
 				});
+
+				App.loading.hide();
 			},
 			error: function() {
 				console.log("Error");
+
+				App.loading.hide();
 			}
 		});
 	}

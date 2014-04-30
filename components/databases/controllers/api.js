@@ -725,3 +725,11 @@ exports.postCreateBackup = function(req, res) {
 exports.deleteBackup = function(req, res) {
 
 }
+
+
+/**
+ * Administer permissions
+ */
+exports.postPermissions = function(req, res) {
+
+}

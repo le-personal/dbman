@@ -4,11 +4,16 @@ html
 		title= title
 		include styles
 	body
+		div.loading
+			img(src="images/loading.gif").loadingImage
+			div.loadingText Loading...
 		include header
 		div#templates
 			include /message
 			block templates
 		div#page
+			div.container
+					ol.breadcrumb
 			block content
 		include scripts
 		block scripts

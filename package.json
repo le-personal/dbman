@@ -18,6 +18,7 @@
     "jade": "*",
     "connect-redis": "1.4.7",
     "ssh2": "*",
-    "connect-multiparty": "*"
+    "connect-multiparty": "*",
+    "underscore": "*"
   }
 }
