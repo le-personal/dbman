@@ -8,10 +8,9 @@ var Database = mongoose.model("Database", {
 	server: {type: Schema.Types.ObjectId, ref: "Server"},
 	author: {type: Schema.Types.ObjectId, ref: "User"},
 	permissions: {
+		view: [{type: Schema.Types.ObjectId, ref: "User"}],
 		edit: [{type: Schema.Types.ObjectId, ref: "User"}],
-		export: [{type: Schema.Types.ObjectId, ref: "User"}],
 		import: [{type: Schema.Types.ObjectId, ref: "User"}],
-		restore: [{type: Schema.Types.ObjectId, ref: "User"}],
 		backup: [{type: Schema.Types.ObjectId, ref: "User"}],
 		remove: [{type: Schema.Types.ObjectId, ref: "User"}],
 	},

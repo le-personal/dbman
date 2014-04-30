@@ -5,10 +5,11 @@ var isAdmin = include.lib("isAdmin", "users");
 var controller = include.controller("databases");
 var api = include("databases", "controllers", "api");
 var isUnlocked = include.lib("isUnlocked", "databases");
+var canView = include.lib("canView", "databases");
 
-app.get("/databases", isUser, isAdmin, controller.getDatabases);
-app.get("/api/databases", isUser, isAdmin, api.getDatabases);
-app.get("/api/databases/:id", isUser, isAdmin, api.getDatabase);
+app.get("/databases", isUser, controller.getDatabases);
+app.get("/api/databases", isUser, api.getDatabases);
+app.get("/api/databases/:id", isUser, canView, api.getDatabase);
 app.post("/api/databases", isUser, isAdmin, api.postDatabase);
 app.delete("/api/databases/:id", isUser, isAdmin, isUnlocked, api.deleteDatabase);
 
