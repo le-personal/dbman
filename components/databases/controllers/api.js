@@ -29,25 +29,31 @@ exports.getDatabases = function(req, res) {
 			var results = [];
 			var total = databases.length;
 			var count = 0;
-			databases.forEach(function(database) {
-				DatabaseUser.find({database: database._id})
-				.exec(function(err, users) {
-					Backup.find({database: database._id})
-					.populate("author")
-					.exec(function(err, backups) {
-						var result = database;
-						database.users = users;
-						database.backups = backups;
 
-						results.push(result);
+			if(total > 0) {
+				databases.forEach(function(database) {
+					DatabaseUser.find({database: database._id})
+					.exec(function(err, users) {
+						Backup.find({database: database._id})
+						.populate("author")
+						.exec(function(err, backups) {
+							var result = database;
+							database.users = users;
+							database.backups = backups;
 
-						count++;
-						if(total == count) {
-							res.send(200, results);
-						}
-					});	
+							results.push(result);
+
+							count++;
+							if(total == count) {
+								res.send(200, results);
+							}
+						});	
+					});
 				});
-			});
+			}
+			else {
+				res.send(200, []);
+			}
 		}
 	});
 }
