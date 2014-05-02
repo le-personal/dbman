@@ -16,6 +16,19 @@ App.Models.Database = Backbone.Model.extend({
 		isLocked: false,
 	},
 	idAttribute: "_id",
+	getDatabase: function() {
+		var self = this;
+		self.fetch({
+			success: function(model, response) {
+				self.trigger("getDatabase:success", model, response);
+			},
+			error: function(model, response) {
+				console.log(response);
+				alert.error("There was an error");
+				self.trigger("getDatabase:error", response);
+			}
+		});
+	},
 	showTables: function(id) {
 		var self = this;
 		var url = this.urlRoot;
