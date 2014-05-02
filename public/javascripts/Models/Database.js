@@ -6,14 +6,16 @@ App.Models.Database = Backbone.Model.extend({
 		server: '',
 		author: '',
 		permissions: {
+			view: [],
 			edit: [],
 			import: [],
-			restore: [],
-			backup: [],
 			remove: []
 		},
+		users: {},
+		backups: {},
 		isLocked: false,
 	},
+	idAttribute: "_id",
 	showTables: function(id) {
 		var self = this;
 		var url = this.urlRoot;
@@ -80,6 +82,39 @@ App.Models.Database = Backbone.Model.extend({
 		}, "json").fail(function(response) {
 			console.log(response);
 			self.trigger("importDatabase:error", response);
+		});
+	},
+	addPermission: function(id, user, permission) {
+		var self = this;
+		var url = this.urlRoot;
+
+		var database = id;
+
+		jQuery.post(url + "/permissions", {user: user, permission: permission, database: database, op: "add"}, function(response) {
+			if(response) {
+				self.trigger("addPermission:success", response);
+			}
+		}, "json").fail(function(error) {
+			console.log("error");
+			console.log(error);
+			self.trigger("addPermission:error", error);
+		});
+	},
+	removePermission: function(id, user, permission) {
+		var self = this;
+		var url = this.urlRoot;
+
+		var database = id;
+
+		jQuery.post(url + "/permissions", {user: user, permission: permission, database: database, op: "remove"}, function(response) {
+			console.log(response);
+			if(response) {
+				self.trigger("removePermission:success", response);
+			}
+		}, "json").fail(function(error) {
+			console.log("error");
+			console.log(error);
+			self.trigger("removePermission:error", error);
 		});
 	},
 });

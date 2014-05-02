@@ -6,20 +6,50 @@ var app = include.app();
 var util = require("util");
 var models = include.model("databases");
 var Database = models.Database;
+var DatabaseUser = models.DatabaseUser;
+var Backup = models.Backup;
 var Connection = include.lib("connection");
 
 exports.getDatabases = function(req, res) {
 	Database.find()
 	.populate("server")
-	.exec(function(err, results) {
-		if(err) throw err;
-		if(results) {
-			var render = {
-				title: "Databases",
-				databases: results
-			}
-			
-			res.render("listDatabases", render);	
+	.populate("author")
+	.populate("permissions.view")
+	.populate("permissions.edit")
+	.populate("permissions.import")
+	.populate("permissions.remove")
+	.exec(function(err, databases) {
+		if(err) res.send(404);
+		if(databases) {
+			var results = [];
+			var total = databases.length;
+			var count = 0;
+			databases.forEach(function(database) {
+				DatabaseUser.find({database: database._id})
+				.exec(function(err, users) {
+					Backup.find({database: database._id})
+					.populate("author")
+					.exec(function(err, backups) {
+
+						var result = database;
+						database.users = users;
+						database.backups = backups;
+
+						results.push(result);
+						
+						count++;
+						if(total == count) {
+							var render = {
+								title: "Databases",
+								databases: results,
+								json: JSON.stringify(results)
+							}
+
+							res.render("listDatabases", render)
+						}
+					});	
+				});
+			});
 		}
 	});
 }

@@ -40,3 +40,5 @@ app.post("/admin/users/edit/:id", isUser, isAdmin, controller.postAdminEditUser)
 
 app.get("/admin/users/delete/:id", isUser, isAdmin, controller.getAdminDeleteUser);
 app.post("/admin/users/delete/:id", isUser, isAdmin, controller.postAdminDeleteUser);
+
+app.get("/api/users", isUser, controller.apiGetUsers);

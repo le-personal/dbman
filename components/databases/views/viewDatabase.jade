@@ -6,6 +6,7 @@ script(type="text/template", id="viewDatabaseTemplate")
 		<a href="#listBackups/<%= database._id %>" class="btn btn-primary">List backups</a>
 		<a href="#createBackup/<%= database._id %>" class="btn btn-primary">Backup</a>
 		<a href="#import/<%= database._id %>" class="btn btn-primary">Import</a>
+		<a href="#permissions/<%= database._id %>" class="btn btn-primary">Permissions</a>
 	div#content
 		h3 Database information
 		table.table.table-striped

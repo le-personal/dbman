@@ -49,3 +49,10 @@ div.loading {
 div.loading .loadingText {
   margin-left: -15%;
 }
+
+/** 
+ * Autocomplete fix 
+ */
+.ui-front {
+    z-index: 10000;
+}

@@ -10,6 +10,8 @@
     "underscore": "1.5.2",
     "momentjs": "~2.5.1",
     "jquery.iframe-transport": "*",
-    "blueimp-file-upload": "*"
+    "blueimp-file-upload": "*",
+    "backbone.bootstrap-modal": "https://github.com/powmedia/backbone.bootstrap-modal/archive/bootstrap3.zip",
+    "typeahead.js": "*"
   }
 }

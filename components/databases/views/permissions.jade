@@ -1,0 +1,42 @@
+script(type="text/template", id="permissionsForm")
+	form(role="form")
+		div.form-group
+			input(type="hidden", id="selectedUser", name="selectedUser")
+		div.form-group
+			label(for="user") User to add
+			input(type="text", id="user", name="user", data-provide="typeahead").form-control
+			div.help-block User to add to this database with permissions
+		div.form-group
+			label(for="access") Database access
+			select(name="access").form-control
+				options
+					option(value="view") View
+					option(value="edit") Edit
+					option(value="import") Import
+					option(value="remove") Remove
+script(type="text/template" id="permissionRow")
+	tr
+		td
+			strong <%= fullName %>
+		td
+			<a href="#" class="btn btn-danger btn-xs revoke-access-btn" data-permission="<%= permission %>" id="<%= _id %>">Revoke access</a>
+script(type="text/template", id="permissionsTemplate")
+	div#content
+		div.btn-group
+			<a href="#allowaccess/<%= database._id %>" class="btn btn-primary allowAccess">Allow access to user</a>
+		table.table.table-striped.table-condensed.table-hover
+			thead
+				th View
+			tbody#membersWithViewAccess
+		table.table.table-striped.table-condensed.table-hover
+			thead
+				th Edit
+			tbody#membersWithEditAccess
+		table.table.table-striped.table-condensed.table-hover
+			thead
+				th Import
+			tbody#membersWithImportAccess
+		table.table.table-striped.table-condensed.table-hover
+			thead
+				th Remove
+			tbody#membersWithRemoveAccess

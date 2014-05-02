@@ -99,6 +99,9 @@ App.Title = Backbone.View.extend({
 	},
 	change: function(title) {
 		$("h1").text(title);
+	},
+	set: function(title) {
+		this.change(title);
 	}
 });
 

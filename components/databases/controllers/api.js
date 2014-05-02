@@ -18,10 +18,36 @@ var path = require("path");
 exports.getDatabases = function(req, res) {
 	Database.find()
 	.populate("server")
-	.exec(function(err, results) {
-		if(err) throw err;
-		if(results) {
-			res.send(200, results);
+	.populate("author")
+	.populate("permissions.view")
+	.populate("permissions.edit")
+	.populate("permissions.import")
+	.populate("permissions.remove")
+	.exec(function(err, databases) {
+		if(err) res.send(404);
+		if(databases) {
+			var results = [];
+			var total = databases.length;
+			var count = 0;
+			databases.forEach(function(database) {
+				DatabaseUser.find({database: database._id})
+				.exec(function(err, users) {
+					Backup.find({database: database._id})
+					.populate("author")
+					.exec(function(err, backups) {
+						var result = database;
+						database.users = users;
+						database.backups = backups;
+
+						results.push(result);
+
+						count++;
+						if(total == count) {
+							res.send(200, results);
+						}
+					});	
+				});
+			});
 		}
 	});
 }
@@ -31,11 +57,9 @@ exports.getDatabase = function(req, res) {
 	Database.findOne({_id: id})
 	.populate("server")
 	.populate("author")
+	.populate("permissions.view")
 	.populate("permissions.edit")
-	.populate("permissions.export")
 	.populate("permissions.import")
-	.populate("permissions.restore")
-	.populate("permissions.backup")
 	.populate("permissions.remove")
 	.exec(function(err, result) {
 		if(err) {
@@ -47,12 +71,12 @@ exports.getDatabase = function(req, res) {
 				Backup.find({database: result._id})
 				.populate("author")
 				.exec(function(err, backups) {
-					res.send(200, {
-						server: result.server, 
-						database: result, 
-						users: users,
-						backups: backups
-					});
+
+					var database = result;
+					database.users = users;
+					database.backups = backups;
+
+					res.send(200, database);
 				})
 			});
 		}
@@ -731,5 +755,111 @@ exports.deleteBackup = function(req, res) {
  * Administer permissions
  */
 exports.postPermissions = function(req, res) {
+	var body = req.body;
 
+	var user = body.user;
+	var permission = body.permission;
+	var op = body.op;
+	var database = body.database;
+
+	console.log(body);
+
+	function validate(next) {
+		if(!body.user) {
+			res.send(406, "The user to add is missing");
+		}
+		if(!body.permission) {
+			res.send(406, "The permission to add is missing");
+		}
+		if(!body.op) {
+			res.send(406, "No operation set");
+		}
+		if(!body.database) {
+			res.send(406, "No database");
+		}
+
+		next();
+	}
+
+	validate(function() {
+		if(op == "add") {
+
+			switch(permission) {
+				case "view":
+					var query = Database.update({_id: database}, {$push: {
+						"permissions.view": user
+					}});
+				break;
+
+				case "edit":
+					var query = Database.update({_id: database}, {$push: {
+						"permissions.edit": user
+					}});
+				break;
+
+				case "import":
+					var query = Database.update({_id: database}, {$push: {
+						"permissions.import": user
+					}});
+				break;
+
+				case "remove":
+					var query = Database.update({_id: database}, {$push: {
+						"permissions.remove": user
+					}});
+				break;
+			}
+
+			query.exec(function(err, result) {
+				if(err) {
+					console.log("ERROR");
+					console.log(err);
+					res.send(406, err);
+				}
+				if(result) {
+					console.log("RESULT");
+					console.log(result);
+					res.send(200, {result: result});
+				}
+			});
+		}
+
+		if(op == "remove") {
+			switch(permission) {
+				case "view":
+					var query = Database.update({_id: database}, {$pull: {
+						"permissions.view": user
+					}});
+				break;
+
+				case "edit":
+					var query = Database.update({_id: database}, {$pull: {
+						"permissions.edit": user
+					}});
+				break;
+
+				case "import":
+					var query = Database.update({_id: database}, {$pull: {
+						"permissions.import": user
+					}});
+				break;
+
+				case "remove":
+					var query = Database.update({_id: database}, {$pull: {
+						"permissions.remove": user
+					}});
+				break;
+			}
+
+			query.exec(function(err, result) {
+				if(err) {
+					console.log(err);
+					res.send(406, err);
+				}
+				if(result) {
+					res.send(200, {result: result});
+				}
+			});
+		}
+	});
 }

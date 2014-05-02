@@ -4,10 +4,12 @@ block scripts
 	script(src="/javascripts/Models/Database.js")
 	script(src="/javascripts/Collections/Databases.js")
 	script(src="/javascripts/Models/DatabaseUser.js")
+	script(src="/javascripts/Models/User.js")
 	script(src="/javascripts/Models/Backup.js")
 	script(src="/javascripts/Models/File.js")
 	script(src="/javascripts/Collections/DatabaseUsers.js")
 	script(src="/javascripts/Collections/Backups.js")
+	script(src="/javascripts/Collections/Users.js")
 	script(src="/javascripts/Models/Server.js")
 	script(src="/javascripts/Collections/Servers.js")
 	script(src="/javascripts/Views/DatabasesView.js")
@@ -28,7 +30,9 @@ block templates
 	include importDatabase
 	include createBackup
 	include listBackups
-
+	include permissions
+	script(type="text/template", id="databases")
+		!{json}
 block content
 	div.container
 		div.row
@@ -55,22 +59,22 @@ block content
 									th Locked
 									th Actions
 							tbody
-								each database in databases
-									tr(class="database-#{database._id}")
+								each result in databases
+									tr(class="database-#{result._id}")
 										td 
-											a(href="/databases#view/"+ database._id) #{database.database_name}
+											a(href="/databases#view/"+ result._id) #{result.database_name}
 										td 
-											a(href="/databases#showDatabases/" + database.server._id) #{database.server.name}
-										td #{database.database_type}
-										td(class="database-status-#{database._id}") #{database.isLocked}
+											a(href="/databases#showDatabases/" + result.server._id) #{result.server.name}
+										td #{result.database_type}
+										td(class="database-status-#{result._id}") #{result.isLocked}
 										td
 											div.btn-group
-												-if(database.isLocked)
-													a(href="/databases#unlock/" + database._id, class="btn btn-xs btn-warning ") Unlock
-												-if(!database.isLocked)
-													a(href="/databases#lock/" + database._id, class="btn btn-xs btn-success ") Lock
-												a(href="/databases#view/" + database._id).btn.btn-xs.btn-primary View
-												a(href="/databases#delete/" + database._id).btn.btn-xs.btn-danger Delete
+												-if(result.isLocked)
+													a(href="/databases#unlock/" + result._id, class="btn btn-xs btn-warning ") Unlock
+												-if(!result.isLocked)
+													a(href="/databases#lock/" + result._id, class="btn btn-xs btn-success ") Lock
+												a(href="/databases#view/" + result._id).btn.btn-xs.btn-primary View
+												a(href="/databases#delete/" + result._id).btn.btn-xs.btn-danger Delete
 
 					else
 						div.alert.alert-info

@@ -17,7 +17,8 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		'showUsersInDatabase/:id': 'showUsersInDatabase',
 		'listBackups/:id': "listBackups",
 		"createBackup/:id": "createBackup",
-		"import/:id": "import"
+		"import/:id": "import",
+		"permissions/:id": "permissions"
 	},
 	listDatabases: function() {
 		new App.Views.ListDatabases({el: "div#content"});
@@ -68,5 +69,8 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 	},
 	import: function(id) {
 		new App.Views.Import({el: "div#content", id: id});
+	},
+	permissions: function(id) {
+		new App.Views.Permissions({el: "div#content", id: id});
 	}
 });

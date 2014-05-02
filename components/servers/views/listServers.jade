@@ -18,6 +18,16 @@ block templates
 	include addServer
 	script(type="text/template", id="servers").
 		!{json}
+	script(type="text/template", id="serverRowTemplate")
+		tr(class="server-<%= server._id %>")
+			td <%= server.name %>
+			td <%= server.ip %>
+			td <%= server.os %>
+			td
+				div.btn-group
+					<a href="/servers#view/<%= server._id %>" class="btn btn-xs btn-primary">View</a>
+					<a href="/servers#edit/<%= server._id %>" class="btn btn-xs btn-primary">Edit</a>
+					<a href="/servers#delete/<%= server._id %>" class="btn btn-xs btn-primary">Delete</a>
 block content
 	div.container
 		div.row
@@ -42,17 +52,8 @@ block content
 									th IP
 									th OS
 									th Actions
-							tbody
-								each server in servers
-									tr(class="server-#{server._id}")
-										td #{server.name}
-										td #{server.ip}
-										td #{server.os}
-										td
-											div.btn-group
-												a(href="/servers#view/" + server._id).btn.btn-xs.btn-primary View
-												a(href="/servers#edit/" + server._id).btn.btn-xs.btn-info Edit
-												a(href="/servers#delete/" + server._id).btn.btn-xs.btn-danger Delete
+							tbody#servers-tbody
+								
 					else
 						div.alert.alert-info
 							p No servers added

@@ -491,3 +491,15 @@ exports.postAdminDeleteUser = function(req, res) {
 		res.redirect("/admin/users");
 	});
 }
+
+exports.apiGetUsers = function(req, res) {
+	Model.find()
+	.exec(function(err, users) {
+		if(err) {
+			res.send(406, err);
+		}
+		if(users) {
+			res.send(200, users);
+		}
+	});
+}

@@ -10,9 +10,42 @@ function getServersCollection() {
 }
 
 App.Views.ListServers = Backbone.View.extend({
+	template: _.template($("#serverRowTemplate").html()),
+	collection: "",
 	initialize: function() {
+		var self = this;
+
+		// bind the view to the events render and addAll
+		_.bindAll(this, "render", "addAll");
+
+		// hide the loading and set the breadcrumb
 		App.loading.hide();
 		new App.Breadcrumb().add([{link: "/servers", title: "Servers"}]);
+
+		// get the servers prepopulated from the JSON in the HTML
+		var servers = _.template($("#servers").html());
+
+		// instantiate a new collection
+		this.collection = new App.Collections.Servers();
+
+		// bind the reset event to the addAll method of this view
+		this.collection.bind("reset", this.addAll);
+
+		// add the servers from the template to the collection
+		this.collection.reset(JSON.parse(servers()));
+
+		// on add, add the new server by triggering render
+		this.collection.on("add", this.render, this);
+		
+	},
+	render: function(model) {
+		console.log("New model added");
+		console.log(model);
+		$("tbody#servers-tbody").append(this.template({server: model.toJSON()}));
+	},
+	addAll: function() {
+		// for each model in the collection, trigger render
+		this.collection.each(this.render);
 	}
 });
 
@@ -50,6 +83,7 @@ App.Views.ViewServer = Backbone.View.extend({
 });
 
 App.Views.AddServer = Backbone.View.extend({
+	collection: getServersCollection(),
 	template: _.template($("#addServerTemplate").html()),
 	events: {
 		"click .submit": "save"
