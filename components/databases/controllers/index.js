@@ -19,37 +19,48 @@ exports.getDatabases = function(req, res) {
 	.populate("permissions.import")
 	.populate("permissions.remove")
 	.exec(function(err, databases) {
-		if(err) res.send(404);
+		if(err) {
+			res.redirect("/404")
+		}
 		if(databases) {
 			var results = [];
 			var total = databases.length;
 			var count = 0;
-			databases.forEach(function(database) {
-				DatabaseUser.find({database: database._id})
-				.exec(function(err, users) {
-					Backup.find({database: database._id})
-					.populate("author")
-					.exec(function(err, backups) {
 
-						var result = database;
-						database.users = users;
-						database.backups = backups;
+			if(total > 0) {
+				databases.forEach(function(database) {
+					DatabaseUser.find({database: database._id})
+					.exec(function(err, users) {
+						Backup.find({database: database._id})
+						.populate("author")
+						.exec(function(err, backups) {
+							var result = database;
+							database.users = users;
+							database.backups = backups;
 
-						results.push(result);
-						
-						count++;
-						if(total == count) {
-							var render = {
-								title: "Databases",
-								databases: results,
-								json: JSON.stringify(results)
+							results.push(result);
+							count++;
+							if(total == count) {
+								var render = {
+									title: "Databases",
+									databases: results,
+									json: JSON.stringify(results)
+								}
+
+								res.render("listDatabases", render)
 							}
-
-							res.render("listDatabases", render)
-						}
-					});	
+						});	
+					});
 				});
-			});
+			}
+			else {
+				var render = {
+					title: "Databases",
+					databases: [],
+					json: JSON.stringify([])
+				}
+				res.render("listDatabases", render);
+			}
 		}
 	});
 }
