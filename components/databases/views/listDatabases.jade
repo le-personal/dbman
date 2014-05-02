@@ -34,6 +34,26 @@ block templates
 	include databaseMenu
 	script(type="text/template", id="databases")
 		!{json}
+	script(type="text/template", id="databaseRow")
+		<td>
+		<a href="/databases#view/<%= database._id %>"><%= database.database_name %></a>
+		</td>
+		<td>
+		<a href="/databases#showDatabases/<%= database.server._id %>"><%= database.server.name %></a>
+		</td>
+		<td><%= database.database_type %></td>
+		<td class="database-status-<%= database._id %>"><%= database.isLocked %></td>
+		<td>
+		<div class="btn-group">
+		<% if(database.isLocked) { %>
+		<button class="unlockDatabase btn btn-xs btn-warning">Unlock</button>
+		<% } else { %>
+		<button class="lockDatabase btn btn-xs btn-success">Lock</button>
+		<% } %>
+		<a data-id="<%= database._id %>" href="/databases#view/<%= database._id %>" class="viewDatabase btn btn-xs btn-primary">View</a>
+		<button class="removeDatabase btn btn-xs btn-danger"> Delete</button>
+		</div>
+		</td>
 block content
 	div.container
 		div.row
@@ -57,23 +77,7 @@ block content
 									th Type
 									th Locked
 									th Actions
-							tbody
-								each result in databases
-									tr(class="database-#{result._id}")
-										td 
-											a(href="/databases#view/"+ result._id) #{result.database_name}
-										td 
-											a(href="/databases#showDatabases/" + result.server._id) #{result.server.name}
-										td #{result.database_type}
-										td(class="database-status-#{result._id}") #{result.isLocked}
-										td
-											div.btn-group
-												-if(result.isLocked)
-													a(href="/databases#unlock/" + result._id, class="btn btn-xs btn-warning ") Unlock
-												-if(!result.isLocked)
-													a(href="/databases#lock/" + result._id, class="btn btn-xs btn-success ") Lock
-												a(href="/databases#view/" + result._id).btn.btn-xs.btn-primary View
-												a(href="/databases#delete/" + result._id).btn.btn-xs.btn-danger Delete
+							tbody#listDatabases
 
 					else
 						div.alert.alert-info

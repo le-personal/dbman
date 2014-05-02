@@ -1,4 +1,3 @@
-var dbBreadcrumb = new App.Breadcrumb();
 var dbMenu = new App.Menu();
 
 function getDatabasesCollection() {
@@ -11,17 +10,115 @@ function getDatabasesCollection() {
 }
 
 /**
+ * List one database row in the table
+ */
+App.Views.ListDatabasesRow = Backbone.View.extend({
+	tagName: "tr",
+	template: _.template($("#databaseRow").html()),
+	events: {
+		"click .lockDatabase": "lock",
+		"click .unlockDatabase": "unlock",
+		"click .removeDatabase": "confirmRemoval"
+	},
+	initialize: function() {
+		this.model.on("change", this.render, this);
+		this.model.on("destroy", this.remove, this);
+	},
+	render: function() {
+		this.$el.html(this.template({database: this.model.toJSON()}));
+		return this;
+	},
+	lock: function(e) {
+		e.preventDefault();
+		var self = this;
+		var id = self.model.toJSON()._id;
+
+		self.model.lockDatabase(id);
+
+		// the model will fire a success or error event on completion
+		self.model.on("lockDatabase:success", function(data) {
+			self.model.set({isLocked: true});
+		})
+
+		self.model.on("lockDatabase:error", function(error) {
+			alert.error(error.responseText);
+		});
+	},
+	unlock: function(e) {
+		e.preventDefault();
+		var self = this;
+		var id = self.model.toJSON()._id;
+
+		self.model.unlockDatabase(id);
+
+		// the model will fire a success or error event on completion
+		self.model.on("unlockDatabase:success", function(data) {
+			self.model.set({isLocked: false});
+		})
+
+		self.model.on("unlockDatabase:error", function(error) {
+			alert.error(error.responseText);
+		});
+	},
+	remove: function(e) {
+		// remove from dom
+		this.$el.remove();
+		alert.show("success", "The database was removed from the server");
+	},
+	confirmRemoval: function(e) {
+		/**
+		 * Confirms the removal of a database by showing a modal
+		 */
+		e.preventDefault();
+		var self = this;
+		var database = self.model.toJSON();
+
+		if(database.isLocked) {
+			return alert.error("The database is locked, you cannot delete it");
+		}
+		else {
+			var modal = new Backbone.BootstrapModal({
+				title: "Are you sure you want to delete the database " + database.database_name,
+				content: "This operation cannot be undone, and the database will be removed from the server too",
+				animate: true,
+			}).open();
+
+			modal.on("ok", function() {
+				self.model.destroy();
+			});
+		}
+	} 
+});
+
+/**
  * List all databases
  */
 App.Views.ListDatabases = Backbone.View.extend({
+	el: $("tbody#listDatabases"),
+	
+	collection: null,
+	
 	initialize: function() {
+		var self = this;
+
 		app.loading.hide();
 
 		// hide the breadcrumb
-		dbBreadcrumb.hide();
+		app.breadcrumb.hide();
 		
 		// set the menu
 		dbMenu.mainmenu("databases");
+
+		var databases = _.template($("#databases").html());
+		self.collection = new App.Collections.Databases(JSON.parse(databases()));
+		self.render();
+	},
+	render: function() {
+		var self = this;
+		self.collection.each(function(database) {
+			var databaseRowView = new App.Views.ListDatabasesRow({model: database});
+			$("tbody#listDatabases").append(databaseRowView.render().el);
+		}, this);
 	}
 });
 
@@ -66,11 +163,11 @@ App.Views.ViewDatabase = Backbone.View.extend({
 		app.title.set("Database " + database.database_name);
 
 		// Set the breadcrumb
-		dbBreadcrumb.reset();
-		dbBreadcrumb.add("Databases", "/databases");
-		dbBreadcrumb.add(database.database_name, "#view/" + database._id);
-		dbBreadcrumb.add("view");
-		dbBreadcrumb.render();
+		app.breadcrumb.reset();
+		app.breadcrumb.add("Databases", "/databases");
+		app.breadcrumb.add(database.database_name, "#view/" + database._id);
+		app.breadcrumb.add("view");
+		app.breadcrumb.render();
 
 		// render the template
 		self.$el.html(self.template({
@@ -134,35 +231,6 @@ App.Views.AddDatabase = Backbone.View.extend({
 	}
 });
 
-
-App.Views.DeleteDatabase = Backbone.View.extend({
-	id: null,
-	initialize: function(data) {
-		this.id = data.id;
-		this.render();
-	},
-	render: function() {
-		var self = this;
-		var model = new App.Models.Database({id: this.id});
-
-		model.destroy({
-			success: function() {
-				$(".database-" + self.id).hide().remove();
-				new App.Views.Message({
-					type: "success",
-					message: "Removed the database successfully"
-				});
-			},
-			error: function(model, response) {
-				new App.Views.Message({
-					type: "danger",
-					message: response.responseText
-				});
-			}
-		});
-	}
-});
-
 /**
  * Show tables in a database
  */
@@ -182,11 +250,11 @@ App.Views.ShowTables = Backbone.View.extend({
 
 		app.title.set("Tables in database " + self.database.database_name);
 
-		dbBreadcrumb.reset();
-		dbBreadcrumb.add("Databases", "/databases");
-		dbBreadcrumb.add(self.database.database_name, "#view/" + self.database._id);
-		dbBreadcrumb.add("Show Tables");
-		dbBreadcrumb.render();
+		app.breadcrumb.reset();
+		app.breadcrumb.add("Databases", "/databases");
+		app.breadcrumb.add(self.database.database_name, "#view/" + self.database._id);
+		app.breadcrumb.add("Show Tables");
+		app.breadcrumb.render();
 
 		self.listen();
 		self.render();
@@ -245,11 +313,11 @@ App.Views.ShowUsersInDatabase = Backbone.View.extend({
 		self.model = self.collection.get(self.id);
 		self.database = self.model.toJSON();
 
-		dbBreadcrumb.reset();
-		dbBreadcrumb.add("Databases", "/databases");
-		dbBreadcrumb.add(self.database.database_name, "#view/"+self.database._id);
-		dbBreadcrumb.add("Users with access to database");
-		dbBreadcrumb.render();
+		app.breadcrumb.reset();
+		app.breadcrumb.add("Databases", "/databases");
+		app.breadcrumb.add(self.database.database_name, "#view/"+self.database._id);
+		app.breadcrumb.add("Users with access to database");
+		app.breadcrumb.render();
 
 		app.title.set("Users with access to database " + self.database.database_name);
 
@@ -341,9 +409,11 @@ App.Views.ShowDatabases = Backbone.View.extend({
 
 App.Views.LockDatabase = Backbone.View.extend({
 	id: null,
+	collection: getDatabasesCollection(),
 	initialize: function(data) {
-		this.id = data.id;
-		this.render();
+		var self = this;
+		self.id = data.id;
+		self.render();
 	},
 	changeStatus: function() {
 		var self = this;
@@ -351,7 +421,7 @@ App.Views.LockDatabase = Backbone.View.extend({
 	},
 	render: function() {
 		var self = this;
-		var model = new App.Models.Database({id: this.id});
+		var model = self.collection.get(self.id);
 
 		model.lockDatabase(this.id);
 
@@ -359,25 +429,26 @@ App.Views.LockDatabase = Backbone.View.extend({
 		model.on("lockDatabase:success", function(data) {
 			// once we have the response we can display the data of stdout
 			// if we made a Sync operation, we use the method listen
-			new App.Views.Message({
-				type: "success", 
-				message: "The database is now locked"
-			});
-
-			self.changeStatus();
+			alert.show("success", "The database is now locked");
+			// self.changeStatus();
 		})
 
-		model.on("lockDatabase:error", function() {
-			console.log("error");
-		})
+		model.on("lockDatabase:error", function(error) {
+			alert.error(error.responseText);
+		});
 	}
 });
 
+/**
+ * Unlock database
+ */
 App.Views.UnlockDatabase = Backbone.View.extend({
 	id: null,
+	collection: getDatabasesCollection(),
 	initialize: function(data) {
-		this.id = data.id;
-		this.render();
+		var self = this;
+		self.id = data.id;
+		self.render();
 	},
 	changeStatus: function() {
 		var self = this;
@@ -385,7 +456,7 @@ App.Views.UnlockDatabase = Backbone.View.extend({
 	},
 	render: function() {
 		var self = this;
-		var model = new App.Models.Database({id: this.id});
+		var model = self.collection.get(self.id);
 
 		model.unlockDatabase(this.id);
 
@@ -393,16 +464,13 @@ App.Views.UnlockDatabase = Backbone.View.extend({
 		model.on("unlockDatabase:success", function(data) {
 			// once we have the response we can display the data of stdout
 			// if we made a Sync operation, we use the method listen
-			new App.Views.Message({
-				type: "success", 
-				message: "The database is now unlocked, you can make changes to it"
-			});
+			alert.show("success", "The database is now unlocked, you can make changes to it");
 
 			self.changeStatus();
 		})
 
-		model.on("unlockDatabase:error", function() {
-			console.log("error");
+		model.on("unlockDatabase:error", function(error) {
+			console.log(error.responseText);
 		})
 	}
 });
@@ -718,11 +786,11 @@ App.Views.CreateBackup = Backbone.View.extend({
 
 		app.title.set("Create backup of database " + self.database.database_name);
 	
-		dbBreadcrumb.reset();
-		dbBreadcrumb.add("Databases", "/databases");
-		dbBreadcrumb.add(self.database.database_name, "#view/" + self.database._id);
-		dbBreadcrumb.add("Create backup");
-		dbBreadcrumb.render();
+		app.breadcrumb.reset();
+		app.breadcrumb.add("Databases", "/databases");
+		app.breadcrumb.add(self.database.database_name, "#view/" + self.database._id);
+		app.breadcrumb.add("Create backup");
+		app.breadcrumb.render();
 
 		self.model.getDatabase();
 		self.model.on("getDatabase:success", function(model, response) {
@@ -804,15 +872,16 @@ App.Views.ListBackups = Backbone.View.extend({
 
 			app.title.set("Backups of " + self.database.database_name);
 
-			dbBreadcrumb.reset();
-			dbBreadcrumb.add("Databases", "/databases");
-			dbBreadcrumb.add(self.database.database_name, "#view/" + self.database._id);
-			dbBreadcrumb.add("Backups");
-			dbBreadcrumb.render();
+			app.breadcrumb.reset();
+			app.breadcrumb.add("Databases", "/databases");
+			app.breadcrumb.add(self.database.database_name, "#view/" + self.database._id);
+			app.breadcrumb.add("Backups");
+			app.breadcrumb.render();
 			
 			self.backups = response.backups;
 			self.render();
 
+			self.collection.reset();
 			_.each(response.backups, function(backup) {
 				self.collection.add(backup);
 			})
@@ -831,6 +900,7 @@ App.Views.ListBackups = Backbone.View.extend({
 		$("tbody").prepend(self.rowTemplate({backup: backup}))
 	}
 });
+
 
 App.Views.AddPermissionsForm = Backbone.View.extend({
 	formTemplate: _.template($("#permissionsForm").html()),

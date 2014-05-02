@@ -5,11 +5,8 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		"": "listDatabases",
 		"add": "addDatabase",
 		"view/:id": "viewDatabase",
-		"delete/:id": "deleteDatabase",
 		"showTables/:id": "showTables",
 		"showDatabases/:id": "showDatabases",
-		"lock/:id": "lockDatabase",
-		"unlock/:id": "unlockDatabase",
 		'listAllUsers': "listAllUsers",
 		'viewUser/:id': 'viewUser',
 		'addUser/:id': 'addUser',
@@ -29,20 +26,11 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 	addDatabase: function() {
 		new App.Views.AddDatabase({el: "div#content"});
 	},
-	deleteDatabase: function(id) {
-		new App.Views.DeleteDatabase({el: "div#content", id: id});
-	},
 	showTables: function(id) {
 		new App.Views.ShowTables({el: "div#content", id: id});
 	},
 	showDatabases: function(id) {
 		new App.Views.ShowDatabases({el: "div#content", id: id});
-	},
-	lockDatabase: function(id) {
-		new App.Views.LockDatabase({el: "div#content", id: id});
-	},
-	unlockDatabase: function(id) {
-		new App.Views.UnlockDatabase({el: "div#content", id: id});
 	},
 	listAllUsers: function() {
 		// not implemented yet
