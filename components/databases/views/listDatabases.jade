@@ -31,6 +31,7 @@ block templates
 	include createBackup
 	include listBackups
 	include permissions
+	include databaseMenu
 	script(type="text/template", id="databases")
 		!{json}
 block content
@@ -38,19 +39,15 @@ block content
 		div.row
 			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
 				h1!= title
+					div.pull-right
+						a(href="/databases#add").btn.btn-success Add database
 				hr
 		div.row
-			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
-				ul.nav.nav-pills.nav-stacked
-					li.active
-						a(href="/databases") Databases
-					li.add
-						a(href="/databases#add") Add database
-			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
 				div#message
 				div#content
 					if(databases.length > 0)
-						table.table.table-hover.table-bordered.table-striped
+						table.table.table-hover.table-striped.well
 							thead
 								tr
 									th Name
