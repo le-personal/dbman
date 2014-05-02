@@ -63,7 +63,7 @@ App.Views.Message = App.Message = Backbone.View.extend({
 		this.render();
 	},
 	error: function(message) {
-		this.type = "error";
+		this.type = "danger";
 		this.message = message;
 
 		this.render();

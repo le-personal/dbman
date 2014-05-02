@@ -16,5 +16,7 @@ script(type="text/template", id="createBackup-template")
 			button(type="submit", id="form-login-button").btn.btn-primary.submit Create backup
 
 script(type="text/template", id="downloadLink-template")
-	<a href="<%= backup.url %>" class="btn btn-success">Download backup</a>
-	div.help-block Location of file: <%= backup.url %>
+	div.row
+		div.col-lg-8.col-md-8.col-sm-11.col-xs-11.col-lg-offset-2.col-md-offset-2.col-sm-offset-1.col-xs-offset-1
+			<a href="<%= backup.url %>" class="btn btn-success btn-large btn-block center-block">Download backup</a>
+			div(align="center").help-block.center-block Location of file: <%= backup.url %>

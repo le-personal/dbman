@@ -285,6 +285,10 @@ App.Views.ShowUsersInDatabase = Backbone.View.extend({
 	}
 });
 
+
+/**
+ * Needs work
+ */
 App.Views.ShowDatabases = Backbone.View.extend({
 	server: null,
 	template: _.template($("#genericResponse").html()),
@@ -423,10 +427,6 @@ App.Views.ListAllUsers = Backbone.View.extend({
 		var self = this;
 		$("tbody").append(self.row({user: user}))
 	}
-});
-
-App.Views.ViewDatabaseUser = Backbone.View.extend({
-
 });
 
 App.Views.AddDatabaseUser = Backbone.View.extend({
@@ -692,8 +692,15 @@ App.Views.Import = Backbone.View.extend({
 	}
 });
 
+
+/**
+ * Create a backup
+ * Shows a modal at the end with the download button
+ */
 App.Views.CreateBackup = Backbone.View.extend({
 	databaseId: null,
+	collection: getDatabasesCollection(),
+	model: null,
 	database: {},
 	template: _.template($("#createBackup-template").html()),
 	downloadLinkTemplate: _.template($("#downloadLink-template").html()),
@@ -703,29 +710,38 @@ App.Views.CreateBackup = Backbone.View.extend({
 	initialize: function(data) {
 		app.loading.show();
 		var self = this;
-		this.databaseId = data.id;
+		self.databaseId = data.id;
 
-		var database = new App.Models.Database({id: this.databaseId});
-		database.fetch({
-			success: function(model, response) {
-				self.database = response;
-				self.render();
-			},
-			error: function(model, error) {
-				alert(error);
-			}
+
+		self.model = self.collection.get(self.databaseId);
+		self.database = self.model.toJSON();
+
+		app.title.set("Create backup of database " + self.database.database_name);
+	
+		dbBreadcrumb.reset();
+		dbBreadcrumb.add("Databases", "/databases");
+		dbBreadcrumb.add(self.database.database_name, "#view/" + self.database._id);
+		dbBreadcrumb.add("Create backup");
+		dbBreadcrumb.render();
+
+		self.model.getDatabase();
+		self.model.on("getDatabase:success", function(model, response) {
+			self.database = response;
+			self.render();
 		});
 	},
 	render: function() {
 		var self = this;
 		self.$el.html(self.template({database: self.database}));
-		console.log(self.database);
-		new App.Title().set("Create backup of database " + self.database.database_name);
+		
 		app.loading.hide();
 	},
 	save: function(e) {
+		app.loading.show();
+
 		var self = this;
 		e.preventDefault();
+
 		// gather all values of the form
 		var values = {}
 		var form = $("form").serializeArray();
@@ -734,31 +750,30 @@ App.Views.CreateBackup = Backbone.View.extend({
 		});
 
 		if(!values.name || !values.format) {
-			new App.Views.Message({
-				type: "danger",
-				message: "Both the name and the format are required"
-			})				
+			alert.error("Both the name and the format are required");
 		}
 		else {
 			var model = new App.Models.Backup();
 			model.save(values, {
 				success: function(model, response) {
-					new App.Views.Message({
-						type: "success",
-						message: "Backup created and registered. You can download it now or you can list the backups to download it."
-					})
-
+					alert.show("success", "Backup created and registered. You can download it now or you can list the backups to download it.");
+					
 					// show download link here
-					self.$el.html(self.downloadLinkTemplate({backup: response}));
+					var content = self.downloadLinkTemplate({backup: response});
+
+					// open a modal with the button
+					var modal = new Backbone.BootstrapModal({
+						title: "Backup ready!",
+						content: content,
+						allowCancel: false,
+						animate: true,
+					}).open();
 
 					// remove form from the dom
 					$("form").remove();
 				},
 				error: function(model, error) {
-					new App.Views.Message({
-						type: "danger",
-						message: error.responseText
-					})				
+					alert.error(error.responseText);
 				}
 			});
 		}
