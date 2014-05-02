@@ -1,44 +1,76 @@
+var dbBreadcrumb = new App.Breadcrumb();
+var dbMenu = new App.Menu();
+
 function getDatabasesCollection() {
 	// Get te databases prepopulated in a template that prints JSON
 	var databases = _.template($("#databases").html());
-	var collection = new App.Collections.Databases();
-
-	// Add the databases (JSON) to the collection
-	collection.reset(JSON.parse(databases()));
+	// define a new application with the data loaded
+	var collection = new App.Collections.Databases(JSON.parse(databases()));
 
 	return collection;
 }
 
+/**
+ * List all databases
+ */
 App.Views.ListDatabases = Backbone.View.extend({
 	initialize: function() {
-		App.loading.hide();
-		new App.Breadcrumb().add([{link: "/databases", title: "Databases"}]);
-		new App.Menu().mainmenu("databases");
+		app.loading.hide();
+
+		// hide the breadcrumb
+		dbBreadcrumb.hide();
+		
+		// set the menu
+		dbMenu.mainmenu("databases");
 	}
 });
 
+App.Views.DatabaseMenu = Backbone.View.extend({
+	el: "#actions",
+	menuTemplate: _.template($("#databaseMenu").html()),
+	render: function(database) {
+		var self = this;
+		this.$el.html(self.menuTemplate({database: database}))
+	}
+});
+
+/**
+ * View a database
+ */
 App.Views.ViewDatabase = Backbone.View.extend({
 	id: null,
 	collection: getDatabasesCollection(),
 	template: _.template($("#viewDatabaseTemplate").html()),
+	database: {},
 	initialize: function(data) {
-		App.loading.show();
-		this.id = data.id;
-		this.render();
+		app.loading.show();
+
+		var self = this;
+		self.id = data.id;
+		
+		var model = this.collection.get(this.id);
+		self.database = model.toJSON();
+
+		self.renderMenu();
+		self.render();
+	},
+	renderMenu: function() {
+		var self = this;
+		new App.Views.DatabaseMenu().render(self.database);
 	},
 	render: function() {
 		var self = this;
-		var model = this.collection.get(this.id);
-		var database = model.toJSON();
+		var database = self.database;
 
 		// Set the title
-		new App.Title().change("Database " + database.database_name);
+		app.title.set("Database " + database.database_name);
 
 		// Set the breadcrumb
-		new App.Breadcrumb().add([
-			{link: "/databases", title: "Databases"},
-			{link: "#view/" + database._id, title: database.database_name}
-		]);
+		dbBreadcrumb.reset();
+		dbBreadcrumb.add("Databases", "/databases");
+		dbBreadcrumb.add(database.database_name, "#view/" + database._id);
+		dbBreadcrumb.add("view");
+		dbBreadcrumb.render();
 
 		// render the template
 		self.$el.html(self.template({
@@ -49,10 +81,14 @@ App.Views.ViewDatabase = Backbone.View.extend({
 		}));
 
 		// Hide
-		App.loading.hide();
+		app.loading.hide();
 	}
 });
 
+
+/**
+ * Create a database
+ */
 App.Views.AddDatabase = Backbone.View.extend({
 	template: _.template($("#addDatabaseTemplate").html()),
 	collection: getDatabasesCollection(),
@@ -63,8 +99,7 @@ App.Views.AddDatabase = Backbone.View.extend({
 	initialize: function() {
 		var self = this;
 		
-		this.changeActiveMenu();
-		this.changeTitle();
+		app.title.set("Add database");
 
 		self.servers.fetch({
 			success: function(models, response) {
@@ -72,13 +107,6 @@ App.Views.AddDatabase = Backbone.View.extend({
 			},
 			error: function() {}
 		});
-	},
-	changeTitle: function() {
-		$("h1").text("Add database");
-	},
-	changeActiveMenu: function() {
-		$("ul.nav > li.active").removeClass("active");
-		$("ul.nav > li.add").addClass("active");
 	},
 	render: function() {
 		var self = this;
@@ -97,19 +125,14 @@ App.Views.AddDatabase = Backbone.View.extend({
 		var model = new App.Models.Database();
 		model.save(data, {
 			success: function(m, response) {
-				console.log(m);
-				console.log(response);
-
-				new App.Views.Message({type: "success", message: "Database created successfully"});
+				alert.success("Database created successfully");
 			},
 			error: function(m, response) {
-				new App.Views.Message({type: "danger", message: response.responseText});
+				alert.error(response.responseText);
 			}
 		})
-
 	}
 });
-
 
 
 App.Views.DeleteDatabase = Backbone.View.extend({
@@ -140,19 +163,98 @@ App.Views.DeleteDatabase = Backbone.View.extend({
 	}
 });
 
+/**
+ * Show tables in a database
+ */
 App.Views.ShowTables = Backbone.View.extend({
 	id: null,
+	collection: getDatabasesCollection(),
+	model: null,
 	database: {},
 	template: _.template($("#genericResponse").html()),
 	dataTemplate: _.template($("#genericData").html()),
 	initialize: function(data) {
-		this.id = data.id;
+		var self = this;
+
+		self.id = data.id;
+		self.model = self.collection.get(self.id);
+		self.database = self.model.toJSON();
+
+		app.title.set("Tables in database " + self.database.database_name);
+
+		dbBreadcrumb.reset();
+		dbBreadcrumb.add("Databases", "/databases");
+		dbBreadcrumb.add(self.database.database_name, "#view/" + self.database._id);
+		dbBreadcrumb.add("Show Tables");
+		dbBreadcrumb.render();
+
+		self.listen();
+		self.render();
+	},
+	listen: function() {
+		// it will listen for an event in case we used a Sync / event based call
+		var self = this;
+		App.io.on("ssh:execute:data:" + self.server, function(data) {
+			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
+		})
+	},
+	render: function() {
+		var self = this;
+		app.loading.show();
+		self.$el.html(self.template());
+
+		self.model.getDatabase();
+		self.model.on("getDatabase:success", function(model, response) {
+			self.database = model.toJSON();
+			
+			// call testConnection and pass the id
+			// the model will make a post request passing the id in the body
+			self.model.showTables(self.id);
+		})
+
+		// the model will fire a success or error event on completion
+		self.model.on("showTables:success", function(data) {
+			// once we have the response we can display the data of stdout
+			// if we made a Sync operation, we use the method listen
+			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
+			alert.show("success", "The tables on the database " + self.database.database_name + " are");
+		})
+
+		self.model.on("showTables:error", function() {
+			alert.error("There was an error");
+		})
+	}
+});
+
+/**
+ * SHow users in a database
+ */
+App.Views.ShowUsersInDatabase = Backbone.View.extend({
+	id: null,
+	database: {},
+	model: null,
+	collection: getDatabasesCollection(),
+	template: _.template($("#genericResponse").html()),
+	dataTemplate: _.template($("#genericData").html()),
+	initialize: function(data) {
+		app.loading.show();
+
+		var self = this;
+		self.id = data.id;
+
+		self.model = self.collection.get(self.id);
+		self.database = self.model.toJSON();
+
+		dbBreadcrumb.reset();
+		dbBreadcrumb.add("Databases", "/databases");
+		dbBreadcrumb.add(self.database.database_name, "#view/"+self.database._id);
+		dbBreadcrumb.add("Users with access to database");
+		dbBreadcrumb.render();
+
+		app.title.set("Users with access to database " + self.database.database_name);
+
 		this.listen();
 		this.render();
-	},
-	changeTitle: function() {
-		console.log(this.database);
-		$("h1").text("Show tables of database " + this.database.database_name);
 	},
 	listen: function() {
 		// it will listen for an event in case we used a Sync / event based call
@@ -166,37 +268,20 @@ App.Views.ShowTables = Backbone.View.extend({
 		this.$el.html(this.template());
 
 		// create a new model
-		var model = new App.Models.Database({id: this.id});
-
-		model.fetch({
-			success: function(model, response) {
-				var database = model.toJSON();
-				self.database = database.database;
-				self.changeTitle();
-			}, 
-			error: function() {
-
-			}
-		});
-
-		// call testConnection and pass the id
-		// the model will make a post request passing the id in the body
-		model.showTables(this.id);
+		self.model.getDatabase();
+		self.model.on("getDatabase:success", function(model, response) {		
+			// // call showUsersInDatabase and pass the id
+			// // the model will make a post request passing the id in the body
+			self.model.showUsersInDatabase(self.id);
+		});		
 
 		// the model will fire a success or error event on completion
-		model.on("showTables:success", function(data) {
+		self.model.on("showUsersInDatabase:success", function(data) {
 			// once we have the response we can display the data of stdout
 			// if we made a Sync operation, we use the method listen
 			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
-			new App.Views.Message({
-				type: "success", 
-				message: "The tables on the database are:"
-			});
-		})
-
-		model.on("showTables:error", function() {
-			console.log("error");
-		})
+			alert.show("success", "The users with access to this database are");
+		});
 	}
 });
 
@@ -249,65 +334,6 @@ App.Views.ShowDatabases = Backbone.View.extend({
 	}
 });
 
-App.Views.ShowUsersInDatabase = Backbone.View.extend({
-	id: null,
-	database: {},
-	template: _.template($("#genericResponse").html()),
-	dataTemplate: _.template($("#genericData").html()),
-	initialize: function(data) {
-		this.id = data.id;
-		this.listen();
-		this.render();
-	},
-	changeTitle: function() {
-		console.log(this.database);
-		$("h1").text("Show users in database " + this.database.database_name);
-	},
-	listen: function() {
-		// it will listen for an event in case we used a Sync / event based call
-		var self = this;
-		App.io.on("ssh:execute:data:" + self.server, function(data) {
-			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
-		})
-	},
-	render: function() {
-		var self = this;
-		this.$el.html(this.template());
-
-		// create a new model
-		var model = new App.Models.Database({id: this.id});
-
-		model.fetch({
-			success: function(model, response) {
-				var database = model.toJSON();
-				self.database = database.database;
-				self.changeTitle();
-			}, 
-			error: function() {
-
-			}
-		});
-
-		// call testConnection and pass the id
-		// the model will make a post request passing the id in the body
-		model.showUsersInDatabase(this.id);
-
-		// the model will fire a success or error event on completion
-		model.on("showUsersInDatabase:success", function(data) {
-			// once we have the response we can display the data of stdout
-			// if we made a Sync operation, we use the method listen
-			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
-			new App.Views.Message({
-				type: "success", 
-				message: "The users with access to this database are:"
-			});
-		})
-
-		model.on("showUsersInDatabase:error", function() {
-			console.log("error");
-		})
-	}
-});
 
 App.Views.LockDatabase = Backbone.View.extend({
 	id: null,
@@ -382,7 +408,7 @@ App.Views.ListAllUsers = Backbone.View.extend({
 	template: _.template($("#listDatabaseUsers-template").html()),
 	row: _.template($("#databaseUserRow-template").html()),
 	initialize: function() {
-		App.loading.show();
+		app.loading.show();
 		this.collection.fetch();
 		this.render();
 
@@ -390,7 +416,7 @@ App.Views.ListAllUsers = Backbone.View.extend({
 	},
 	render: function() {
 		this.$el.html(this.template());
-		App.loading.show();
+		app.loading.show();
 	},
 	addUser: function(user) {
 		console.log(user);
@@ -413,7 +439,7 @@ App.Views.AddDatabaseUser = Backbone.View.extend({
 	templateGeneric: _.template($("#genericResponse").html()),
 	dataTemplate: _.template($("#genericData").html()),
 	initialize: function(data) {
-		App.loading.show();
+		app.loading.show();
 		this.databaseId = data.id;
 		this.render();
 	},
@@ -430,7 +456,7 @@ App.Views.AddDatabaseUser = Backbone.View.extend({
 				self.database = data.database;
 				self.$el.html(self.template({database: data.database, databaseId: self.databaseId}));
 				self.changeTitle(data.database.database_name);
-				App.loading.hide();
+				app.loading.hide();
 			}
 		});
 	},
@@ -443,7 +469,7 @@ App.Views.AddDatabaseUser = Backbone.View.extend({
 	},
 	save: function(e) {
 		e.preventDefault();
-		App.loading.show();
+		app.loading.show();
 		var self = this;
 
 		var values = {
@@ -463,11 +489,11 @@ App.Views.AddDatabaseUser = Backbone.View.extend({
 			success: function(model, response) {
 				self.$el.html(self.templateGeneric());
 				self.listen(response._id);
-				App.loading.hide();
+				app.loading.hide();
 			},
 			error: function(model, response) {
 				new App.Views.Message({type: "danger", message: response.responseText});
-				App.loading.hide();
+				app.loading.hide();
 			}
 		})
 	}
@@ -476,7 +502,7 @@ App.Views.AddDatabaseUser = Backbone.View.extend({
 App.Views.DropUser = Backbone.View.extend({
 	id: null,
 	initialize: function(data) {
-		App.loading.show();
+		app.loading.show();
 		this.id = data.id;
 		this.render();
 	},
@@ -491,14 +517,14 @@ App.Views.DropUser = Backbone.View.extend({
 					type: "success",
 					message: "Removed the database user"
 				});
-				App.loading.hide();
+				app.loading.hide();
 			},
 			error: function(model, response) {
 				new App.Views.Message({
 					type: "danger",
 					message: response.responseText
 				});
-				App.loading.hide();
+				app.loading.hide();
 			}
 		});
 	}
@@ -517,7 +543,7 @@ App.Views.Import = Backbone.View.extend({
 		"click .submit": "save"
 	},
 	initialize: function(data) {
-		App.loading.show();
+		app.loading.show();
 		this.bind("importDatabase", this.importDatabase);
 		this.id = data.id;
 		this.render();
@@ -533,14 +559,14 @@ App.Views.Import = Backbone.View.extend({
 				self.database = database;
 				self.changeTitle();
 				self.$el.html(self.template({database: database, server: database.server}));
-				App.loading.hide();
+				app.loading.hide();
 			},
 			error: function(model, response) {
 				new App.Views.Message({
 					type: "danger",
 					message: response.responseText
 				});
-				App.loading.hide();
+				app.loading.hide();
 			}
 		});
 	},
@@ -603,7 +629,7 @@ App.Views.Import = Backbone.View.extend({
 	},
 	save: function(e) {
 		e.preventDefault();
-		App.loading.show();
+		app.loading.show();
 		var self = this;
 
 		var fileId = self.fileId;
@@ -612,15 +638,15 @@ App.Views.Import = Backbone.View.extend({
 			success: function(model, response) {
 				// trigger the import step
 				self.trigger("importDatabase", model);
-				App.loading.hide();
+				app.loading.hide();
 			},
 			error: function(model, response) {
-				App.loading.hide();
+				app.loading.hide();
 			}	
 		});
 	},
 	importDatabase: function(model) {
-		App.loading.show();
+		app.loading.show();
 		var self = this;
 
 		var file = model.toJSON();
@@ -643,7 +669,7 @@ App.Views.Import = Backbone.View.extend({
 				type: "success",
 				message: "Successfully imported the database"
 			});
-			App.loading.hide();
+			app.loading.hide();
 		})
 
 		db.on("importDatabase:error", function(error) {
@@ -651,7 +677,7 @@ App.Views.Import = Backbone.View.extend({
 				type: "danger",
 				message: error.responseText
 			});
-			App.loading.hide();
+			app.loading.hide();
 		})
 	},
 	renderGenericTemplate: function(data) {
@@ -675,7 +701,7 @@ App.Views.CreateBackup = Backbone.View.extend({
 		"click .submit": "save"
 	},
 	initialize: function(data) {
-		App.loading.show();
+		app.loading.show();
 		var self = this;
 		this.databaseId = data.id;
 
@@ -695,7 +721,7 @@ App.Views.CreateBackup = Backbone.View.extend({
 		self.$el.html(self.template({database: self.database}));
 		console.log(self.database);
 		new App.Title().set("Create backup of database " + self.database.database_name);
-		App.loading.hide();
+		app.loading.hide();
 	},
 	save: function(e) {
 		var self = this;
@@ -747,7 +773,7 @@ App.Views.ListBackups = Backbone.View.extend({
 	template: _.template($("#listBackups-template").html()),
 	rowTemplate: _.template($("#listBackupsRow-template").html()),
 	initialize: function(data) {
-		App.loading.show();
+		app.loading.show();
 		var self = this;
 		self.databaseId = data.id;
 
@@ -775,7 +801,7 @@ App.Views.ListBackups = Backbone.View.extend({
 	render: function() {
 		var self = this;
 		self.$el.html(self.template({database: self.database, backups: self.backups}))
-		App.loading.hide();
+		app.loading.hide();
 	},
 	renderRow: function(model) {
 		var self = this;
@@ -788,7 +814,7 @@ App.Views.AddPermissionsForm = Backbone.View.extend({
 	formTemplate: _.template($("#permissionsForm").html()),
 	initialize: function() {
 		var self = this;
-		App.loading.show();
+		app.loading.show();
 		this.bind("ok", this.okClicked);
 
 		this.users = new App.Collections.Users();
@@ -803,7 +829,7 @@ App.Views.AddPermissionsForm = Backbone.View.extend({
 	},
 	render: function() {
 		var self = this;
-		App.loading.hide();
+		app.loading.hide();
 		this.$el.html(self.formTemplate());
 
 		var users = this.users;
@@ -838,7 +864,7 @@ App.Views.Permissions = Backbone.View.extend({
 	initialize: function(data) {
 		var self = this;
 		self.id = data.id;
-		App.loading.show();
+		app.loading.show();
 
 		self.collection.on("reset", function() {
 			self.collection.fetch({
@@ -900,7 +926,7 @@ App.Views.Permissions = Backbone.View.extend({
 			$("#membersWithRemoveAccess").append(self.permissionRow(data));
 		});
 
-		App.loading.hide();
+		app.loading.hide();
 	},
 	openForm: function(e) {
 		e.preventDefault();
