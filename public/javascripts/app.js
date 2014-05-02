@@ -37,20 +37,53 @@ App.ResetMessage = Backbone.View.extend({
 	}
 });
 
+/**
+ * Provide shortcuts so we can show the message or just do obj.success("message");
+ */
 App.Views.Message = App.Message = Backbone.View.extend({
 	el: $("#message"),
 	template: _.template($("#messageTemplate").html()),
 	initialize: function(data) {
-		this.type = data.type;
-		this.message = data.message;
+		if(this.type && this.message) {
+			this.type = data.type;
+			this.message = data.message;
 
-		this.render();
+			this.render();
+		}
 	},
 	render: function() {
 		this.$el.html(this.template({type: this.type, message: this.message}));
-	},
-});
 
+		// hide the loading
+		App.loading.hide();
+	},
+	show: function(type, message) {
+		this.type = type;
+		this.message = message;
+		this.render();
+	},
+	error: function(message) {
+		this.type = "error";
+		this.message = message;
+
+		this.render();
+	},
+	success: function(message) {
+		this.type = "succes";
+		this.message = message;
+		this.render();
+	},
+	warning: function(message) {
+		this.type = "warning";
+		this.message = message;
+		this.render();
+	},
+	info: function(message) {
+		this.type = "info";
+		this.message = message;
+		this.render();
+	}
+});
 
 /**
  * Accepts el and active as properties or data
@@ -71,11 +104,13 @@ App.Menu = Backbone.View.extend({
 
 App.Breadcrumb = Backbone.View.extend({
 	el: "ol.breadcrumb",
+	elements: [],
 	initialize: function() {
 		this.reset();
 	},
-	add: function(elements) {
+	render: function() {
 		var self = this;
+		var elements = self.elements;
 		var total = elements.length;
 		var count = 0;
 		_.each(elements, function(element) {
@@ -88,8 +123,19 @@ App.Breadcrumb = Backbone.View.extend({
 			}
 		})
 	},
+	hide: function() {
+		this.$el.hide();
+	},
 	reset: function() {
+		this.elements = [];
+		this.$el.show();
 		this.$el.empty();
+	},
+	set: function(title, link) {
+		this.elements.push({title: title, link: link});
+	},
+	add: function(title, link) {
+		this.elements.push({title: title, link: link});
 	}
 });
 
@@ -98,9 +144,11 @@ App.Title = Backbone.View.extend({
 		
 	},
 	change: function(title) {
-		$("h1").text(title);
+		$("h1 > span.title").text(title);
 	},
 	set: function(title) {
+		// every time we change the title reset the message
+		new App.ResetMessage();
 		this.change(title);
 	}
 });
@@ -122,7 +170,10 @@ App.Views.Loading = Backbone.View.extend({
 });
 
 // Instantiate a loading 
-App.loading = new App.Views.Loading();
+App.loading = app.loading = new App.Views.Loading();
+app.breadcrumb = new App.Breadcrumb();
+app.alert = alert = new App.Message();
+app.title = new App.Title();
 
 (function() {
 	new App.Routers.AppRouter();

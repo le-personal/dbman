@@ -1,15 +1,8 @@
 script(type="text/template", id="viewDatabaseTemplate")
-	div.btn-group
-		<a href="#addUser/<%= database._id %>" class="btn btn-primary">Add user</a>
-		<a href="#showTables/<%= database._id %>" class="btn btn-primary">Show tables</a>
-		<a href="#showUsersInDatabase/<%= database._id %>" class="btn btn-primary">Show users</a>
-		<a href="#listBackups/<%= database._id %>" class="btn btn-primary">List backups</a>
-		<a href="#createBackup/<%= database._id %>" class="btn btn-primary">Backup</a>
-		<a href="#import/<%= database._id %>" class="btn btn-primary">Import</a>
-		<a href="#permissions/<%= database._id %>" class="btn btn-primary">Permissions</a>
 	div#content
-		h3 Database information
-		table.table.table-striped
+		table.table.table-striped.well
+			thead
+				th(colspan="2") Database information
 			tbody
 				tr
 					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
@@ -24,8 +17,10 @@ script(type="text/template", id="viewDatabaseTemplate")
 				tr
 					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
 					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.isLocked %>
-		h3 Server information
-		table.table.table-striped
+		
+		table.table.table-striped.well
+			thead
+				th(colspan="2") Server information
 			tbody
 				tr
 					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
@@ -35,7 +30,7 @@ script(type="text/template", id="viewDatabaseTemplate")
 					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
 		h3 Database users with permissions
 		<% if(users.length > 0) { %>
-		table.table.table-striped
+		table.table.table-striped.well
 			thead
 				th Username
 				th Allowed Hosts

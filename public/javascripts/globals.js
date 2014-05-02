@@ -7,3 +7,5 @@ App.Controller = function(id) {
 	this.id = id;
 }
 App.io = io.connect();
+
+var app = app || {}

@@ -38,9 +38,11 @@ block content
 	div.container
 		div.row
 			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
-				h1!= title
+				h1
+					span.title!= title
 					div.pull-right
-						a(href="/databases#add").btn.btn-success Add database
+						div#actions
+							a(href="/databases#add").btn.btn-success Add database
 				hr
 		div.row
 			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
