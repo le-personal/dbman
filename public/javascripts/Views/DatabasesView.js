@@ -780,10 +780,15 @@ App.Views.CreateBackup = Backbone.View.extend({
 	}
 });
 
+
+/**
+ * List all backups for a database
+ */
 App.Views.ListBackups = Backbone.View.extend({
 	databaseId: null,
 	database: {},
 	backups: {},
+	databases: getDatabasesCollection(),
 	collection: new App.Collections.Backups(),
 	template: _.template($("#listBackups-template").html()),
 	rowTemplate: _.template($("#listBackupsRow-template").html()),
@@ -792,23 +797,25 @@ App.Views.ListBackups = Backbone.View.extend({
 		var self = this;
 		self.databaseId = data.id;
 
-		var db = new App.Models.Database({id: self.databaseId});
-		db.fetch({
-			success: function(model, response) {
-				self.database = response;
-				self.backups = response.backups;
+		var db = self.databases.get(self.databaseId);
+		db.getDatabase();
+		db.on("getDatabase:success", function(model, response) {
+			self.database = response;
 
-				self.render();
+			app.title.set("Backups of " + self.database.database_name);
 
-				console.log("collection");
-				console.log(self.collection);
-				_.each(response.backups, function(backup) {
-					self.collection.add(backup);
-				})
-			},
-			error: function(model, error) {
-				new App.Views.Message({type: "danger", message: error.responseText});
-			}
+			dbBreadcrumb.reset();
+			dbBreadcrumb.add("Databases", "/databases");
+			dbBreadcrumb.add(self.database.database_name, "#view/" + self.database._id);
+			dbBreadcrumb.add("Backups");
+			dbBreadcrumb.render();
+			
+			self.backups = response.backups;
+			self.render();
+
+			_.each(response.backups, function(backup) {
+				self.collection.add(backup);
+			})
 		});
 
 		self.collection.on("add", self.renderRow, this);

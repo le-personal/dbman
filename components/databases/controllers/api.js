@@ -72,17 +72,33 @@ exports.getDatabase = function(req, res) {
 			res.send(404);
 		}
 		if(result) {
-			DatabaseUser.find({database: result._id})
+			DatabaseUser.find({"database": result._id})
 			.exec(function(err, users) {
-				Backup.find({database: result._id})
+				
+				Backup.find({"database": result._id})
 				.populate("author")
 				.exec(function(err, backups) {
 
-					var database = result;
-					database.users = users;
-					database.backups = backups;
+					// not working, had to rewrite
+					// var database = result;
+					// database["users"] = users;
+					// database["backups"] = backups;
 
-					res.send(200, database);
+					var response = {
+						backups: backups,
+						users: users,
+						server: result.server,
+						author: result.author,
+						permissions: result.permissions,
+						_id: result._id,
+						database_name: result.database_name,
+						database_type: result.database_type,
+						isLocked: result.isLocked,
+						created: result.created,
+						_v: result._v
+					}
+
+					res.send(200, response);
 				})
 			});
 		}

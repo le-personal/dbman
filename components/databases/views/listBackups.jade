@@ -1,7 +1,6 @@
 script(type="text/template", id="listBackups-template")
 	div#content
-		h3 Backups of database <%= database.database_name %>
-		table.table.table-striped
+		table.table.table-striped.table-hover.well
 			thead
 				th Name
 				th Created
@@ -14,7 +13,7 @@ script(type="text/template", id="listBackups-template")
 script(type="text/template", id="listBackupsRow-template")
 	tr
 		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
-			strong <%= backup.name %>
+			<a href="<%= backup.url %>" class=""><%= backup.name %></a>
 			div Created by: <%= backup.author.fullName %>
 		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.created %>
 		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.type %>
