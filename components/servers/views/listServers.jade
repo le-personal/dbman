@@ -32,20 +32,18 @@ block content
 	div.container
 		div.row
 			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
-				h1!= title
+				h1
+					span.title!= title
+					div.pull-right
+						div#actions
+							a(href="/servers#add").btn.btn-success Add server
 				hr
 		div.row
-			div.col-lg-2.col-md-2.col-sm-10.col-xs-10
-				ul.nav.nav-pills.nav-stacked
-					li.active
-						a(href="/servers") Servers
-					li.add
-						a(href="/servers#add") Add server
-			div.col-lg-10.col-md-10.col-sm-10.col-xs-10
+			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
 				div#message
 				div#content
 					if(servers.length > 0)
-						table.table.table-hover.table-bordered.table-striped
+						table.table.table-hover.table-bordered.table-striped.well
 							thead
 								tr
 									th Name
