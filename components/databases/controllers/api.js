@@ -152,47 +152,57 @@ exports.postDatabase = function(req, res) {
 					var database = new Database(db);
 					database.save(function(err, databaseCreated) {
 						if(err) {
-							throw err;
+							res.send(500, err);
 						}
 
 						if(databaseCreated) {
-							if(body.createDatabase == "on") {
-								// create the database
-								if(serviceType == "mysql") {
-									// attach the server object to the _server property in the databaseCreated
-									databaseCreated._server = server;
-									var mysql = new MySQL(databaseCreated);
 
-									// get the right command
-									var command = mysql.createDatabase();
-								}
+							Database.findOne(databaseCreated)
+							.populate("server")
+							.populate("author")
+							.exec(function(err, newDatabase) {
+								if(newDatabase) {
 
-								if(serviceType == "mongodb") {
-									// do nothing here
-								}
-								
-								var connection = new Connection(result._id, server);
-								connection.executeAsync(command, function(stderr, stdout) {
-									var send = {
-										_id: databaseCreated._id,
-										_v: databaseCreated._v,
-										database_name: databaseCreated.database_name,
-										database_type: databaseCreated.database_type,
-										author: databaseCreated.author,
-										permissions: databaseCreated.permissions,
-										isLocked: databaseCreated.isLocked,
-										created: databaseCreated.created
+									if(body.createDatabase == "on") {
+										// create the database
+										if(serviceType == "mysql") {
+											// attach the server object to the _server property in the databaseCreated
+											databaseCreated._server = server;
+											var mysql = new MySQL(databaseCreated);
+
+											// get the right command
+											var command = mysql.createDatabase();
+										}
+
+										if(serviceType == "mongodb") {
+											// do nothing here
+										}
+										
+										var connection = new Connection(result._id, server);
+										connection.executeAsync(command, function(stderr, stdout) {
+											// var send = {
+											// 	_id: databaseCreated._id,
+											// 	_v: databaseCreated._v,
+											// 	database_name: databaseCreated.database_name,
+											// 	database_type: databaseCreated.database_type,
+											// 	author: databaseCreated.author,
+											// 	permissions: databaseCreated.permissions,
+											// 	isLocked: databaseCreated.isLocked,
+											// 	created: databaseCreated.created
+											// }
+											// send.server = server;
+											// send.stdout = stdout;
+											// send.stderr = stderr;
+
+											res.send(201, newDatabase);
+										});
 									}
-									send.server = server;
-									send.stdout = stdout;
-									send.stderr = stderr;
+									else {
+										res.send(201, newDatabase);
+									}
 
-									res.send(201, send);
-								});
-							}
-							else {
-								res.send(201, result);
-							}
+								}
+							});
 						}
 						else {
 							res.send(406);
@@ -247,20 +257,25 @@ exports.deleteDatabase = function(req, res) {
 
 exports.postShowDatabases = function(req, res) {
 	var serverId = req.body.server;
-
+	console.log(serverId);
 	if(serverId) {
 		Server.findOne({_id: serverId}, function(err, server) {
-			var database = {
-				_server: server
+			if(err) {
+				res.send(500, err);
 			}
-			var mysql = new MySQL(database);
-			var command = mysql.showDatabases();
-			var connection = new Connection(serverId, server);
-			connection.executeAsync(command, function(stderr, stdout) {
-				console.log(stderr);
-				console.log(stdout);
-				res.send(200, {stdout: stdout, stderr: stderr});
-			});
+			if(server) {
+				var database = {
+					_server: server
+				}
+				var mysql = new MySQL(database);
+				var command = mysql.showDatabases();
+				var connection = new Connection(serverId, server);
+				connection.executeAsync(command, function(stderr, stdout) {
+					console.log(stderr);
+					console.log(stdout);
+					res.send(200, {stdout: stdout, stderr: stderr});
+				});
+			}
 		});
 	}
 	else {

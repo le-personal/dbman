@@ -390,20 +390,35 @@ App.Views.ShowUsersInDatabase = Backbone.View.extend({
 
 
 /**
- * Needs work
+ * Show databases on a server,
+ * we first get the database in the id and then we get the server
+ * to query
  */
 App.Views.ShowDatabases = Backbone.View.extend({
 	server: null,
+	collection: getDatabasesCollection(),
 	template: _.template($("#genericResponse").html()),
 	dataTemplate: _.template($("#genericData").html()),
 	initialize: function(data) {
-		this.server = data.id;
+		var self = this;
+
+		// id is database id
+		self.id = data.id;
+
+		self.model = self.collection.get(self.id);
+		self.database = self.model.toJSON();
+		self.server = self.database.server;
+
+		app.breadcrumb.reset();
+		app.breadcrumb.add("Databases", "/databases");
+		app.breadcrumb.add(self.database.database_name, "#view/"+self.database._id);
+		app.breadcrumb.add("Show databases in server ");
+		app.breadcrumb.render();
+
+		app.title.set("Show databases in server  " + self.server.name);
+
 		this.listen();
 		this.render();
-		this.changeTitle();
-	},
-	changeTitle: function() {
-		$("h1").text("Show databases on server");
 	},
 	listen: function() {
 		// it will listen for an event in case we used a Sync / event based call
@@ -416,27 +431,21 @@ App.Views.ShowDatabases = Backbone.View.extend({
 		var self = this;
 		this.$el.html(this.template());
 
-		// create a new model
-		var model = new App.Models.Database();
-
 		// call testConnection and pass the id
 		// the model will make a post request passing the id in the body
-		model.showDatabases(this.server);
+		self.model.showDatabases(self.server._id);
 
 		// the model will fire a success or error event on completion
-		model.on("showDatabases:success", function(data) {
+		self.model.on("showDatabases:success", function(data) {
 
 			// once we have the response we can display the data of stdout
 			// if we made a Sync operation, we use the method listen
 			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
-			new App.Views.Message({
-				type: "success", 
-				message: "The databases on server are:"
-			});
+			alert.success("The databases on server are:");
 		})
 
-		model.on("showDatabases:error", function() {
-			console.log("error");
+		self.model.on("showDatabases:error", function(err) {
+			alert.error(err.responseText);
 		})
 	}
 });
