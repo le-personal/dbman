@@ -42,7 +42,17 @@ block templates
 		<a href="/databases#showDatabases/<%= database.server._id %>"><%= database.server.name %></a>
 		</td>
 		<td><%= database.database_type %></td>
-		<td class="database-status-<%= database._id %>"><%= database.isLocked %></td>
+		<td class="database-status-<%= database._id %>">
+		<% if(database.isLocked) { %>
+		<a title="This database is locked, which prevents users to apply dangerous actions to it." class="btn btn-xs btn-success">
+		<span class="glyphicon glyphicon-lock"></span>
+		</a>
+		<% } else { %>
+		<a title="This database is not locked which means that a user with permissions can apply dangerous actions to it. If this is not what you want, please lock it." class="btn btn-xs btn-warning">
+		<span class="glyphicon glyphicon-lock"></span>
+		</a>
+		<% } %>
+		</td>
 		<td>
 		<div class="btn-group">
 		<% if(database.isLocked) { %>
