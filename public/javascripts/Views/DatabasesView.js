@@ -9,6 +9,10 @@ function getDatabasesCollection() {
 	return collection;
 }
 
+
+/**
+ * SHows the actions menu for the databases
+ */
 App.Views.DatabaseMenu = Backbone.View.extend({
 	el: "#actions",
 	menuTemplate: _.template($("#databaseMenu").html()),
@@ -27,7 +31,8 @@ App.Views.ListDatabasesRow = Backbone.View.extend({
 	events: {
 		"click .lockDatabase": "lock",
 		"click .unlockDatabase": "unlock",
-		"click .removeDatabase": "confirmRemoval"
+		"click .removeDatabase": "confirmRemoval",
+		"click .viewDatabase": "viewDatabase"
 	},
 	initialize: function() {
 		this.model.on("change", this.render, this);
@@ -36,6 +41,12 @@ App.Views.ListDatabasesRow = Backbone.View.extend({
 	render: function() {
 		this.$el.html(this.template({database: this.model.toJSON()}));
 		return this;
+	},
+	viewDatabase: function(e) {
+		e.preventDefault();
+		var self = this;
+
+		new App.Views.ViewDatabase({model: self.model, el: "div#content", id: self.model.toJSON()._id});
 	},
 	lock: function(e) {
 		e.preventDefault();
@@ -105,7 +116,7 @@ App.Views.ListDatabasesRow = Backbone.View.extend({
 App.Views.ListDatabases = Backbone.View.extend({
 	collection: null,
 	events: {
-		"click .add": "addDatabase"
+		"click .addDatabase": "addDatabase"
 	},
 	initialize: function() {
 		var self = this;
@@ -175,7 +186,7 @@ App.Views.AddDatabase = Backbone.View.extend({
 	},
 	submit: function() {
 		app.loading.show();
-		
+
 		var self = this;
 		var data = {}
 		var formValues = $("form").serializeArray();
@@ -210,7 +221,12 @@ App.Views.ViewDatabase = Backbone.View.extend({
 		var self = this;
 		self.id = data.id;
 		
-		var model = this.collection.get(this.id);
+		if(self.model) {
+			var model = self.model;
+		}
+		else {
+			var model = this.collection.get(this.id);
+		}
 		self.database = model.toJSON();
 
 		self.renderMenu();

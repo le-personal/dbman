@@ -174,11 +174,14 @@ exports.postDatabase = function(req, res) {
 								var connection = new Connection(result._id, server);
 								connection.executeAsync(command, function(stderr, stdout) {
 									var send = {
+										_id: databaseCreated._id,
+										_v: databaseCreated._v,
 										database_name: databaseCreated.database_name,
 										database_type: databaseCreated.database_type,
 										author: databaseCreated.author,
 										permissions: databaseCreated.permissions,
-										isLocked: databaseCreated.isLocked
+										isLocked: databaseCreated.isLocked,
+										created: databaseCreated.created
 									}
 									send.server = server;
 									send.stdout = stdout;
