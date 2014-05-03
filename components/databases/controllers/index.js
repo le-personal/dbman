@@ -9,6 +9,7 @@ var Database = models.Database;
 var DatabaseUser = models.DatabaseUser;
 var Backup = models.Backup;
 var Connection = include.lib("connection");
+var _ = require("underscore");
 
 exports.getDatabases = function(req, res) {
 	Database.find()
@@ -29,15 +30,22 @@ exports.getDatabases = function(req, res) {
 
 			if(total > 0) {
 				databases.forEach(function(database) {
+					// get each databaseuser
 					DatabaseUser.find({database: database._id})
 					.exec(function(err, users) {
+						// backups
 						Backup.find({database: database._id})
 						.populate("author")
 						.exec(function(err, backups) {
-							var result = database;
-							database.users = users;
-							database.backups = backups;
 
+							// result is what we send to the array
+							// before adding the users and backups results
+							// we need to convert the database result to an object
+							var result = database.toObject();
+							result.users = users;
+							result.backups = backups;
+
+							// push to the array of results
 							results.push(result);
 							count++;
 							if(total == count) {

@@ -1,48 +1,30 @@
 script(type="text/template", id="viewDatabaseTemplate")
-	div#content
-		table.table.table-striped.well
-			thead
-				th(colspan="2") Database information
-			tbody
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
-						strong <%= database.database_name %>
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.created %>
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.author.fullName %>
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.isLocked %>
-		
-		table.table.table-striped.well
-			thead
-				th(colspan="2") Server information
-			tbody
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>	
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
-		h3 Database users with permissions
-		<% if(users.length > 0) { %>
-		table.table.table-striped.well
-			thead
-				th Username
-				th Allowed Hosts
-			tbody
-			<% _.each(users, function(user) { %>
-			<tr class="database-user-<%= user._id %>">
-			td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= user.username %>	
-			td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= user.allowedHosts %>
-			td.col-lg-3.col-md-3.col-sm-3.col-xs-3 
-				<a href="#dropUser/<%= user._id %>" class="btn btn-danger btn-xs">Drop</a>
-			</tr>
-			<% }) %>
-		<% } else { %>
-		div.alert.alert-warning No users have access to this database
-		<% } %>
+	table.table.table-striped.well
+		thead
+			th(colspan="2") Database information
+		tbody
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
+					strong <%= database.database_name %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.created %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.author.fullName %>
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.isLocked %>
+	
+	table.table.table-striped.well
+		thead
+			th(colspan="2") Server information
+		tbody
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>	
+			tr
+				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
+	div#databaseUsersContainer

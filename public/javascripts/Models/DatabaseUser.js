@@ -6,5 +6,6 @@ App.Models.DatabaseUser = Backbone.Model.extend({
 		allowedHosts: [],
 		created: '',
 		database: ''
-	}
+	},
+	idAttribute: "_id",
 });

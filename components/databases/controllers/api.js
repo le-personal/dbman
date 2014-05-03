@@ -37,10 +37,15 @@ exports.getDatabases = function(req, res) {
 						Backup.find({database: database._id})
 						.populate("author")
 						.exec(function(err, backups) {
-							var result = database;
-							database.users = users;
-							database.backups = backups;
 
+							// result is what we send to the array
+							// before adding the users and backups results
+							// we need to convert the database result to an object
+							var result = database.toObject();
+							result.users = users;
+							result.backups = backups;
+
+							// push to the array of results
 							results.push(result);
 
 							count++;
@@ -541,16 +546,13 @@ exports.deleteDatabaseUser = function(req, res) {
 
 					user.allowedHosts.forEach(function(host) {
 						dropUser(user, database, host, function(stderr, stdout) {
-							if(!stderr) {
-								DatabaseUser.remove({_id: id}, function(err, result) {
-									res.send(200, {stdout: stdout, stderr: stderr});
-								})
-							}
 							if(stderr) {
 								res.send(406, stderr);
 							}
 							else {
-								res.send(406, "There was a problem droping the user");
+								DatabaseUser.remove({_id: id}, function(err, result) {
+									res.send(200, {stdout: stdout, stderr: stderr});
+								})
 							}
 						})						
 					});

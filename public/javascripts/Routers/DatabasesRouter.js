@@ -9,7 +9,6 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		"showDatabases/:id": "showDatabases",
 		'listAllUsers': "listAllUsers",
 		'viewUser/:id': 'viewUser',
-		'addUser/:id': 'addUser',
 		'dropUser/:id': "dropUser",
 		'showUsersInDatabase/:id': 'showUsersInDatabase',
 		'listBackups/:id': "listBackups",
@@ -39,9 +38,6 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 	viewUser: function(id) {
 		// not implemented yet
 		new App.Views.ViewDatabaseUser({el: "div#content", id: id});
-	},
-	addUser: function(id) {
-		new App.Views.AddDatabaseUser({el: "div#content", id: id});
 	},
 	showUsersInDatabase: function(id) {
 		new App.Views.ShowUsersInDatabase({el: "div#content", id: id});

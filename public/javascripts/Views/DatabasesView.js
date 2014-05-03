@@ -9,16 +9,39 @@ function getDatabasesCollection() {
 	return collection;
 }
 
-
 /**
  * SHows the actions menu for the databases
  */
 App.Views.DatabaseMenu = Backbone.View.extend({
 	el: "#actions",
+	events: {
+		"click .addUserToDatabase": "addUserToDatabase"
+	},
 	menuTemplate: _.template($("#databaseMenu").html()),
-	render: function(database) {
+	initialize: function(data) {
 		var self = this;
-		this.$el.html(self.menuTemplate({database: database}))
+		console.log("Initialized menu, check the colleccion that we passed");
+
+		// since we use a different name than collection, we need to map it here
+		// or it will not be recognized
+		self.collection = data.databasesCollection;
+		self.databaseUsersCollection = data.databaseUsersCollection;
+		self.render();
+	},
+	render: function() {
+		var self = this;
+		this.$el.html(self.menuTemplate({database: self.model.toJSON()}))
+	},
+	addUserToDatabase: function(e) {
+		e.preventDefault();
+		var self = this;
+
+		// the databaseUsersCollection is sent from the ViewDatabase view to here,
+		// we pass it to the AddDatabaseUser
+		new App.Views.AddDatabaseUser({
+			model: self.model, 
+			collection: self.databaseUsersCollection
+		});
 	}
 });
 
@@ -129,6 +152,7 @@ App.Views.ListDatabases = Backbone.View.extend({
 		// set the menu
 		dbMenu.mainmenu("databases");
 
+		// get the databases prepopulated in JSON
 		var databases = _.template($("#databases").html());
 		self.collection = new App.Collections.Databases(JSON.parse(databases()));
 		self.collection.on("add", self.renderOne, this);
@@ -137,8 +161,7 @@ App.Views.ListDatabases = Backbone.View.extend({
 	render: function() {
 		var self = this;
 		self.collection.each(function(database) {
-			var databaseRowView = new App.Views.ListDatabasesRow({model: database});
-			$("tbody#listDatabases").append(databaseRowView.render().el);
+			self.renderOne(database);
 		}, this);
 	},
 	renderOne: function(database) {
@@ -211,6 +234,7 @@ App.Views.AddDatabase = Backbone.View.extend({
  * View a database
  */
 App.Views.ViewDatabase = Backbone.View.extend({
+	tagName: "div",
 	id: null,
 	collection: getDatabasesCollection(),
 	template: _.template($("#viewDatabaseTemplate").html()),
@@ -226,6 +250,7 @@ App.Views.ViewDatabase = Backbone.View.extend({
 		}
 		else {
 			var model = this.collection.get(this.id);
+			self.model = model;
 		}
 		self.database = model.toJSON();
 
@@ -233,8 +258,22 @@ App.Views.ViewDatabase = Backbone.View.extend({
 		self.render();
 	},
 	renderMenu: function() {
+		// Here we render the menu by instantiating App.Views.DatabaseMenu
+		// this class needs the databaseUsersCollection, the databasesCollection
+		// and the model (the database) we're viewing.
+		// The menu will pass to corresponding views data as needed.
+
 		var self = this;
-		new App.Views.DatabaseMenu().render(self.database);
+		// set the users to use it to set the collection of database users and send it to the
+		// DatabaseMenu view, the databaseUsersCollection will be sent to the ListUsers and AddUsers views
+		var users = self.model.toJSON().users;
+		self.databaseUsersCollection = new App.Collections.DatabaseUsers(users);
+		
+		new App.Views.DatabaseMenu({
+			model: self.model, 
+			databasesCollection: self.collection, 
+			databaseUsersCollection: self.databaseUsersCollection 
+		}).render();
 	},
 	render: function() {
 		var self = this;
@@ -257,6 +296,9 @@ App.Views.ViewDatabase = Backbone.View.extend({
 			users: database.users, 
 			permissions: database.permissions
 		}));
+
+		// this view will handle showing the users
+		new App.Views.ListAllDatabaseUsers({collection: self.databaseUsersCollection, el: "div#databaseUsersContainer"});
 
 		// Hide
 		app.loading.hide();
@@ -450,57 +492,94 @@ App.Views.ShowDatabases = Backbone.View.extend({
 	}
 });
 
-App.Views.ListAllUsers = Backbone.View.extend({
-	collection: new App.Collections.DatabaseUsers(),
-	template: _.template($("#listDatabaseUsers-template").html()),
-	row: _.template($("#databaseUserRow-template").html()),
+App.Views.ListOneDatabaseUser = Backbone.View.extend({
+	tagName: "tr",
+	template: _.template($("#databaseUserRow-template").html()),
+	events: {
+		"click .removeDatabaseUser": "confirmRemoval",
+	},
 	initialize: function() {
-		app.loading.show();
-		this.collection.fetch();
-		this.render();
-
-		this.collection.on("add", "addUser", this);
+		this.model.on("change", this.render, this);
+		this.model.on("destroy", this.remove, this);
 	},
 	render: function() {
-		this.$el.html(this.template());
-		app.loading.show();
+		this.$el.html(this.template({user: this.model.toJSON()}));
+		return this;
 	},
-	addUser: function(user) {
-		console.log(user);
+	remove: function(e) {
+		this.$el.remove();
+		alert.success("The user was removed from the database");
+	},
+	confirmRemoval: function(e) {
+		e.preventDefault();
 		var self = this;
-		$("tbody").append(self.row({user: user}))
+		var databaseUser = self.model.toJSON();
+		
+		var modal = new Backbone.BootstrapModal({
+			title: "Are you sure you want to delete the user " + databaseUser.username,
+			content: "This operation cannot be undone, and the user will no longer have access to this database",
+			animate: true,
+		}).open();
+
+		modal.on("ok", function() {
+			console.log("Destroying user");
+			console.log(self.model);
+			self.model.destroy();
+		});
+		
+	}
+});
+
+App.Views.ListAllDatabaseUsers = Backbone.View.extend({
+	template: _.template($("#listDatabaseUsers-template").html()),
+	initialize: function() {
+		var self = this;
+		app.loading.show();
+		
+		self.collection.on("add", self.renderOne, this);
+		self.render();
+	},
+	render: function() {
+		var self = this;
+
+		// render the container template, where we define the table
+		self.$el.html(self.template());
+
+		self.collection.each(function(user) {
+			self.renderOne(user);
+		})
+	},
+	renderOne: function(user) {
+		var listOneDatabaseUser = new App.Views.ListOneDatabaseUser({model: user});
+		$("tbody#databaseUsers").append(listOneDatabaseUser.render().el);
 	}
 });
 
 App.Views.AddDatabaseUser = Backbone.View.extend({
-	databaseId: null,
 	database: {},
 	events: {
 		'click .submit': "save"
 	},
-	template: _.template($("#addDatabaseUser-template").html()),
-	templateGeneric: _.template($("#genericResponse").html()),
-	dataTemplate: _.template($("#genericData").html()),
+	formTemplate: _.template($("#addDatabaseUser-template").html()),
 	initialize: function(data) {
-		app.loading.show();
-		this.databaseId = data.id;
-		this.render();
-	},
-	changeTitle: function(database_name) {
-		$("h1").text("Create user on database " + database_name);
+		var self = this;
+		self.database = self.model.toJSON();
+		self.users = self.collection.toJSON();
+
+		self.render();
 	},
 	render: function() {
 		var self = this;
 
-		var database = new App.Models.Database({id: self.databaseId});
-		database.fetch({
-			success: function(model, response) {
-				var data = model.toJSON();
-				self.database = data.database;
-				self.$el.html(self.template({database: data.database, databaseId: self.databaseId}));
-				self.changeTitle(data.database.database_name);
-				app.loading.hide();
-			}
+		var form = self.formTemplate({database: self.database});
+		var modal = new Backbone.BootstrapModal({
+			title: "Add user to database",
+			content: form,
+			animate: true
+		}).open();
+
+		modal.on("ok", function() {
+			self.submit();
 		});
 	},
 	listen: function(id) {
@@ -510,8 +589,7 @@ App.Views.AddDatabaseUser = Backbone.View.extend({
 			self.$el.html(self.dataTemplate({stdout: data.stdout, stderr: data.stderr}));
 		})
 	},
-	save: function(e) {
-		e.preventDefault();
+	submit: function() {
 		app.loading.show();
 		var self = this;
 
@@ -530,12 +608,16 @@ App.Views.AddDatabaseUser = Backbone.View.extend({
 		var model = new App.Models.DatabaseUser();
 		model.save(values, {
 			success: function(model, response) {
-				self.$el.html(self.templateGeneric());
-				self.listen(response._id);
+				// self.$el.html(self.templateGeneric());
+				// self.listen(response._id);
 				app.loading.hide();
+
+				// add the model to the collection so it's detected
+				// the collection comes from the ViewDatabase View
+				self.collection.add(model);
 			},
-			error: function(model, response) {
-				new App.Views.Message({type: "danger", message: response.responseText});
+			error: function(model, error) {
+				alert.error(error.responseText);
 				app.loading.hide();
 			}
 		})
