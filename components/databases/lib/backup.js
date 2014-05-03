@@ -70,7 +70,9 @@ Backup.prototype.save = function(callback) {
 
 	var model = new Model(data);
 	model.save(function(err, result){
-		if(err) throw err;
+		if(err) {
+			callback(err, null);
+		}
 		if(result) callback(err, result);
 	});
 }

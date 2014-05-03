@@ -123,7 +123,7 @@ exports.postDatabase = function(req, res) {
 		Database.findOne({database_name: database_name, server: serverId})
 		.populate("server")
 		.exec(function(err, result) {
-			if(err) throw err;
+			if(err) res.send(406, err);
 			if(result) {
 				res.send(406, "The database exists in that server");
 			}
@@ -134,7 +134,7 @@ exports.postDatabase = function(req, res) {
 	}
 
 	Server.findOne({_id: serverId}, function(err, server) {
-		if(err) throw err;
+		if(err) res.send(406, err);
 		if(server) {
 			getDatabase(body.database_name, serverId, function(err, result) {
 				if(result) {
