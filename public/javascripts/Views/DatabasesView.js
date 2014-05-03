@@ -126,7 +126,12 @@ App.Views.ListDatabasesRow = Backbone.View.extend({
 			}).open();
 
 			modal.on("ok", function() {
-				self.model.destroy();
+				self.model.destroy({
+					wait: true, 
+					error: function(model, err) {
+						alert.error(err.responseText);
+					}
+				});
 			});
 		}
 	} 

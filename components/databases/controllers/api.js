@@ -232,7 +232,6 @@ exports.deleteDatabase = function(req, res) {
 				var mysql = new MySQL(database);
 				var command = mysql.dropDatabase();
 				var connection = new Connection(id, database.server);
-				console.log(command);
 				connection.executeAsync(command, function(stderr, stdout) {
 					Database.remove({_id: id}, function(err, result) {
 						DatabaseUser.find({database: id}, function(err, users) {

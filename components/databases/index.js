@@ -19,8 +19,10 @@ app.delete("/api/databases/:id", isUser, canRemove, isUnlocked, api.deleteDataba
 // actions
 app.post("/api/databases/showdatabases", isUser, isAdmin, api.postShowDatabases);
 app.post("/api/databases/showtables", isUser, canView, api.postShowTables);
-app.post("/api/databases/lock", isUser, canView, isUnlocked, api.postLockDatabase);
-app.post("/api/databases/unlock", isUser, canView, api.postUnLockDatabase);
+
+// anyone can lock, only admins can unlock
+app.post("/api/databases/lock", isUser, isUnlocked, api.postLockDatabase);
+app.post("/api/databases/unlock", isUser, isAdmin, api.postUnLockDatabase);
 app.post("/api/databases/showusersindatabase", isUser, canView, api.postShowUsersInDatabase);
 app.post("/api/databases/import", isUser, canImport, isUnlocked, api.postImportDatabase);
 
