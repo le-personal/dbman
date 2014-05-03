@@ -55,14 +55,14 @@ block templates
 		</div>
 		</td>
 block content
-	div.container
+	div.container.content
 		div.row
 			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
 				h1
 					span.title!= title
 					div.pull-right
 						div#actions
-							a(href="/databases#add").btn.btn-success Add database
+							button.add.btn.btn-success Add database
 				hr
 		div.row
 			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
@@ -78,7 +78,6 @@ block content
 									th Locked
 									th Actions
 							tbody#listDatabases
-
 					else
 						div.alert.alert-info
 							p No databases added

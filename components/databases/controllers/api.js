@@ -141,11 +141,9 @@ exports.postDatabase = function(req, res) {
 						server: serverId,
 						author: user,
 						permissions: {
+							view: [user],
 							edit: [user],
-							export: [user],
 							import: [user],
-							restore: [user],
-							backup: [user],
 							remove: [user]
 						},
 						isLocked: false,
@@ -175,9 +173,18 @@ exports.postDatabase = function(req, res) {
 								
 								var connection = new Connection(result._id, server);
 								connection.executeAsync(command, function(stderr, stdout) {
-									console.log(stderr);
-									console.log(stdout);
-									res.send(200, {stdout: stdout, stderr: stderr});
+									var send = {
+										database_name: databaseCreated.database_name,
+										database_type: databaseCreated.database_type,
+										author: databaseCreated.author,
+										permissions: databaseCreated.permissions,
+										isLocked: databaseCreated.isLocked
+									}
+									send.server = server;
+									send.stdout = stdout;
+									send.stderr = stderr;
+
+									res.send(201, send);
 								});
 							}
 							else {

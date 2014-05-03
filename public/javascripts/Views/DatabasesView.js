@@ -9,6 +9,15 @@ function getDatabasesCollection() {
 	return collection;
 }
 
+App.Views.DatabaseMenu = Backbone.View.extend({
+	el: "#actions",
+	menuTemplate: _.template($("#databaseMenu").html()),
+	render: function(database) {
+		var self = this;
+		this.$el.html(self.menuTemplate({database: database}))
+	}
+});
+
 /**
  * List one database row in the table
  */
@@ -94,10 +103,10 @@ App.Views.ListDatabasesRow = Backbone.View.extend({
  * List all databases
  */
 App.Views.ListDatabases = Backbone.View.extend({
-	el: $("tbody#listDatabases"),
-	
 	collection: null,
-	
+	events: {
+		"click .add": "addDatabase"
+	},
 	initialize: function() {
 		var self = this;
 
@@ -111,6 +120,7 @@ App.Views.ListDatabases = Backbone.View.extend({
 
 		var databases = _.template($("#databases").html());
 		self.collection = new App.Collections.Databases(JSON.parse(databases()));
+		self.collection.on("add", self.renderOne, this);
 		self.render();
 	},
 	render: function() {
@@ -119,15 +129,70 @@ App.Views.ListDatabases = Backbone.View.extend({
 			var databaseRowView = new App.Views.ListDatabasesRow({model: database});
 			$("tbody#listDatabases").append(databaseRowView.render().el);
 		}, this);
+	},
+	renderOne: function(database) {
+		var databaseRowView = new App.Views.ListDatabasesRow({model: database});
+		$("tbody#listDatabases").append(databaseRowView.render().el);
+	},
+	addDatabase: function(e) {
+		e.preventDefault();
+		var self = this;
+		new App.Views.AddDatabase({collection: self.collection});
 	}
 });
 
-App.Views.DatabaseMenu = Backbone.View.extend({
-	el: "#actions",
-	menuTemplate: _.template($("#databaseMenu").html()),
-	render: function(database) {
+/**
+ * Create a database
+ */
+App.Views.AddDatabase = Backbone.View.extend({
+	template: _.template($("#addDatabaseTemplate").html()),
+	servers: new App.Collections.Servers(),
+	initialize: function() {
 		var self = this;
-		this.$el.html(self.menuTemplate({database: database}))
+		
+		self.servers.fetch({
+			success: function(models, response) {
+				self.render();
+			},
+			error: function(models, error) {
+				alert.error(error.responseText);
+			}
+		});
+	},
+	render: function() {
+		var self = this;
+		var servers = self.servers.toJSON();
+
+		var form = self.template({servers: servers});
+		var modal = new Backbone.BootstrapModal({
+			title: "Add a database",
+			content: form
+		}).open();
+
+		modal.on("ok", function() {
+			self.submit();
+		});
+	},
+	submit: function() {
+		app.loading.show();
+		
+		var self = this;
+		var data = {}
+		var formValues = $("form").serializeArray();
+		_.each(formValues, function(element) {
+			data[element.name] = element.value;
+		});
+
+		var model = new App.Models.Database();
+		model.save(data, {
+			success: function(m, response) {
+				app.loading.hide();
+				self.collection.add(m);
+			},
+			error: function(m, error) {
+				alert.error(error.responseText);
+			}
+		});
 	}
 });
 
@@ -183,53 +248,7 @@ App.Views.ViewDatabase = Backbone.View.extend({
 });
 
 
-/**
- * Create a database
- */
-App.Views.AddDatabase = Backbone.View.extend({
-	template: _.template($("#addDatabaseTemplate").html()),
-	collection: getDatabasesCollection(),
-	servers: new App.Collections.Servers(),
-	events: {
-		"click .submit": "save"
-	},
-	initialize: function() {
-		var self = this;
-		
-		app.title.set("Add database");
 
-		self.servers.fetch({
-			success: function(models, response) {
-				self.render();
-			},
-			error: function() {}
-		});
-	},
-	render: function() {
-		var self = this;
-		var servers = self.servers.toJSON();
-		self.$el.html(self.template({servers: servers}));
-	},
-	save: function(e) {
-		e.preventDefault();
-		
-		var data = {}
-		var formValues = $("form").serializeArray();
-		_.each(formValues, function(element) {
-			data[element.name] = element.value;
-		});
-
-		var model = new App.Models.Database();
-		model.save(data, {
-			success: function(m, response) {
-				alert.success("Database created successfully");
-			},
-			error: function(m, response) {
-				alert.error(response.responseText);
-			}
-		})
-	}
-});
 
 /**
  * Show tables in a database

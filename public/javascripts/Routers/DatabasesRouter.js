@@ -18,7 +18,7 @@ App.Routers.DatabasesRouter = Backbone.Router.extend({
 		"permissions/:id": "permissions"
 	},
 	listDatabases: function() {
-		new App.Views.ListDatabases({el: "div#content"});
+		new App.Views.ListDatabases({el: "div.content"});
 	},
 	viewDatabase: function(id) {
 		new App.Views.ViewDatabase({el: "div#content", id: id});
