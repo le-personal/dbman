@@ -11,8 +11,8 @@ var multipartMiddleware = multipart();
 
 // var fileupload = require('fileupload').createFileUpload("/home/luis/files").middleware;
 
-app.get("/api/files", isUser, isAdmin, api.getFiles);
-app.get("/api/files/:id", isUser, isAdmin, api.getFile);
+app.get("/api/files", isUser, api.getFiles);
+app.get("/api/files/:id", isUser, api.getFile);
 app.post("/api/files", multipartMiddleware, api.postFile);
 
 

@@ -364,8 +364,8 @@ App.Views.ShowTables = Backbone.View.extend({
 			alert.show("success", "The tables on the database " + self.database.database_name + " are");
 		})
 
-		self.model.on("showTables:error", function() {
-			alert.error("There was an error");
+		self.model.on("showTables:error", function(err) {
+			alert.error(err.responseText);
 		})
 	}
 });
@@ -680,8 +680,6 @@ App.Views.Import = Backbone.View.extend({
 				self.database = database;
 				self.$el.html(self.template({database: database, server: database.server}));
 				app.loading.hide();
-
-				alert.success("Database imported successfully");
 			},
 			error: function(model, error) {
 				alert.error(error.responseText);

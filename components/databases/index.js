@@ -27,12 +27,15 @@ app.post("/api/databases/import", isUser, canImport, isUnlocked, api.postImportD
 app.post("/api/databases/permissions", isAdmin, api.postPermissions);
 
 // users
-app.get("/api/databases/users", isUser, canEdit, api.getDatabaseUsers);
+// no permissions here because we always need an id to check for permissions
+app.get("/api/databases/users", isUser, api.getDatabaseUsers);
 app.get("/api/databases/users/:id", isUser, canEdit, api.getDatabaseUser);
 app.post("/api/databases/users", isUser, canEdit, api.postDatabaseUser);
 app.delete("/api/databases/users/:id", isUser, canEdit, api.deleteDatabaseUser);
 
-app.get("/api/databases/backups", isUser, canView, api.getBackups);
+// no permissions here because we always need an id to check for permissions
+app.get("/api/databases/backups", isUser, api.getBackups);
 app.get("/api/databases/backups/:id", isUser, canView, api.getBackup);
-app.post("/api/databases/backups", isUser, canView, api.postCreateBackup);
+// no permissions here because we always need an id to check for permissions
+app.post("/api/databases/backups", isUser, api.postCreateBackup);
 app.delete("/api/databases/backups/:id", isUser, canView, api.deleteBackup);

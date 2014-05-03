@@ -22,18 +22,20 @@ function getUser(userId, callback) {
 }
 
 module.exports = exports = function(req, res, next) {
-	var id = req.params.id;
+	var id = req.param("id");
+
 	var userId = req.user;
 
 	getUser(userId, function(err, isAdmin) {
 		if(isAdmin) {
 			next();
 		}
-
 		else {
 			Database.findOne({_id: id})
 			.populate("permissions.view")
 			.exec(function(err, result) {
+				console.log(err);
+				console.log(result);
 				if(err) res.send(404);
 				if(!result) res.send(404);
 				if(result) {

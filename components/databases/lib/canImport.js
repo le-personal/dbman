@@ -22,7 +22,7 @@ function getUser(userId, callback) {
 }
 
 module.exports = exports = function(req, res, next) {
-	var id = req.params.id;
+	var id = req.param("id");
 	var userId = req.user;
 
 	getUser(userId, function(err, isAdmin) {
