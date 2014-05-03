@@ -450,75 +450,6 @@ App.Views.ShowDatabases = Backbone.View.extend({
 	}
 });
 
-
-App.Views.LockDatabase = Backbone.View.extend({
-	id: null,
-	collection: getDatabasesCollection(),
-	initialize: function(data) {
-		var self = this;
-		self.id = data.id;
-		self.render();
-	},
-	changeStatus: function() {
-		var self = this;
-		$("td.database-status-" + self.id).text("true");
-	},
-	render: function() {
-		var self = this;
-		var model = self.collection.get(self.id);
-
-		model.lockDatabase(this.id);
-
-		// the model will fire a success or error event on completion
-		model.on("lockDatabase:success", function(data) {
-			// once we have the response we can display the data of stdout
-			// if we made a Sync operation, we use the method listen
-			alert.show("success", "The database is now locked");
-			// self.changeStatus();
-		})
-
-		model.on("lockDatabase:error", function(error) {
-			alert.error(error.responseText);
-		});
-	}
-});
-
-/**
- * Unlock database
- */
-App.Views.UnlockDatabase = Backbone.View.extend({
-	id: null,
-	collection: getDatabasesCollection(),
-	initialize: function(data) {
-		var self = this;
-		self.id = data.id;
-		self.render();
-	},
-	changeStatus: function() {
-		var self = this;
-		$("td.database-status-" + self.id).text("false");
-	},
-	render: function() {
-		var self = this;
-		var model = self.collection.get(self.id);
-
-		model.unlockDatabase(this.id);
-
-		// the model will fire a success or error event on completion
-		model.on("unlockDatabase:success", function(data) {
-			// once we have the response we can display the data of stdout
-			// if we made a Sync operation, we use the method listen
-			alert.show("success", "The database is now unlocked, you can make changes to it");
-
-			self.changeStatus();
-		})
-
-		model.on("unlockDatabase:error", function(error) {
-			console.log(error.responseText);
-		})
-	}
-});
-
 App.Views.ListAllUsers = Backbone.View.extend({
 	collection: new App.Collections.DatabaseUsers(),
 	template: _.template($("#listDatabaseUsers-template").html()),
@@ -981,9 +912,6 @@ App.Views.AddPermissionsForm = Backbone.View.extend({
 				$("#selectedUser").val(user._id);
 			} 
 		});
-	},
-	okClicked: function() {
-
 	}
 });
 
@@ -1022,16 +950,14 @@ App.Views.Permissions = Backbone.View.extend({
 		this.database = this.collection.get(self.id);
 		var database = self.database.toJSON();
 
-		// Set the title and breadcrumb
-		new App.Title().set("Permissions for database: " + database.database_name);
+		app.title.set("Permissions for database " + database.database_name);
 
-		// Set the breadcrumb
-		new App.Breadcrumb().add([
-			{link: "/databases", title: "Databases"},
-			{link: "#view/" + database._id, title: database.database_name},
-			{link: "#permissions/" + database._id, title: "Permissions"}
-		]);
-		
+		app.breadcrumb.reset();
+		app.breadcrumb.add("Databases", "/databases");
+		app.breadcrumb.add(database.database_name, "#view/" + database._id);
+		app.breadcrumb.add("Permissions");
+		app.breadcrumb.render();
+
 		// add the main content
 		self.$el.html(self.template({database: database}));
 

@@ -22,21 +22,21 @@ script(type="text/template" id="permissionRow")
 			<a href="#" class="btn btn-danger btn-xs revoke-access-btn" data-permission="<%= permission %>" id="<%= _id %>">Revoke access</a>
 script(type="text/template", id="permissionsTemplate")
 	div#content
-		div.btn-group
-			<a href="#allowaccess/<%= database._id %>" class="btn btn-primary allowAccess">Allow access to user</a>
-		table.table.table-striped.table-condensed.table-hover
+		table.table.table-striped.table-condensed.table-hover.well
 			thead
-				th View
+				th View access
 			tbody#membersWithViewAccess
-		table.table.table-striped.table-condensed.table-hover
+		table.table.table-striped.table-condensed.table-hover.well
 			thead
-				th Edit
+				th Edit access
 			tbody#membersWithEditAccess
-		table.table.table-striped.table-condensed.table-hover
+		table.table.table-striped.table-condensed.table-hover.well
 			thead
-				th Import
+				th Import access
 			tbody#membersWithImportAccess
-		table.table.table-striped.table-condensed.table-hover
+		table.table.table-striped.table-condensed.table-hover.well
 			thead
-				th Remove
+				th Remove access
 			tbody#membersWithRemoveAccess
+		hr
+		<a href="#allowaccess/<%= database._id %>" class="btn btn-primary allowAccess">Allow access to user</a>

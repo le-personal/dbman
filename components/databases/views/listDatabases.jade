@@ -36,7 +36,7 @@ block templates
 		!{json}
 	script(type="text/template", id="databaseRow")
 		<td>
-		<a href="/databases#view/<%= database._id %>"><%= database.database_name %></a>
+		<a href="/databases#view/<%= database._id %>" class="viewDatabase"><%= database.database_name %></a>
 		</td>
 		<td>
 		<a href="/databases#showDatabases/<%= database._id %>"><%= database.server.name %></a>
