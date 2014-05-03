@@ -835,25 +835,25 @@ exports.postPermissions = function(req, res) {
 
 			switch(permission) {
 				case "view":
-					var query = Database.update({_id: database}, {$push: {
+					var query = Database.update({_id: database}, {$addToSet: {
 						"permissions.view": user
 					}});
 				break;
 
 				case "edit":
-					var query = Database.update({_id: database}, {$push: {
+					var query = Database.update({_id: database}, {$addToSet: {
 						"permissions.edit": user
 					}});
 				break;
 
 				case "import":
-					var query = Database.update({_id: database}, {$push: {
+					var query = Database.update({_id: database}, {$addToSet: {
 						"permissions.import": user
 					}});
 				break;
 
 				case "remove":
-					var query = Database.update({_id: database}, {$push: {
+					var query = Database.update({_id: database}, {$addToSet: {
 						"permissions.remove": user
 					}});
 				break;

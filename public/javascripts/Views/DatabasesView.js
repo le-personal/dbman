@@ -678,15 +678,13 @@ App.Views.Import = Backbone.View.extend({
 			success: function(model, response) {
 				var database = model.toJSON();
 				self.database = database;
-				self.changeTitle();
 				self.$el.html(self.template({database: database, server: database.server}));
 				app.loading.hide();
+
+				alert.success("Database imported successfully");
 			},
-			error: function(model, response) {
-				new App.Views.Message({
-					type: "danger",
-					message: response.responseText
-				});
+			error: function(model, error) {
+				alert.error(error.responseText);
 				app.loading.hide();
 			}
 		});
@@ -703,9 +701,6 @@ App.Views.Import = Backbone.View.extend({
 	updateProgressBar: function(percentage) {
 		var bar = $("#progress .bar");
 		bar.css('width', percentage + '%').attr("aria-valuenow", percentage);
-	},
-	changeTitle: function() {
-		$("h1").text("Import a database into " + this.database.database_name);
 	},
 	upload: function(e) {
 		e.preventDefault();
@@ -757,8 +752,8 @@ App.Views.Import = Backbone.View.extend({
 		var file = new App.Models.File({id: fileId});
 		file.fetch({
 			success: function(model, response) {
-				// trigger the import step
-				self.trigger("importDatabase", model);
+				// call the import step
+				self.importDatabase(model);
 				app.loading.hide();
 			},
 			error: function(model, response) {
@@ -786,19 +781,12 @@ App.Views.Import = Backbone.View.extend({
 		db.importDatabase(data.database, data.file);
 
 		db.on("importDatabase:success", function(response) {
-			new App.Views.Message({
-				type: "success",
-				message: "Successfully imported the database"
-			});
+			alert.success("Successfully imported the database");
 			app.loading.hide();
 		})
 
 		db.on("importDatabase:error", function(error) {
-			new App.Views.Message({
-				type: "danger",
-				message: error.responseText
-			});
-			app.loading.hide();
+			alert.error(error.responseText);
 		})
 	},
 	renderGenericTemplate: function(data) {
@@ -901,6 +889,17 @@ App.Views.CreateBackup = Backbone.View.extend({
 	}
 });
 
+/** 
+ * List one backup 
+ */
+App.Views.ListOneBackup = Backbone.View.extend({
+	tagName: "tr",
+	template: _.template($("#listBackupsRow-template").html()),
+	render: function() {
+		this.$el.html(this.template({backup: this.model.toJSON()}));
+		return this;
+	}
+});
 
 /**
  * List all backups for a database
@@ -910,9 +909,7 @@ App.Views.ListBackups = Backbone.View.extend({
 	database: {},
 	backups: {},
 	databases: getDatabasesCollection(),
-	collection: new App.Collections.Backups(),
 	template: _.template($("#listBackups-template").html()),
-	rowTemplate: _.template($("#listBackupsRow-template").html()),
 	initialize: function(data) {
 		app.loading.show();
 		var self = this;
@@ -921,41 +918,51 @@ App.Views.ListBackups = Backbone.View.extend({
 		var db = self.databases.get(self.databaseId);
 		db.getDatabase();
 		db.on("getDatabase:success", function(model, response) {
-			self.database = response;
+			self.database = model.toJSON();
+			self.setBreadcrumbAndTitle();
 
-			app.title.set("Backups of " + self.database.database_name);
+			// Create collection and populate it
+			self.collection = new App.Collections.Backups(self.database.backups);
 
-			app.breadcrumb.reset();
-			app.breadcrumb.add("Databases", "/databases");
-			app.breadcrumb.add(self.database.database_name, "#view/" + self.database._id);
-			app.breadcrumb.add("Backups");
-			app.breadcrumb.render();
-			
-			self.backups = response.backups;
+			// render the container template where we define the table
+			self.$el.html(self.template());
+
+			// render 
 			self.render();
-
-			self.collection.reset();
-			_.each(response.backups, function(backup) {
-				self.collection.add(backup);
-			})
+			
+			// listener
+			self.collection.on("add", self.renderOne, this);
 		});
 
-		self.collection.on("add", self.renderRow, this);
-	},	
+	},
+	setBreadcrumbAndTitle: function() {
+		var self = this;
+		app.title.set("Backups of " + self.database.database_name);
+
+		app.breadcrumb.reset();
+		app.breadcrumb.add("Databases", "/databases");
+		app.breadcrumb.add(self.database.database_name, "#view/" + self.database._id);
+		app.breadcrumb.add("Backups");
+		app.breadcrumb.render();
+	},
 	render: function() {
 		var self = this;
-		self.$el.html(self.template({database: self.database, backups: self.backups}))
+
+		self.collection.each(function(backup) {
+			self.renderOne(backup);
+		});
+
 		app.loading.hide();
 	},
-	renderRow: function(model) {
-		var self = this;
-		var backup = model.toJSON();
-		$("tbody").prepend(self.rowTemplate({backup: backup}))
+	renderOne: function(backup) {
+		var listOneBackup = new App.Views.ListOneBackup({model: backup});
+		$("tbody#backupsList").append(listOneBackup.render().el);
 	}
 });
 
 
 App.Views.AddPermissionsForm = Backbone.View.extend({
+	tagName: "div",
 	formTemplate: _.template($("#permissionsForm").html()),
 	initialize: function() {
 		var self = this;
@@ -975,7 +982,7 @@ App.Views.AddPermissionsForm = Backbone.View.extend({
 	render: function() {
 		var self = this;
 		app.loading.hide();
-		this.$el.html(self.formTemplate());
+		this.$el.empty().html(self.formTemplate());
 
 		var users = this.users;
 		var userNames = users.pluck("fullName");
@@ -994,6 +1001,7 @@ App.Views.AddPermissionsForm = Backbone.View.extend({
 });
 
 App.Views.Permissions = Backbone.View.extend({
+	tagName: "div",
 	id: null,
 	collection: getDatabasesCollection(),
 	database: null,
@@ -1008,26 +1016,36 @@ App.Views.Permissions = Backbone.View.extend({
 		self.id = data.id;
 		app.loading.show();
 
+		// get the model from the collection, not from the server
+		// this is enought to set the breadcumb and title and to call render
+		self.model = self.collection.get(self.id);
+
+		// save the JSON to self.database
+		self.database = self.model.toJSON();
+
+		// set breadcrumb and title
+		self.setBreadcrumbAndTitle();
+
+		// render 
+		self.render();
+
+		// rebuild the collection and re-render
 		self.collection.on("reset", function() {
+			console.log("Listened reset");
 			self.collection.fetch({
-				success: function() {
+				success: function(model, response) {
+					console.log("Got success");
 					self.render();
 				},
 				error: function(model, response) {
-					// self.render();
-					alert("ERROR");
+					alert.error(response.responseText);
 				}
 			});
 		}, this);
-
-		this.render();
 	},
-	render: function() {
+	setBreadcrumbAndTitle: function() {
 		var self = this;
-
-		this.database = this.collection.get(self.id);
-		var database = self.database.toJSON();
-
+		var database = self.database;
 		app.title.set("Permissions for database " + database.database_name);
 
 		app.breadcrumb.reset();
@@ -1035,58 +1053,73 @@ App.Views.Permissions = Backbone.View.extend({
 		app.breadcrumb.add(database.database_name, "#view/" + database._id);
 		app.breadcrumb.add("Permissions");
 		app.breadcrumb.render();
+	},
+	render: function() {
+		var self = this;
 
-		// add the main content
-		self.$el.html(self.template({database: database}));
+		// get the database each time the render is triggered
+		// this is because we call render when we reset the collection
+		self.model.getDatabase();
+		self.model.on("getDatabase:success", function(model, response) {
+			// reset the model
+			self.model = model;
+			self.database = model.toJSON();
 
-		var permissions = database.permissions;
-		
-		// for each permission add the right template with the right data
-		_.each(database.permissions.view, function(viewAccess) {
-			var data = viewAccess;
-			data.permission = "view";
-			$("#membersWithViewAccess").append(self.permissionRow(data));
+			var database = self.database;
+
+			// add the main content
+			self.$el.html(self.template({database: database}));
+
+			var permissions = database.permissions;
+			
+			// for each permission add the right template with the right data
+			_.each(database.permissions.view, function(viewAccess) {
+				var data = viewAccess;
+				data.permission = "view";
+				$("#membersWithViewAccess").append(self.permissionRow(data));
+			});
+
+			_.each(database.permissions.edit, function(editAccess) {
+				var data = editAccess;
+				data.permission = "edit";
+				$("#membersWithEditAccess").append(self.permissionRow(data));
+			});
+
+			_.each(database.permissions.import, function(importAccess) {
+				var data = importAccess;
+				data.permission = "import";
+				$("#membersWithImportAccess").append(self.permissionRow(data));
+			});
+
+			_.each(database.permissions.remove, function(removeAccess) {
+				var data = removeAccess;
+				data.permission = "remove";
+				$("#membersWithRemoveAccess").append(self.permissionRow(data));
+			});
+
+			app.loading.hide();
 		});
-
-		_.each(database.permissions.edit, function(editAccess) {
-			var data = editAccess;
-			data.permission = "edit";
-			$("#membersWithEditAccess").append(self.permissionRow(data));
-		});
-
-		_.each(database.permissions.import, function(importAccess) {
-			var data = importAccess;
-			data.permission = "import";
-			$("#membersWithImportAccess").append(self.permissionRow(data));
-		});
-
-		_.each(database.permissions.remove, function(removeAccess) {
-			var data = removeAccess;
-			data.permission = "remove";
-			$("#membersWithRemoveAccess").append(self.permissionRow(data));
-		});
-
-		app.loading.hide();
 	},
 	openForm: function(e) {
 		e.preventDefault();
 		var self = this;
 
-		var content = new App.Views.AddPermissionsForm();
+		var form = new App.Views.AddPermissionsForm();
 		var modal = new Backbone.BootstrapModal({
-			content: content
+			content: form
 		}).open();
 
 		modal.on("ok", function() {
 			var user = $("#selectedUser").val();
 			var permission = $("select[name=access]").val();
-			var database = self.database.toJSON();
+			var database = self.database;
 			var id = database._id;
 			
-			self.database.addPermission(id, user, permission);
+			self.model.addPermission(id, user, permission);
 
-			self.database.on("addPermission:success", function(response) {
+			self.model.on("addPermission:success", function(response) {
 				self.collection.reset();
+				modal.remove();
 			})
 		})
 	},
@@ -1096,12 +1129,12 @@ App.Views.Permissions = Backbone.View.extend({
 
 		var user = $(e.currentTarget).attr("id");
 		var permission = $(e.currentTarget).attr("data-permission");
-		var database = self.database.toJSON();
+		var database = self.database;
 		var id = database._id;
 
-		self.database.removePermission(id, user, permission);
+		self.model.removePermission(id, user, permission);
 
-		self.database.on("removePermission:success", function(response) {
+		self.model.on("removePermission:success", function(response) {
 			self.collection.reset();
 		})
 	}
