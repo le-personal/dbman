@@ -20,7 +20,6 @@ App.Views.DatabaseMenu = Backbone.View.extend({
 	menuTemplate: _.template($("#databaseMenu").html()),
 	initialize: function(data) {
 		var self = this;
-		console.log("Initialized menu, check the colleccion that we passed");
 
 		// since we use a different name than collection, we need to map it here
 		// or it will not be recognized
@@ -522,11 +521,8 @@ App.Views.ListOneDatabaseUser = Backbone.View.extend({
 		}).open();
 
 		modal.on("ok", function() {
-			console.log("Destroying user");
-			console.log(self.model);
 			self.model.destroy();
 		});
-		
 	}
 });
 
