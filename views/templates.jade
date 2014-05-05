@@ -1,0 +1,41 @@
+//- layout view
+
+
+
+//- /** 
+//-  * Template to show alerts / messages
+//-  */
+script(type="text/template", id="message")
+	<div class="alert alert-<%= type %>"><span><%= message %></span><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button></div>
+
+//- /** 
+//-  * Template to handle the title 
+//-  */
+script(type="text/template", id="title-template")
+	h1
+		span.title <%= title %>
+		div.pull-right
+			div#actions
+	hr
+
+//- /** 
+//-  * Template to handle the contextual menu 
+//-  */
+script(type="text/template", id="context-menu")
+	<a href="<%= href %>" class="btn btn-<%= type %> <%= class %>"><%= title %></a> 
+
+//- /** 
+//-  * Template to handle data response 
+//-  */
+script(type="text/template", id="data")
+	div.row
+		div.col-lg-12.col-md-12.col-sm-12.col-xs-12
+			<% if(stdout) { %>
+			h3 stdout
+			pre <%= stdout %>
+			<% } %>
+
+			<% if(stderr) { %>
+			h3 stderr
+			pre.alert.alert-danger <%= stderr %>
+			<% } %>

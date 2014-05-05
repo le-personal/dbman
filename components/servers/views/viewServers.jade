@@ -1,0 +1,30 @@
+extends /layout
+
+block scripts
+	script(src="/vendor/requirejs/require.js", data-main="/js/server")
+
+block templates
+	include viewServer
+	include addServer
+	script(type="text/template", id="data-servers")
+		!{json}
+	script(type="text/template", id="view-server")
+		td <%= name %>
+		td <%= ip %>
+		td <%= os %>
+		td
+			div.btn-group
+				<a href="/servers#view/<%= _id %>" class="btn btn-xs btn-primary">View</a>
+				<a href="/servers#edit/<%= _id %>" class="btn btn-xs btn-primary">Edit</a>
+				<a href="/servers#delete/<%= _id %>" class="btn btn-xs btn-primary">Delete</a>
+	script(type="text/template", id="view-servers")
+		table.table.table-hover.table-bordered.table-striped.well
+			thead
+				tr
+					th Name
+					th IP
+					th OS
+					th Actions
+			tbody
+	script(type="text/template", id="empty-servers")
+		p No servers added

@@ -1,39 +1,39 @@
 script(type="text/template", id="viewServerTemplate")
 	div.btn-group
-		<a href="#testConnection/<%= server._id %>" class="btn btn-primary">Test connection</a>
+		<a href="#testConnection/<%= _id %>" class="btn btn-primary">Test connection</a>
 	div#content
 		h3 Server information
 		table.table.table-striped
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Name:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= name %>
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 IP:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= ip %>
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 SSH Username:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ssh_username %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= ssh_username %>
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 OS:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.os %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= os %>
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.created %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= created %>
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.author.fullName %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= author.fullName %>
 
 		h3 Services
 		hr
 
-		h4 <%= server.service.type %>
+		h4 <%= service.type %>
 		table.table.table-striped
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Service type:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.service.type %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= service.type %>
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Username:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.service.username %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= service.username %>
 			tr
 				td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Port:
-				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.service.port %>
+				td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= service.port %>

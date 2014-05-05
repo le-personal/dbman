@@ -12,6 +12,6 @@ exports.getServers = function(req, res) {
 			json: JSON.stringify(results)
 		}
 
-		res.render("listServers", render);
+		res.render("viewServers", render);
 	});
 }

@@ -7,13 +7,19 @@ html
 		div.loading
 			img(src="/images/loading.gif").loadingImage
 			div.loadingText Loading
-		include header
 		div#templates
-			include /message
+			include /templates
+			include header
 			block templates
 		div#page
+			div#header
 			div.container
-					ol.breadcrumb
+				div.row
+					div.col-lg-12
+						div#title
+				div.row
+					div.col-lg-12
+						div#main
 			block content
 		include scripts
 		block scripts

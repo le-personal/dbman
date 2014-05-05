@@ -12,6 +12,8 @@
     "jquery.iframe-transport": "*",
     "blueimp-file-upload": "*",
     "backbone.bootstrap-modal": "https://github.com/powmedia/backbone.bootstrap-modal/archive/bootstrap3.zip",
-    "typeahead.js": "*"
+    "typeahead.js": "*",
+    "requirejs": "*",
+    "backbone.marionette": "*"
   }
 }
