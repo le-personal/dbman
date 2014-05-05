@@ -42,3 +42,5 @@ app.get("/admin/users/delete/:id", isUser, isAdmin, controller.getAdminDeleteUse
 app.post("/admin/users/delete/:id", isUser, isAdmin, controller.postAdminDeleteUser);
 
 app.get("/api/users", isUser, controller.apiGetUsers);
+
+app.get("/api/session", isUser, controller.apiGetSession);

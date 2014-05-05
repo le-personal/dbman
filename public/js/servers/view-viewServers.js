@@ -13,7 +13,6 @@ define([
 		itemViewContainer: "tbody",
 		// emptyView: 
 		onRender: function() {
-			console.log("view-viewServers:rendered");
 		}
 	});
 

@@ -1,4 +1,4 @@
-script(type="text/template")#header-menu
+script(type="text/template")#header-template
   nav(role="navigation", style="margin-bottom: 0").navbar.navbar-inverse.navbar-static-top
     div.container-fluid
       <!-- Brand and toggle get grouped for better mobile display -->
@@ -14,12 +14,14 @@ script(type="text/template")#header-menu
       div.collapse.navbar-collapse#navbar
         -if(user)
           ul.nav.navbar-nav
+            <% if(isAdmin) { %>
             li.servers.active
               a(href="/servers") Servers
-            li.databases
-              a(href="/databases") Databases
             li.users
               a(href="/admin/users") Users
+            <% } %>
+            li.databases
+              a(href="/databases") Databases
         ul.nav.navbar-nav.pull-right
           -if(!user)
             li

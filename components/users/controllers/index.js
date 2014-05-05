@@ -503,3 +503,19 @@ exports.apiGetUsers = function(req, res) {
 		}
 	});
 }
+
+exports.apiGetSession = function(req, res) {
+	var userId = req.user;
+
+	Model.findOne({_id: userId}, function(err, user) {
+		if(err) {
+			res.send(403);
+		}
+		if(user) {
+			var send = user.toObject();
+			delete send.password;
+
+			res.send(200, send);
+		}
+	})
+}

@@ -4,7 +4,8 @@ define([
 	, "marionette"
   , "underscore"
   , "/js/servers/view-viewTitle.js"
-], function ($, Backbone, Marionette, _, ViewTitle) {
+  , '/js/servers/session.js',
+], function ($, Backbone, Marionette, _, ViewTitle, Session) {
   var App = new Backbone.Marionette.Application();
 
   function isMobile() {
@@ -19,7 +20,7 @@ define([
   });
 
   App.addInitializer(function () {
-      Backbone.history.start();
+    Backbone.history.start();
   });
 
   // instantiate the view that shows the title and map it to App.title so
@@ -29,6 +30,9 @@ define([
   // Eg. App.title.set("Some title");
   App.title = new ViewTitle({title: ""});
   App.titleRegion.show(App.title);
+
+  // instantiate the session class
+  App.session = new Session();
 
   // This handles the show/hide of the loading animation
   // We do this with events so if we want to trigger them
@@ -40,6 +44,7 @@ define([
   App.vent.on("showLoading", function() {
     $(".loading").show();
   });
+
 
   App.mobile = isMobile();
 

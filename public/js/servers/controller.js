@@ -6,15 +6,20 @@ define([
   'marionette', 
   '/js/servers/view-viewServers.js', 
   '/js/servers/view-viewTitle.js', 
+  '/js/servers/view-viewHeader.js',
   "/js/servers/collection.js"
 ],
-  function ($, _, App, Backbone, Marionette, ViewServers, ViewTitle, Collection) {
+  function ($, _, App, Backbone, Marionette, ViewServers, ViewTitle, ViewHeader, Collection) {
   return Backbone.Marionette.Controller.extend({
       initialize:function (options) {
         // trigger the showLoading event
         App.vent.trigger("showLoading");
+
+        App.session.load();
+        App.session.on("sessionLoaded", function(user) {
+          App.headerRegion.show(new ViewHeader({user: user}));
+        });
         
-         //  App.headerRegion.show(new DesktopHeaderView());
       },
       //gets mapped to in AppRouter's appRoutes
       viewServers:function () {
