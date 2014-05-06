@@ -11,16 +11,23 @@ define(function (require) {
   var loading = require("/js/servers/loading.js");
   var Title = require("/js/servers/view-viewTitle.js");
   var DataView = require("/js/servers/view-data.js");
+  var MenuView = require("/js/servers/view-viewMenu.js");
+  var BootstrapModal = require("backboneBootstrapModal");
+  var AddServerFormView = require("/js/servers/view-addServerFormView.js")
 
   var Controller = Backbone.Marionette.Controller.extend({
     listenTo: {
       "showServerView": "showServerView",
-      "testConnection": "testConnection"
+      "testConnection": "testConnection",
+      "onClick:menu:add": "showAddServerForm"
     },
     initialize:function (options) {
       var self = this;
-      this.collection = new Collection();
-      this.collection.reset();
+
+       // Get the data from the template #data-servers
+      var data = _.template($("#data-servers").html());
+      this.collection = new Collection(JSON.parse(data()));
+      // this.collection.reset();
 
       // create a new title and add it to the title region in the layout
       // if we need to change the title we just do this.title.set("new title");
@@ -28,7 +35,7 @@ define(function (require) {
       layout.title.show(this.title);
 
       // listen to all events in this.listenTo and execute the value
-      _.each(this.listenTo, function(index, value) {
+      _.each(this.listenTo, function(value, index) {
         Backbone.on(index, function(options) {
           self[value](options);
         });
@@ -58,20 +65,20 @@ define(function (require) {
       // show loading
       loading.show();
 
-      // Get the data from the template #data-servers
-      var data = _.template($("#data-servers").html());
-
       // // instantiate the collection and pass it to ViewServers    
-      var collection = new Collection(JSON.parse(data()));
+      var collection = this.collection;
 
       this.title.set("Servers");
       var viewServers = new ViewServers({collection: collection});
+      
+      layout.menu.show(new MenuView({title: "Add server", name: "add"}));
 
       // add the viewServers to the main region in the layout
       layout.main.show(viewServers);
 
       // hide loading
       loading.hide();
+
     },
     showServerView: function(options) {
       var self = this;
@@ -88,6 +95,15 @@ define(function (require) {
         loading.hide();
         layout.main.show(new DataView(data).render());
       });
+    },
+    showAddServerForm: function(options) {
+      var addServerForm = new AddServerFormView({collection: this.collection});
+      var modal = new Backbone.BootstrapModal({
+        title: "Add server",
+        content: addServerForm
+      });
+
+      modal.open();
     }
   });
 

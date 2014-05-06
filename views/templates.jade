@@ -21,14 +21,14 @@ script(type="text/template", id="title-template")
 	h1
 		span.title <%= title %>
 		div.pull-right
-			div#actions
+			div#menu
 	hr
 
 //- /** 
 //-  * Template to handle the contextual menu 
 //-  */
 script(type="text/template", id="context-menu")
-	<a href="<%= href %>" class="btn btn-<%= type %> <%= class %>"><%= title %></a> 
+	<button class="btn btn-<%= type %> <%= name %>"><%= title %></button> 
 
 //- /** 
 //-  * Template to handle data response 

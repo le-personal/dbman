@@ -4,6 +4,7 @@ define(function(require) {
 	var Model = require("/js/servers/model.js");
 	var Collection = require("/js/servers/collection.js");
 	var vent = require("/js/servers/vent.js");
+	var navigate = require("/js/servers/navigator.js");
 
 	var ViewServer = Backbone.Marionette.ItemView.extend({
 		tagName: "tr",
@@ -13,7 +14,7 @@ define(function(require) {
 			"click .test": "testConnection"
 		},
 		showServerView: function() {
-			Backbone.trigger("showServerView", {model: this.model});
+			navigate.to("view", this.model.toJSON()._id, true);
 		},
 		testConnection: function() {
 			Backbone.trigger("testConnection", {model: this.model});

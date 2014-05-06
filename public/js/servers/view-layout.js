@@ -9,7 +9,8 @@ define(function(require) {
 		template: "#layout",
 		regions: {
 			main: "#main",
-			title: "#title"
+			title: "#title",
+			menu: "#menu"
 		}
 	});
 
