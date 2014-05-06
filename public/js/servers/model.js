@@ -23,10 +23,10 @@ define([
 				port: ''
 			}
 		},
-		testConnection: function(id) {
+		testConnection: function() {
 			var self = this;
 			var url = this.urlRoot;
-			jQuery.post(url + "/test", {id: id}, function(response) {
+			jQuery.post(url + "/test", {id: this.toJSON()._id}, function(response) {
 				if(response) {
 					self.trigger("testConnection:success", response);
 				}

@@ -3,9 +3,10 @@ define([
 	,	"backbone"
 	, "marionette"
   , "underscore"
+  , "/js/servers/router.js"
   , "/js/servers/view-viewTitle.js"
-  , '/js/servers/session.js',
-], function ($, Backbone, Marionette, _, ViewTitle, Session) {
+  , '/js/servers/session.js'
+], function ($, Backbone, Marionette, _, Router, ViewTitle, Session) {
   var App = new Backbone.Marionette.Application();
 
   function isMobile() {
@@ -19,7 +20,7 @@ define([
       mainRegion:"#main"
   });
 
-  App.addInitializer(function () {
+  App.addInitializer(function () {   
     Backbone.history.start();
   });
 
@@ -33,6 +34,10 @@ define([
 
   // instantiate the session class
   App.session = new Session();
+
+  App.navigate = function(fragment, id) { 
+    Backbone.history.navigate(fragment + "/" + id, {trigger: true});
+  }
 
   // This handles the show/hide of the loading animation
   // We do this with events so if we want to trigger them

@@ -23,11 +23,7 @@ script(type="text/template")#header-template
             li.databases
               a(href="/databases") Databases
         ul.nav.navbar-nav.pull-right
-          -if(!user)
-            li
-              a(href="/login") Log in
-          -if(user)
-            li
-              a(href="/settings") Settings
-            li
-              a(href="/logout") Log out
+          li
+            a(href="/settings") Settings
+          li
+            a(href="/logout") Log out
