@@ -14,7 +14,7 @@ block templates
 		td <%= os %>
 		td
 			div.btn-group
-				<button class="view btn btn-xs btn-primary">View</button>
+				<a href="/servers#view/<%= _id %>" class="view btn btn-xs btn-primary">View</button>
 				<a href="/servers#edit/<%= _id %>" class="btn btn-xs btn-primary">Edit</a>
 				<a href="/servers#delete/<%= _id %>" class="btn btn-xs btn-primary">Delete</a>
 				<button class="btn btn-xs btn-primary test">Test connection</button>

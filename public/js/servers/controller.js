@@ -1,87 +1,95 @@
-define([
-  "jquery", 
-  "underscore", 
-  '/js/App.js', 
-  'backbone', 
-  'marionette', 
-  '/js/servers/model.js',
-  '/js/servers/view-viewServers.js', 
-  '/js/servers/view-viewTitle.js', 
-  '/js/servers/view-viewHeader.js',
-  '/js/servers/view-showServer.js',
-  "/js/servers/collection.js"
-],
-  function ($, _, App, Backbone, Marionette, Model, ViewServers, ViewTitle, ViewHeader, ShowServerView, Collection) {
-  return Backbone.Marionette.Controller.extend({
-      initialize:function (options) {
-        // trigger the showLoading event
-        App.vent.trigger("showLoading");
+define(function (require) {
+  var $ = require("jquery");
+  var _ = require("underscore");
+  var Backbone = require("backbone");
+  var Marionette = require("marionette");
+  var Model = require("/js/servers/model.js");
+  var ViewServers = require("/js/servers/view-viewServers.js");
+  var ShowServerView = require("/js/servers/view-showServer.js");
+  var Collection = require("/js/servers/collection.js");
+  var layout = require("/js/servers/view-layout.js");
+  var loading = require("/js/servers/loading.js");
+  var Title = require("/js/servers/view-viewTitle.js");
+  var DataView = require("/js/servers/view-data.js");
 
-        App.session.load();
-        App.session.on("sessionLoaded", function(user) {
-          App.headerRegion.show(new ViewHeader({user: user}));
+  var Controller = Backbone.Marionette.Controller.extend({
+    listenTo: {
+      "showServerView": "showServerView",
+      "testConnection": "testConnection"
+    },
+    initialize:function (options) {
+      var self = this;
+      this.collection = new Collection();
+      this.collection.reset();
+
+      // create a new title and add it to the title region in the layout
+      // if we need to change the title we just do this.title.set("new title");
+      this.title = new Title();
+      layout.title.show(this.title);
+
+      // listen to all events in this.listenTo and execute the value
+      _.each(this.listenTo, function(index, value) {
+        Backbone.on(index, function(options) {
+          self[value](options);
         });
+      });
+    },
+    router_viewServers: function() {
+      this.viewServers();
+    },
+    router_showServerView: function(id) {
+      loading.show();
+      var self = this;
 
-        this.collection = new Collection();
-        this.collection.reset();
-      },
+      // Fetch the collection of servers
+      this.collection.fetch({
+        success: function(models, response) {
+          // look for a model with the id defined
+          var model = self.collection.get(id);
 
-      //gets mapped to in AppRouter's appRoutes
-      viewServers:function () {
-        // Get the data from the template #data-servers
-        var data = _.template($("#data-servers").html());
+          // this is firing twice, don't know if this has consecuences
+          self.showServerView({model: model});
+          loading.hide();
+        }
+      });
+    },
+    //gets mapped to in AppRouter's appRoutes
+    viewServers:function () {
+      // show loading
+      loading.show();
 
-        // instantiate the collection and pass it to ViewServers    
-        var collection = new Collection(JSON.parse(data()));
+      // Get the data from the template #data-servers
+      var data = _.template($("#data-servers").html());
 
-        var viewServers = new ViewServers({collection: collection});
+      // // instantiate the collection and pass it to ViewServers    
+      var collection = new Collection(JSON.parse(data()));
 
-        // show in the mainRegion the ViewServers view
-        App.mainRegion.show(viewServers);
+      this.title.set("Servers");
+      var viewServers = new ViewServers({collection: collection});
 
-        // Set the title
-        App.title.set("Servers");
+      // add the viewServers to the main region in the layout
+      layout.main.show(viewServers);
 
-        // trigger the hideLoading event
-        App.vent.trigger("hideLoading");
-      },
-      showServerView: function(id) {
-        var self = this;
+      // hide loading
+      loading.hide();
+    },
+    showServerView: function(options) {
+      var self = this;
+      self.title.set(options.model.toJSON().name);
 
-        // Fetch the collection of servers
-        this.collection.fetch({
-          success: function(models, response) {
-            // look for a model with the id defined
-            var model = self.collection.get(id);
-
-            // Set the name
-            App.title.set(model.toJSON().name);
-
-            // Stop the loading
-            App.vent.trigger("hideLoading");
-
-            // replace the main region with the ShowServerView and pass the model
-            App.mainRegion.show(new ShowServerView({
-              model: model
-            }));
-          }
-        });
-      },
-      testConnection: function(id) {
-        var self = this;
-        this.collection.fetch({
-          success: function(models, response) {
-            var model = self.collection.get(id);
-            model.testConnection();
-            model.on("testConnection:success", function(data) {
-              console.log(data);
-             App.mainRegion.show(new DataView({
-               stdout: data.stdout, 
-               stderr: data.stderr
-             }).render());
-            });
-          }
-        });
-      }
+      // replace the main region with the ShowServerView and pass the model
+      layout.main.show(new ShowServerView({model: options.model}));
+    },
+    testConnection: function(options) {
+      loading.show();
+      var model = options.model;
+      model.testConnection();
+      model.on("testConnection:success", function(data) {
+        loading.hide();
+        layout.main.show(new DataView(data).render());
+      });
+    }
   });
+
+  return Controller;
 });

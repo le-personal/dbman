@@ -1,10 +1,9 @@
 define([
-	"/js/App.js",
 	"jquery",
 	"underscore",
 	"backbone",
 	"marionette"
-], function(App, $, _, Backbone, Marionette) {
+], function($, _, Backbone, Marionette) {
 	var DataView = Backbone.Marionette.CompositeView.extend({
 		template: _.template($("#data-template").html()),
 		render: function() {
@@ -12,8 +11,8 @@ define([
 				stdout: this.options.stdout, 
 				stderr: this.options.stderr
 			}));
-
-			App.vent.trigger("hideLoading");
+			
+			return this;
 		}
 	});
 
