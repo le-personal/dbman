@@ -84,13 +84,24 @@ exports.deleteServer = function(req, res) {
 	var id = req.params.id;
 
 	if(id) {
-		console.log("Removing " + id),
-		Model.remove({_id: id}, function(err, result) {
-			if(err) throw err;
-			if(result) {
-				res.send(200, true);
+		Model.findOne({_id: id}, function(err, server) {
+			if(err) {
+				res.send(404, err);
 			}
-		})
+			if(server) {
+				server.remove(function(err, result) {
+					if(err) {
+						res.send(406, err);
+					}
+					if(result) {
+						// emit
+						app.emit("servers:removed", server);
+						// return the removed server
+						res.send(200, server);
+					}
+				});
+			}
+		});
 	}
 	else {
 		res.send(404);

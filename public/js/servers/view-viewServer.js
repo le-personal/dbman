@@ -11,13 +11,17 @@ define(function(require) {
 		template: "#view-server",
 		events: {
 			"click .view": "showServerView",
-			"click .test": "testConnection"
+			"click .test": "testConnection",
+			"click .remove": "showDeleteServerConfirmationForm"
 		},
 		showServerView: function() {
 			navigate.to("view", this.model.toJSON()._id, true);
 		},
 		testConnection: function() {
 			Backbone.trigger("testConnection", {model: this.model});
+		},
+		showDeleteServerConfirmationForm: function() {
+			Backbone.trigger("showDeleteServerConfirmationForm", {model: this.model});
 		}
 	});
 

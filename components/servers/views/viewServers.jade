@@ -14,10 +14,9 @@ block templates
 		td <%= os %>
 		td
 			div.btn-group
-				<a href="/servers#view/<%= _id %>" class="view btn btn-xs btn-primary">View</button>
-				<a href="/servers#edit/<%= _id %>" class="btn btn-xs btn-primary">Edit</a>
-				<a href="/servers#delete/<%= _id %>" class="btn btn-xs btn-primary">Delete</a>
-				<button class="btn btn-xs btn-primary test">Test connection</button>
+				<a href="/servers#view/<%= _id %>" class="view btn btn-xs btn-primary">View</a>
+				<button class="btn btn-xs btn-danger remove">Delete</button>
+				<button class="btn btn-xs btn-warning test">Test connection</button>
 	script(type="text/template", id="view-servers")
 		table.table.table-hover.table-bordered.table-striped.well
 			thead

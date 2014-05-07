@@ -20,7 +20,8 @@ define(function (require) {
     listenTo: {
       "showServerView": "showServerView",
       "testConnection": "testConnection",
-      "onClick:menu:add": "showAddServerForm"
+      "onClick:menu:add": "showAddServerForm",
+      "showDeleteServerConfirmationForm": "showDeleteServerConfirmationForm"
     },
     initialize:function (options) {
       var self = this;
@@ -51,7 +52,14 @@ define(function (require) {
       // add it to the collection
       io.on("servers:added", function(model) {
         self.collection.add(model);
-      })
+      });
+
+      io.on("servers:removed", function(data) {
+        console.log("listened to servers:removed");
+        var model = new Model(data);
+        console.log(model);
+        self.collection.remove(model);
+      });
     },
     router_viewServers: function() {
       this.viewServers();
@@ -76,16 +84,13 @@ define(function (require) {
     viewServers:function () {
       // show loading
       loading.show();
-
-      // instantiate the collection and pass it to ViewServers    
-      var collection = this.collection;
-
       this.title.set("Servers");
-      var viewServers = new ViewServers({collection: collection});
       
+      // Set the menu
       layout.menu.show(new MenuView({title: "Add server", name: "add"}));
 
       // add the viewServers to the main region in the layout
+      var viewServers = new ViewServers({collection: this.collection});
       layout.main.show(viewServers);
 
       // hide loading
@@ -128,6 +133,23 @@ define(function (require) {
       // and let Marionette handle the $el and closing
       layout.modals.show(modal);
       modal.open();
+    },
+    showDeleteServerConfirmationForm: function(options) {
+      var self = this;
+      var modal = new Backbone.BootstrapModal({
+        title: "Are you sure you want to delete the server " + options.model.toJSON().name,
+        content: "This action cannot be undone"
+      });
+
+      layout.modals.show(modal);
+      modal.open();
+
+      modal.on("ok", function() {
+        loading.show();
+        // destroy the model
+        options.model.destroy({wait: true});
+        loading.hide();
+      });
     }
   });
 
