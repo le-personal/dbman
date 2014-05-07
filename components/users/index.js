@@ -11,7 +11,7 @@ app.get("/", function(req, res, next) {
 		res.redirect("/login");
 	}
 	else {
-		res.redirect("/servers");
+		res.redirect("/databases");
 	}
 })
 

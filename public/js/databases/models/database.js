@@ -66,9 +66,11 @@ define(function(require) {
 				self.trigger("showDatabases:error", error);
 			});
 		},
-		lockDatabase: function(id) {
+		lockDatabase: function() {
 			var self = this;
 			var url = this.urlRoot;
+			var id = this.toJSON()._id;
+
 			jQuery.post(url + "/lock", {id: id}, function(response) {
 				if(response) {
 					self.trigger("lockDatabase:success", response);
@@ -77,9 +79,10 @@ define(function(require) {
 				self.trigger("lockDatabase:error", response);
 			});
 		},
-		unlockDatabase: function(id) {
+		unlockDatabase: function() {
 			var self = this;
 			var url = this.urlRoot;
+			var id = this.toJSON()._id;
 			jQuery.post(url + "/unlock", {id: id}, function(response) {
 				if(response) {
 					self.trigger("unlockDatabase:success", response);

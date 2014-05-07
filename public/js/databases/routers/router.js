@@ -1,4 +1,4 @@
-define(function(requiere) {
+define(function(require) {
 	var Backbone = require("backbone");
 	var Marionette = require("marionette");
 

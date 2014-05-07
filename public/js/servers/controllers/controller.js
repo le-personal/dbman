@@ -59,9 +59,7 @@ define(function (require) {
       });
 
       io.on("servers:removed", function(data) {
-        console.log("listened to servers:removed");
         var model = new Model(data);
-        console.log(model);
         self.collection.remove(model);
       });
     },

@@ -4,18 +4,32 @@ block scripts
 	script(src="/vendor/requirejs/require.js", data-main="/js/databases/main")
 
 block templates
-	script(type="text/template", id="databases")
+	script(type="text/template", id="data-databases")
 		!{json}
-	script(type="text/template", id="databaseRow")
+
+	//- the main table to show the databases
+	script(type="text/template", id="view-databases")
+		table.table.table-hover.table-striped.well
+			thead
+				tr
+					th Name
+					th Server
+					th Type
+					th Locked
+					th Actions
+			tbody
+
+	//- a single row in the databases table
+	script(type="text/template", id="view-databases-row")
 		<td>
-		<a href="/databases#view/<%= database._id %>" class="viewDatabase"><%= database.database_name %></a>
+		<a href="/databases#view/<%= _id %>" class="viewDatabase"><%= database_name %></a>
 		</td>
 		<td>
-		<a href="/databases#showDatabases/<%= database._id %>"><%= database.server.name %></a>
+		<a href="/databases#showDatabases/<%= _id %>"><%= server.name %></a>
 		</td>
-		<td><%= database.database_type %></td>
-		<td class="database-status-<%= database._id %>">
-		<% if(database.isLocked) { %>
+		<td><%= database_type %></td>
+		<td class="database-status-<%= _id %>">
+		<% if(isLocked) { %>
 		<a title="This database is locked, which prevents users to apply dangerous actions to it." class="btn btn-xs btn-success">
 		<span class="glyphicon glyphicon-lock"></span>
 		</a>
@@ -27,16 +41,49 @@ block templates
 		</td>
 		<td>
 		<div class="btn-group">
-		<% if(database.isLocked) { %>
+		<% if(isLocked) { %>
 		<button class="unlockDatabase btn btn-xs btn-warning">Unlock</button>
 		<% } else { %>
 		<button class="lockDatabase btn btn-xs btn-success">Lock</button>
 		<% } %>
-		<a data-id="<%= database._id %>" href="/databases#view/<%= database._id %>" class="viewDatabase btn btn-xs btn-primary">View</a>
+		<a data-id="<%= _id %>" href="/databases#view/<%= _id %>" class="viewDatabase btn btn-xs btn-primary">View</a>
 		<button class="removeDatabase btn btn-xs btn-danger"> Delete</button>
 		</div>
 		</td>
-	script(type="text/template", id="addDatabaseTemplate")
+
+	//- for when viewing a database #view/someid
+	script(type="text/template", id="view-database")
+		table.table.table-striped.well
+			thead
+				th(colspan="2") Database information
+			tbody
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
+						strong <%= database_name %>
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= created %>
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= author.fullName %>
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= isLocked %>
+		
+		table.table.table-striped.well
+			thead
+				th(colspan="2") Server information
+			tbody
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>	
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
+		div#databaseUsersContainer
+
+	script(type="text/template", id="add-database")
 		form(role="form")
 			div.form-group 
 				label(for="server") Destination Server *
@@ -55,16 +102,6 @@ block templates
 					label
 						<input type="checkbox" name="createDatabase"> Create the database on the server?
 						<div class="help-block">If not checked, the database will only be registered but not created on the server. Use this option if the database already exists and you want to managed it.</div>
-	script(type="text/template", id="view-databases")
-		table.table.table-hover.table-striped.well
-			thead
-				tr
-					th Name
-					th Server
-					th Type
-					th Locked
-					th Actions
-			tbody
 				
 	script(type="text/template", id="listDatabaseUsers-template")
 		div
@@ -150,36 +187,6 @@ block templates
 			hr
 			<a href="#allowaccess/<%= database._id %>" class="btn btn-primary allowAccess">Allow access to user</a>
 
-	script(type="text/template", id="viewDatabaseTemplate")
-		table.table.table-striped.well
-			thead
-				th(colspan="2") Database information
-			tbody
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
-						strong <%= database.database_name %>
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.created %>
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.author.fullName %>
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.isLocked %>
-		
-		table.table.table-striped.well
-			thead
-				th(colspan="2") Server information
-			tbody
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>	
-				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
-		div#databaseUsersContainer
 
 	script(type="text/template", id="importDatabase-template")
 		form(role="form", enctype="multipart/form-data", method="post", action="/api/files")
