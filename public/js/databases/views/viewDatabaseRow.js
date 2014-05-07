@@ -8,7 +8,8 @@ define(function(require) {
 		tagName: "tr",
 		events: {
 			"click .lockDatabase": "lockDatabase",
-			"click .unlockDatabase": "unlockDatabase"
+			"click .unlockDatabase": "unlockDatabase",
+			"click .removeDatabase": "removeDatabase"
 		},
 		initialize: function() {
 			// force a render when the model changes
@@ -20,6 +21,9 @@ define(function(require) {
 		},
 		unlockDatabase: function() {
 			Backbone.trigger("unlockDatabase", {model: this.model});
+		},
+		removeDatabase: function() {
+			Backbone.trigger("removeDatabase", {model: this.model});
 		}
 	});
 

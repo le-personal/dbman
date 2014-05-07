@@ -17,6 +17,7 @@ define(function(require) {
   var Title = require("/js/common/views/title.js");
   var DataView = require("/js/common/views/data.js");
   var MenuView = require("/js/common/views/menu.js");
+  var MenuDatabaseView = require("/js/databases/views/menu.js");
 
 	var ViewDatabases = require("/js/databases/views/viewDatabases.js");
 	var ViewDatabase = require("/js/databases/views/viewDatabase.js");
@@ -29,7 +30,8 @@ define(function(require) {
 			'showAddDatabaseForm': 'showAddDatabaseForm',
 			"onClick:menu:add": "showAddDatabaseForm",
 			"lockDatabase": "lockDatabase",
-			"unlockDatabase": "unlockDatabase"
+			"unlockDatabase": "unlockDatabase",
+			"removeDatabase": "openModalToConfirmRemovalOfDatabase"
 		},
 
 		initialize: function() {
@@ -113,6 +115,9 @@ define(function(require) {
 
       // replace the main region with the ShowServerView and pass the model
       layout.main.show(new ViewDatabase({model: options.model}));
+      
+      var menu = new MenuDatabaseView({model: options.model});
+      layout.menu.show(menu);
 		},
 
 		// Shows a form to add a new database
@@ -171,6 +176,28 @@ define(function(require) {
 				console.log("@todo implement the alert error");
 				// alert.error(error.responseText);
 			});
+    },
+
+    openModalToConfirmRemovalOfDatabase: function(options) {
+    	var self = this;
+
+    	var modal = new Backbone.BootstrapModal({
+    		title: "Confirm removal of datababase " + options.model.toJSON().database_name,
+    		content: "This operation cannot be undone, if you click OK, the database will be removed",
+    		animate: true
+    	});
+
+    	// Prevent zombie views by forcing the modal to be shown in #modals
+      // and let Marionette handle the $el and closing
+      layout.modals.show(modal);
+      modal.open();
+
+      modal.on("ok", function() {
+        loading.show();
+        // destroy the model
+        options.model.destroy({wait: true});
+        loading.hide();
+      });
     }
 
 	});

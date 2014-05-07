@@ -243,7 +243,7 @@ exports.deleteDatabase = function(req, res) {
 										counter++;
 
 										if(counter == total) {
-											res.send(200, {stdout: stdout, stderr: stderr});
+											res.send(200, database);
 										}
 									})
 								});
