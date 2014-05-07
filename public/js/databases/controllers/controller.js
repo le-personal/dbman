@@ -140,10 +140,7 @@ define(function(require) {
     },
 
     lockDatabase: function(options) {
-    	console.log("Triggered lock database");
-    	console.log("@problem THe collection is not updated");
 			var self = this;
-			console.log(options.model.toJSON());
 			var id = options.model.toJSON()._id;
 
 			options.model.lockDatabase();
@@ -159,9 +156,7 @@ define(function(require) {
 			});
     },
 
-    unlockDatabase: function() {
-    	console.log("Triggered unlock database");
-    	console.log("@problem The collection is not updated");
+    unlockDatabase: function(options) {
     	var self = this;
 			var id = options.model.toJSON()._id;
 
