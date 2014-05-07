@@ -1,37 +1,9 @@
 extends /layout
 
 block scripts
-	script(src="/javascripts/Models/Database.js")
-	script(src="/javascripts/Collections/Databases.js")
-	script(src="/javascripts/Models/DatabaseUser.js")
-	script(src="/javascripts/Models/User.js")
-	script(src="/javascripts/Models/Backup.js")
-	script(src="/javascripts/Models/File.js")
-	script(src="/javascripts/Collections/DatabaseUsers.js")
-	script(src="/javascripts/Collections/Backups.js")
-	script(src="/javascripts/Collections/Users.js")
-	script(src="/javascripts/Models/Server.js")
-	script(src="/javascripts/Collections/Servers.js")
-	script(src="/javascripts/Views/DatabasesView.js")
-	script(src="/javascripts/Routers/DatabasesRouter.js")
-	script().
-		(function() {
-			var app = new App.Routers.DatabasesRouter();
-			Backbone.history.start({pushState: false});
-		})();
+	script(src="/vendor/requirejs/require.js", data-main="/js/databases/main")
 
 block templates
-	include /genericResponse
-	include /message
-	include viewDatabase
-	include addDatabase
-	include listDatabaseUsers
-	include addDatabaseUser
-	include importDatabase
-	include createBackup
-	include listBackups
-	include permissions
-	include databaseMenu
 	script(type="text/template", id="databases")
 		!{json}
 	script(type="text/template", id="databaseRow")
@@ -64,30 +36,217 @@ block templates
 		<button class="removeDatabase btn btn-xs btn-danger"> Delete</button>
 		</div>
 		</td>
-block content
-	div.container.content
+	script(type="text/template", id="addDatabaseTemplate")
+		form(role="form")
+			div.form-group 
+				label(for="server") Destination Server *
+				<select name="server" class="form-control">
+				<options>
+				<% _.each(servers, function(server) { %>
+				<option value="<%= server._id %>"><%= server.name %></option>
+				<% }) %>
+				</options>
+				</select>
+			div.form-group
+				label(for="database_name") Database name *
+				input(type="text", name="database_name", id="form-input-name", placeholder="Enter a name for this database").form-control
+			div.form-group
+				div.checkbox
+					label
+						<input type="checkbox" name="createDatabase"> Create the database on the server?
+						<div class="help-block">If not checked, the database will only be registered but not created on the server. Use this option if the database already exists and you want to managed it.</div>
+	script(type="text/template", id="view-databases")
+		table.table.table-hover.table-striped.well
+			thead
+				tr
+					th Name
+					th Server
+					th Type
+					th Locked
+					th Actions
+			tbody
+				
+	script(type="text/template", id="listDatabaseUsers-template")
+		div
+			h3 Database users
+			table.table.table-striped.well
+				thead
+					th Username
+					th Allowed Hosts
+				tbody#databaseUsers
+
+	script(type="text/template", id="databaseUserRow-template")
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= user.username %>	
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= user.allowedHosts %>
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 
+			button.btn.btn-danger.btn-xs.removeDatabaseUser Drop
+
+	script(type="text/template", id="listBackups-template")
+		table.table.table-striped.table-hover.well
+			thead
+				th Name
+				th Created
+				th Type
+				th Format
+				th Status
+				th Download
+			tbody#backupsList
+
+	script(type="text/template", id="listBackupsRow-template")
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
+			<a href="<%= backup.url %>" class=""><%= backup.name %></a>
+			div Created by: <%= backup.author.fullName %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.created %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.type %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.format %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.status %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
+			<% if(backup.url) { %>
+			<a href="<%= backup.url %>" class="btn btn-xs btn-success">Download</a>
+			<% } %>
+
+	script(type="text/template", id="permissionsForm")
+		form(role="form")
+			div.form-group
+				input(type="hidden", id="selectedUser", name="selectedUser")
+			div.form-group
+				label(for="user") User to add
+				input(type="text", id="user", name="user", data-provide="typeahead").form-control
+				div.help-block User to add to this database with permissions
+			div.form-group
+				label(for="access") Database access
+				select(name="access").form-control
+					options
+						option(value="view") View
+						option(value="edit") Edit
+						option(value="import") Import
+						option(value="remove") Remove
+
+	script(type="text/template" id="permissionRow")
+		tr
+			td
+				strong <%= fullName %>
+			td
+				<a href="#" class="btn btn-danger btn-xs revoke-access-btn" data-permission="<%= permission %>" id="<%= _id %>">Revoke access</a>
+
+	script(type="text/template", id="permissionsTemplate")
+		div
+			table.table.table-striped.table-condensed.table-hover.well
+				thead
+					th View access
+				tbody#membersWithViewAccess
+			table.table.table-striped.table-condensed.table-hover.well
+				thead
+					th Edit access
+				tbody#membersWithEditAccess
+			table.table.table-striped.table-condensed.table-hover.well
+				thead
+					th Import access
+				tbody#membersWithImportAccess
+			table.table.table-striped.table-condensed.table-hover.well
+				thead
+					th Remove access
+				tbody#membersWithRemoveAccess
+			hr
+			<a href="#allowaccess/<%= database._id %>" class="btn btn-primary allowAccess">Allow access to user</a>
+
+	script(type="text/template", id="viewDatabaseTemplate")
+		table.table.table-striped.well
+			thead
+				th(colspan="2") Database information
+			tbody
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Database name:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
+						strong <%= database.database_name %>
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.created %>
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Author:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.author.fullName %>
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Is Locked?:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= database.isLocked %>
+		
+		table.table.table-striped.well
+			thead
+				th(colspan="2") Server information
+			tbody
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>	
+				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
+		div#databaseUsersContainer
+
+	script(type="text/template", id="importDatabase-template")
+		form(role="form", enctype="multipart/form-data", method="post", action="/api/files")
+			div.newfile
+			div(id="progress", class="progress hidden")
+				div(class="progress-bar bar progress-bar-primary" style="width: 0%;", aria-valuenow="0", aria-valuemin="0", aria-valuemax="100")
+			span(class="btn btn-success fileinput-button")
+				i(class="glyphicon glyphicon-plus")
+				span Add file...
+				<input id="file" type="file" name="file">
+			br
+			br
+			div(id="files", class="files")
+			<input type="hidden" name="fileid" id="fileid" />
+			<input type="hidden" name="database" value="<%= database._id %>" class="form-control" />
+			div.form-group
+				button(type="submit", id="form-login-button").btn.btn-primary.submit.hidden Import into database <%= database.database_name %>
+
+	script(type="text/template", id="createBackup-template")
+		form(role="form")
+			<input type="hidden" name="database" value="<%= database._id %>" class="form-control" />
+			div.form-group
+				label(for="name") Backup name *
+				input(type="text", name="name", id="form-input-name").form-control
+			div.form-group 
+				label(for="format") Format *
+				<select name="format" class="form-control">
+				<options>
+				<option value="sql">.sql</option>
+				<option value="sql.gz">.sql.gz</option>
+				</options>
+				</select>
+			div.form-group
+				button(type="submit", id="form-login-button").btn.btn-primary.submit Create backup
+
+	script(type="text/template", id="downloadLink-template")
 		div.row
-			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
-				h1
-					span.title!= title
-					div.pull-right
-						div#actions
-							button.addDatabase.btn.btn-success Add database
-				hr
-		div.row
-			div.col-lg-12.col-md-12.col-sm-12.col-xs-12
-				div#message
-				div#content
-					if(databases.length > 0)
-						table.table.table-hover.table-striped.well
-							thead
-								tr
-									th Name
-									th Server
-									th Type
-									th Locked
-									th Actions
-							tbody#listDatabases
-					else
-						div.alert.alert-info
-							p No databases added
+			div.col-lg-8.col-md-8.col-sm-11.col-xs-11.col-lg-offset-2.col-md-offset-2.col-sm-offset-1.col-xs-offset-1
+				<a href="<%= backup.url %>" class="btn btn-success btn-large btn-block center-block">Download backup</a>
+				div(align="center").help-block.center-block Location of file: <%= backup.url %>
+
+	script(type="text/template", id="addDatabaseUser-template")
+		form(role="form")
+			<input type="hidden" name="database" value="<%= database._id %>" class="form-control" />
+			div.form-group
+				label(for="username") Username *
+				input(type="text", name="username", id="form-input-database-user", placeholder="Enter the database user to create").form-control
+			div.form-group
+				label(for="password") Password for the database user *
+				input(type="password", name="password", id="form-input-database-password", placeholder="Enter the password for the user").form-control
+			div.form-group
+				label(for="allowedhosts") Allowed hosts
+				input(type="text", name="allowedhosts", id="form-input-allowed-hosts", placeholder="Enter the hosts separated by commas, no spaces").form-control
+
+	script(type="text/template", id="databaseMenu")
+		div.btn-group
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+			<ul class="dropdown-menu" role="menu">
+			<li><a href="#" class="addUserToDatabase">Add user</a></li>
+			<li class="divider"></li>
+			<li><a href="#showTables/<%= database._id %>" class="">Show tables</a></li>
+			<li><a href="#showUsersInDatabase/<%= database._id %>" class="">Show users</a></li>
+			<li class="divider"></li>
+			<li><a href="#listBackups/<%= database._id %>" class="">List backups</a></li>
+			<li><a href="#createBackup/<%= database._id %>" class="">Create backup</a></li>
+			<li class="divider"></li>
+			<li><a href="#import/<%= database._id %>" class="">Import</a></li>
+			<li class="divider"></li>
+			<li><a href="#permissions/<%= database._id %>" class="">Permissions</a></li>
+			</ul>
