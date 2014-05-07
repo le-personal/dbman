@@ -65,7 +65,7 @@ define(function (require) {
       // show loading
       loading.show();
 
-      // // instantiate the collection and pass it to ViewServers    
+      // instantiate the collection and pass it to ViewServers    
       var collection = this.collection;
 
       this.title.set("Servers");
@@ -78,7 +78,6 @@ define(function (require) {
 
       // hide loading
       loading.hide();
-
     },
     showServerView: function(options) {
       var self = this;
@@ -93,7 +92,15 @@ define(function (require) {
       model.testConnection();
       model.on("testConnection:success", function(data) {
         loading.hide();
-        layout.main.show(new DataView(data).render());
+        var modal = new Backbone.BootstrapModal({
+          title: "Testing connection to " + model.toJSON().name,
+          content: new DataView(data).render()
+        });
+
+        // Prevent zombie views by forcing the modal to be shown in #modals
+        // and let Marionette handle the $el and closing
+        layout.modals.show(modal);
+        modal.open();
       });
     },
     showAddServerForm: function(options) {
@@ -103,6 +110,9 @@ define(function (require) {
         content: addServerForm
       });
 
+      // Prevent zombie views by forcing the modal to be shown in #modals
+      // and let Marionette handle the $el and closing
+      layout.modals.show(modal);
       modal.open();
     }
   });

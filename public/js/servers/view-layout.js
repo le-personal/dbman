@@ -10,7 +10,8 @@ define(function(require) {
 		regions: {
 			main: "#main",
 			title: "#title",
-			menu: "#menu"
+			menu: "#menu",
+			modals: "#modals"
 		}
 	});
 
