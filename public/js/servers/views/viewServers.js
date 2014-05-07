@@ -3,9 +3,9 @@ define([
 	, "underscore"
 	, "backbone"
 	, "marionette"
-	, "/js/servers/model.js"
-	, "/js/servers/collection.js"
-	, "/js/servers/view-viewServer.js"
+	, "/js/servers/models/model.js"
+	, "/js/servers/collections/collection.js"
+	, "/js/servers/views/viewServer.js"
 ], function($, _, Backbone, Marionette, Model, Collection, ViewServer) {
 	var ViewServers = Backbone.Marionette.CompositeView.extend({
 		template: "#view-servers",

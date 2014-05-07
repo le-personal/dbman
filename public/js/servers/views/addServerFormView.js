@@ -1,8 +1,8 @@
 define(function(require) {
 	var Backbone = require("backbone");
 	var Marionette = require("marionette");
-	var Server = require("/js/servers/model.js");
-	var loading = require("/js/servers/loading.js");
+	var Server = require("/js/servers/models/model.js");
+	var loading = require("/js/lib/loading.js");
 
 	var AddServerFormView = Backbone.Marionette.ItemView.extend({
 		template: "#addServerTemplate",

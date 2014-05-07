@@ -45,18 +45,13 @@ require.config({
   }
 });
 
-require([
-  "/js/App.js", 
-  "/js/servers/router.js", 
-  "/js/servers/controller.js", 
-  "jquery", 
-  "backbone", 
-  "marionette", 
-  "jqueryui", 
-  "bootstrap"
-], function (App, AppRouter, AppController) {
-  App.appRouter = new AppRouter({
-    controller: new AppController() // instantiate the controller with the mapped methods to the routes
+define(function (require) {
+  var App = require("/js/app.js");
+  var Router = require("/js/servers/routers/router.js");
+  var Controller = require("/js/servers/controllers/controller.js");
+
+  App.appRouter = new Router({
+    controller: new Controller() // instantiate the controller with the mapped methods to the routes
   });
 
   // Start Marionette Application in desktop mode (default)

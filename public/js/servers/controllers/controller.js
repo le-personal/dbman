@@ -3,18 +3,22 @@ define(function (require) {
   var _ = require("underscore");
   var Backbone = require("backbone");
   var Marionette = require("marionette");
-  var Model = require("/js/servers/model.js");
-  var ViewServers = require("/js/servers/view-viewServers.js");
-  var ShowServerView = require("/js/servers/view-showServer.js");
-  var Collection = require("/js/servers/collection.js");
-  var layout = require("/js/servers/view-layout.js");
-  var loading = require("/js/servers/loading.js");
-  var Title = require("/js/servers/view-viewTitle.js");
-  var DataView = require("/js/servers/view-data.js");
-  var MenuView = require("/js/servers/view-viewMenu.js");
   var BootstrapModal = require("backboneBootstrapModal");
-  var AddServerFormView = require("/js/servers/view-addServerFormView.js")
-  var io = require("/js/servers/io.js");
+  
+  var Model = require("/js/servers/models/model.js");
+  var Collection = require("/js/servers/collections/collection.js");
+
+  var io = require("/js/lib/io.js");
+  var loading = require("/js/lib/loading.js");
+  
+  var layout = require("/js/common/views/layout.js");
+  var Title = require("/js/common/views/title.js");
+  var DataView = require("/js/common/views/data.js");
+  var MenuView = require("/js/common/views/menu.js");
+  
+  var ViewServers = require("/js/servers/views/viewServers.js");
+  var ShowServerView = require("/js/servers/views/showServer.js");
+  var AddServerFormView = require("/js/servers/views/addServerFormView.js")
 
   var Controller = Backbone.Marionette.Controller.extend({
     listenTo: {

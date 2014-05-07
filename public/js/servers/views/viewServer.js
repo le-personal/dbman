@@ -1,10 +1,9 @@
 define(function(require) {
 	var Backbone = require("backbone");
 	var Marionette = require("marionette");
-	var Model = require("/js/servers/model.js");
-	var Collection = require("/js/servers/collection.js");
-	var vent = require("/js/servers/vent.js");
-	var navigate = require("/js/servers/navigator.js");
+	var Model = require("/js/servers/models/model.js");
+	var Collection = require("/js/servers/collections/collection.js");
+	var navigate = require("/js/lib/navigator.js");
 
 	var ViewServer = Backbone.Marionette.ItemView.extend({
 		tagName: "tr",

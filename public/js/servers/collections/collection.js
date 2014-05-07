@@ -6,7 +6,7 @@ define([
 		"jquery"
 	, "underscore"
 	, "backbone"
-	, "/js/servers/model.js"
+	, "/js/servers/models/model.js"
 ], function($, _, Backbone, Server) {
 	var Servers = Backbone.Collection.extend({
 		model: Server,

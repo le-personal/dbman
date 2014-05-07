@@ -3,9 +3,7 @@ define([
 	, "underscore"
 	, "backbone"
 	, "marionette"
-	, "/js/servers/model.js"
-	, "/js/servers/collection.js"
-], function($, _, Backbone, Marionette, Model, Collection) {
+], function($, _, Backbone, Marionette) {
 	var ViewTitle = Backbone.Marionette.ItemView.extend({
 		template: "#title-template",
 		ui: {
