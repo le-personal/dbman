@@ -55,6 +55,7 @@ exports.postServer = function(req, res) {
 		model.save(function(err, result) {
 			if(err) throw err;
 			if(result) {
+				app.emit("servers:added", result);
 				res.send(201, result);
 			}	
 		});

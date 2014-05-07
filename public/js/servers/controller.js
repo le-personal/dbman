@@ -14,6 +14,7 @@ define(function (require) {
   var MenuView = require("/js/servers/view-viewMenu.js");
   var BootstrapModal = require("backboneBootstrapModal");
   var AddServerFormView = require("/js/servers/view-addServerFormView.js")
+  var io = require("/js/servers/io.js");
 
   var Controller = Backbone.Marionette.Controller.extend({
     listenTo: {
@@ -40,6 +41,17 @@ define(function (require) {
           self[value](options);
         });
       });
+
+      // start listening to all io events
+      this.listenIO();
+    },
+    listenIO: function() {
+      var self = this;
+      // each time a new server is added and we detect the change
+      // add it to the collection
+      io.on("servers:added", function(model) {
+        self.collection.add(model);
+      })
     },
     router_viewServers: function() {
       this.viewServers();
@@ -94,7 +106,8 @@ define(function (require) {
         loading.hide();
         var modal = new Backbone.BootstrapModal({
           title: "Testing connection to " + model.toJSON().name,
-          content: new DataView(data).render()
+          content: new DataView(data).render(),
+          animate: true
         });
 
         // Prevent zombie views by forcing the modal to be shown in #modals
@@ -107,7 +120,8 @@ define(function (require) {
       var addServerForm = new AddServerFormView({collection: this.collection});
       var modal = new Backbone.BootstrapModal({
         title: "Add server",
-        content: addServerForm
+        content: addServerForm,
+        animate: true
       });
 
       // Prevent zombie views by forcing the modal to be shown in #modals

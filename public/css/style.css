@@ -50,6 +50,10 @@ div.loading .loadingText {
   margin-left: -15%;
 }
 
+div.modal-backdrop {
+  z-index: 1010 !important;
+}
+
 /** 
  * Autocomplete fix 
  */

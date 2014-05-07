@@ -8,7 +8,6 @@ define(function (require) {
   var Layout = require("/js/servers/view-layout.js");
   var ViewHeader = require("/js/servers/view-viewHeader.js");
  
-
   var App = new Backbone.Marionette.Application();
 
   function isMobile() {
