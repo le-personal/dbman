@@ -4,7 +4,13 @@ define(function(require) {
 
 	var Backups = Backbone.Collection.extend({
 		model: Backup,
-		url: "/api/databases/backups"
+		initialize: function(options) {
+			this.options = options;
+			this.database = this.options.database;
+		},
+		url: function() {
+    	return "/api/databases/" + this.database + '/backups';
+  	}
 	});
 	
 	return Backups;
