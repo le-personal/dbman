@@ -10,7 +10,7 @@ define(function(require) {
 			"click a.showAddUserToDatabaseForm": "showAddUserToDatabaseForm",
 			"click a.showTables": "showTables",
 			"click a.showUsersInDatabase": "showUsersInDatabase",
-			"click a.listBackups": "listBackups",
+			"click a.backups": "backups",
 			"click a.createBackup": "createBackup",
 			"click a.import": "import",
 			"click a.permissions": "administerPermissions"
@@ -27,9 +27,9 @@ define(function(require) {
 			e.preventDefault();
 			Backbone.trigger("showUsersInDatabase", {model: this.model});
 		},
-		listBackups: function(e) {
+		viewBackups: function(e) {
 			e.preventDefault();
-			// navigate.to();
+			navigate.toPath("#view/" + this.model.toJSON()._id + "/backups");
 		},
 		createBackup: function(e) {
 			e.preventDefault();
