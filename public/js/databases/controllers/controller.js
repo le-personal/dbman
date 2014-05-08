@@ -5,14 +5,14 @@ define(function(require) {
 	var Backbone = require("backbone");
 	var Marionette = require("marionette");
 	var BootstrapModal = require("backboneBootstrapModal");
-	
+
 	var io = require("/js/lib/io.js");
   var loading = require("/js/lib/loading.js");
 
   var DatabasesCollection = require("/js/databases/collections/databases.js");
   var Database = require("/js/databases/models/database.js");
   var ServersCollection = require("/js/servers/collections/collection.js");
-  
+
   var layout = require("/js/common/views/layout.js");
   var Title = require("/js/common/views/title.js");
   var DataView = require("/js/common/views/data.js");
@@ -23,6 +23,7 @@ define(function(require) {
 	var ViewDatabase = require("/js/databases/views/viewDatabase.js");
 	var AddDatabaseFormView = require("/js/databases/views/addDatabaseFormView.js");
 	var AddUserToDatabaseForm = require("/js/databases/views/addUserToDatabaseForm.js");
+	var ViewBackups = require("/js/databases/views/viewBackups.js");
 
 	var Controller = Backbone.Marionette.Controller.extend({
 		// application events we should be listenting to here
@@ -103,7 +104,7 @@ define(function(require) {
 			// show loading
       loading.show();
       this.title.set("Databases");
-      
+
       // Set the menu
       layout.menu.show(new MenuView({title: "Add databases", name: "add"}));
 
@@ -123,7 +124,7 @@ define(function(require) {
 
       // replace the main region with the ShowServerView and pass the model
       layout.main.show(new ViewDatabase({model: options.model}));
-      
+
       var menu = new MenuDatabaseView({model: options.model});
       layout.menu.show(menu);
 		},
@@ -138,7 +139,7 @@ define(function(require) {
 	      	collection: self.databasesCollection,
 	      	servers: serversCollection
 	      });
-				
+
 	      var modal = new Backbone.BootstrapModal({
 	        title: "Add database",
 	        content: addDatabaseForm,
@@ -230,7 +231,7 @@ define(function(require) {
     },
 
     showTables: function(options) {
-    	var self = this;    	
+    	var self = this;
 
     	loading.show();
     	options.model.showTables();
@@ -252,7 +253,7 @@ define(function(require) {
     },
 
     showUsersInDatabase: function(options) {
-    	var self = this;    	
+    	var self = this;
 
     	loading.show();
     	options.model.showUsersInDatabase();
@@ -272,6 +273,17 @@ define(function(require) {
 	    	modal.open();
     	})
     },
+
+		listBackups: function(options) {
+			var self = this;
+
+			var viewBackups = new ViewBackups({
+				collection:
+			});
+			
+			layout.main.show(viewBackups);
+
+		}
 
 	});
 

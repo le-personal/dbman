@@ -30,14 +30,14 @@ app.post("/api/databases/permissions", isAdmin, api.postPermissions);
 
 // users
 // no permissions here because we always need an id to check for permissions
-app.get("/api/databases/users", isUser, api.getDatabaseUsers);
-app.get("/api/databases/users/:id", isUser, canEdit, api.getDatabaseUser);
-app.post("/api/databases/users", isUser, canEdit, api.postDatabaseUser);
-app.delete("/api/databases/users/:id", isUser, canEdit, api.deleteDatabaseUser);
+app.get("/api/databases/:id/users", isUser, api.getDatabaseUsers);
+app.get("/api/databases/:id/users/:userid", isUser, canEdit, api.getDatabaseUser);
+app.post("/api/databases/:id/users", isUser, canEdit, api.postDatabaseUser);
+app.delete("/api/databases/:id/users/:userid", isUser, canEdit, api.deleteDatabaseUser);
 
 // no permissions here because we always need an id to check for permissions
-app.get("/api/databases/backups", isUser, api.getBackups);
-app.get("/api/databases/backups/:id", isUser, canView, api.getBackup);
+app.get("/api/databases/:id/backups/:backupid", isUser, api.getBackups);
+app.get("/api/databases/:id/backups/:backupid", isUser, canView, api.getBackup);
 // no permissions here because we always need an id to check for permissions
-app.post("/api/databases/backups", isUser, api.postCreateBackup);
-app.delete("/api/databases/backups/:id", isUser, canView, api.deleteBackup);
+app.post("/api/databases/:id/backups", isUser, api.postCreateBackup);
+app.delete("/api/databases/:id/backups/:backupid", isUser, canView, api.deleteBackup);

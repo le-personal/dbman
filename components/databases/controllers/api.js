@@ -52,7 +52,7 @@ exports.getDatabases = function(req, res) {
 							if(total == count) {
 								res.send(200, results);
 							}
-						});	
+						});
 					});
 				});
 			}
@@ -79,7 +79,7 @@ exports.getDatabase = function(req, res) {
 		if(result) {
 			DatabaseUser.find({"database": result._id})
 			.exec(function(err, users) {
-				
+
 				Backup.find({"database": result._id})
 				.populate("author")
 				.exec(function(err, backups) {
@@ -182,7 +182,7 @@ exports.postDatabase = function(req, res) {
 										if(serviceType == "mongodb") {
 											// do nothing here
 										}
-										
+
 										var connection = new Connection(result._id, server);
 										connection.executeAsync(command, function(stderr, stdout) {
 											// var send = {
@@ -212,11 +212,11 @@ exports.postDatabase = function(req, res) {
 						else {
 							res.send(406);
 						}
-					});			
+					});
 				}
 			});
 		}
-	});	
+	});
 }
 
 exports.deleteDatabase = function(req, res) {
@@ -358,7 +358,7 @@ exports.postUnLockDatabase = function(req, res) {
 		if(result) {
 			res.send(200, true);
 		}
-	});	
+	});
 }
 
 
@@ -366,7 +366,9 @@ exports.postUnLockDatabase = function(req, res) {
  Users
 */
 exports.getDatabaseUsers = function(req, res) {
-	DatabaseUser.find().exec(function(err, users) {
+	var databaseid = req.param.id;
+	DatabaseUser.find({database: databaseid})
+	.exec(function(err, users) {
 		if(err) {
 			res.send(406);
 		}
@@ -377,9 +379,11 @@ exports.getDatabaseUsers = function(req, res) {
 }
 
 exports.getDatabaseUser = function(req, res) {
-	var id = req.params.id;
-	if(id) {
-		DatabaseUser.findOne({_id: id})
+	var databaseid = req.params.id;
+	var userid = req.params.userid;
+
+	if(databaseid && userid) {
+		DatabaseUser.findOne({database: databaseid, _id: id})
 		.populate("database")
 		.exec(function(err, user) {
 			if(err) {
@@ -396,10 +400,18 @@ exports.getDatabaseUser = function(req, res) {
 }
 
 exports.postDatabaseUser = function(req, res) {
+	var databaseid = req.param.id;
 	var body = req.body;
 
+	var valuesToSave = {
+		username: body.username,
+		password: secure.encrypt(body.password),
+		database: databaseid,
+		allowedHosts: body.allowedHosts
+	}
+
 	function getDatabase(id, callback) {
-		Database.findOne({_id: id})
+		Database.findOne({_id: databaseid})
 		.populate("server")
 		.exec(function(err, result) {
 			callback(err, result);
@@ -410,7 +422,7 @@ exports.postDatabaseUser = function(req, res) {
 		var values = {
 			username: body.username,
 			password: secure.encrypt(body.password),
-			database: body.database,
+			database: databaseid,
 			allowedHosts: body.allowedHosts
 		}
 
@@ -426,10 +438,9 @@ exports.postDatabaseUser = function(req, res) {
 	};
 
 	function createUser(user, database, callback) {
-		console.log("Creating user");
 		var server = database.server;
 		database._server = server;
-		
+
 		var connection = new Connection(user._id, server);
 		var mysql = new MySQL(database);
 
@@ -457,7 +468,7 @@ exports.postDatabaseUser = function(req, res) {
 	function assignPermissions(user, database, callback) {
 		var server = database.server;
 		database._server = server;
-		
+
 		var connection = new Connection(user._id, server);
 		var mysql = new MySQL(database);
 
@@ -475,14 +486,14 @@ exports.postDatabaseUser = function(req, res) {
 					callback();
 				}
 			});
-			
+
 		});
 	}
 
 	function flush(user, database, callback) {
 		var server = database.server;
 		database._server = server;
-		
+
 		var connection = new Connection(user._id, server);
 		var mysql = new MySQL(database);
 		var flushCommand = mysql.flushPrivileges();
@@ -491,11 +502,11 @@ exports.postDatabaseUser = function(req, res) {
 		});
 	}
 
-	if(body.username && body.password && body.allowedHosts && body.database) {
-		getDatabase(body.database, function(err, database) {
+	if(body.username && body.password && body.allowedHosts && databaseid) {
+		getDatabase(databaseid, function(err, database) {
 			if(err) res.send(406, "Invalid database");
 			if(database) {
-				saveUser(body, function(err, newUser) {
+				saveUser(valuesToSave, function(err, newUser) {
 					if(err) res.send(406, err);
 					if(newUser) {
 						res.send(201, newUser);
@@ -506,7 +517,6 @@ exports.postDatabaseUser = function(req, res) {
 								});
 							});
 						});
-
 					}
 				})
 			}
@@ -519,11 +529,12 @@ exports.postDatabaseUser = function(req, res) {
 
 
 exports.deleteDatabaseUser = function(req, res) {
-	var id = req.params.id;
+	var databaseid = req.param.id;
+	var userid = req.params.userid;
 
 	function dropUser(user, database, host, callback) {
 		database._server = database.server;
-		var connection = new Connection(id, database.server);
+		var connection = new Connection(userid, database.server);
 		var mysql = new MySQL(database);
 
 		var command = mysql.dropUser(user.username, host);
@@ -531,14 +542,14 @@ exports.deleteDatabaseUser = function(req, res) {
 			callback(stderr, stdout);
 		});
 	}
-	
-	if(id) {
-		DatabaseUser.findOne({_id: id})
+
+	if(userid && databaseid) {
+		DatabaseUser.findOne({database: databaseid, _id: userid})
 		.exec(function(err, user) {
 			if(user) {
 				Database.findOne({_id: user.database})
 				.populate("server")
-				.exec(function(err, database) {				
+				.exec(function(err, database) {
 					user.allowedHosts.push("localhost");
 					var count = 0;
 					var total = user.allowedHosts.lenght;
@@ -549,11 +560,11 @@ exports.deleteDatabaseUser = function(req, res) {
 								res.send(406, stderr);
 							}
 							else {
-								DatabaseUser.remove({_id: id}, function(err, result) {
-									res.send(200, {stdout: stdout, stderr: stderr});
-								})
+								user.remove(function(err, result) {
+									res.send(200, user);
+								});
 							}
-						})						
+						})
 					});
 				});
 			}
@@ -562,13 +573,6 @@ exports.deleteDatabaseUser = function(req, res) {
 	else {
 		res.send(404);
 	}
-}
-
-exports.postCreateBackup = function(req, res) {
-	var body = req.body;
-	var files = req.files;
-	console.log(files);
-	console.log(body);
 }
 
 exports.postImportDatabase = function(req, res) {
@@ -599,7 +603,7 @@ exports.postImportDatabase = function(req, res) {
 	function runImportProcess(id, database, file) {
 		database._server = database.server;
 		var connection = new Connection(id, database.server);
-		
+
 		var mysql = new MySQL(database);
 		var command = mysql.importDatabase(file);
 
@@ -722,7 +726,7 @@ exports.postCreateBackup = function(req, res) {
 		})
 	}
 
-	/** 
+	/**
 	 * @param filename string the name and extension of the file
 	 * qparam database object the database object
 	 */

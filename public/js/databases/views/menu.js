@@ -11,7 +11,7 @@ define(function(require) {
 			"click a.showTables": "showTables",
 			"click a.showUsersInDatabase": "showUsersInDatabase",
 			"click a.listBackups": "listBackups",
-			"click a.createBackup": "createBackup", 
+			"click a.createBackup": "createBackup",
 			"click a.import": "import",
 			"click a.permissions": "administerPermissions"
 		},
@@ -29,7 +29,7 @@ define(function(require) {
 		},
 		listBackups: function(e) {
 			e.preventDefault();
-
+			// navigate.to();
 		},
 		createBackup: function(e) {
 			e.preventDefault();
