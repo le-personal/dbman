@@ -30,6 +30,8 @@ define(function(require) {
 	var AddUserToDatabaseForm = require("/js/databases/views/addUserToDatabaseForm.js");
 	var ViewBackups = require("/js/databases/views/viewBackups.js");
 	var ViewUsers = require("/js/databases/views/viewUsers.js");
+	var CreateBackupFormView = require("/js/databases/views/createBackupFormView.js");
+	var DownloadBackupLinkView = require("/js/databases/views/downloadBackupLinkView.js");
 
 	var Controller = Backbone.Marionette.Controller.extend({
 		// application events we should be listenting to here
@@ -44,7 +46,8 @@ define(function(require) {
 			"showTables": "showTables",
 			"showUsersInDatabase": "showUsersInDatabase",
 			"viewBackups": "viewBackups",
-			"createBackup": "createBackup",
+			"showCreateBackupForm": "showCreateBackupForm",
+			"showNewBackupCreatedModal": "showNewBackupCreatedModal",
 			"import": "import",
 			"permissions": "permissions"
 		},
@@ -340,6 +343,49 @@ define(function(require) {
 
     	layout.modals.show(modal);
     	loading.hide();
+    	modal.open();
+    },
+
+    showCreateBackupForm: function(options) {
+    	var createBackupFormView = new CreateBackupFormView({
+    		model: options.model, // a database model
+    		collection: this.backupsCollection
+    	});
+
+    	var modal = new Backbone.BootstrapModal({
+    		title: "Create backup of database " + options.model.toJSON().database_name,
+    		content: createBackupFormView,
+    		modalOptions: {
+    			backdrop: false
+    		}
+     	});
+
+     	layout.modals.show(modal);
+     	loading.hide();
+     	modal.open();
+    },
+
+    /** 
+     * @param options struct modal with the new backup created 
+     */
+    showNewBackupCreatedModal: function(options) {
+    	// show download link here
+			var content = new DownloadBackupLinkView({
+				model: options.model
+			});
+
+			// open a modal with the button
+			var modal = new Backbone.BootstrapModal({
+				title: "Backup ready!",
+				content: content,
+				allowCancel: false,
+				animate: true,
+				modalOptions: {
+					backdrop: false
+				}
+			});
+
+			layout.modals.show(modal);
     	modal.open();
     },
 

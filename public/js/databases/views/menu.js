@@ -11,7 +11,7 @@ define(function(require) {
 			"click a.showTables": "showTables",
 			"click a.showUsersInDatabase": "showUsersInDatabase",
 			"click a.viewBackups": "viewBackups",
-			"click a.createBackup": "createBackup",
+			"click a.createBackup": "showCreateBackupForm",
 			"click a.import": "import",
 			"click a.permissions": "administerPermissions"
 		},
@@ -31,9 +31,9 @@ define(function(require) {
 			e.preventDefault();
 			navigate.toPath("#view/" + this.model.toJSON()._id + "/backups", true);
 		},
-		createBackup: function(e) {
+		showCreateBackupForm: function(e) {
 			e.preventDefault();
-			Backbone.trigger("createBackup", {model: this.model});
+			Backbone.trigger("showCreateBackupForm", {model: this.model});
 		},
 		import: function(e) {
 			e.preventDefault();
