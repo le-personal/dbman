@@ -121,13 +121,16 @@ define(function(require) {
 
 		router_viewBackupsView: function(databaseid) {
 			loading.show();
-			var self = this;
 
-			var backupsCollection = new BackupsCollection({database: databaseid});
-			backupsCollection.fetch().done(function() {
-				self.viewBackups({collection: backupsCollection});
-				loading.hide();
-			});
+			var self = this;
+			this.backupsCollection = new BackupsCollection({database: databaseid});
+
+			this.backupsCollection.fetch({
+				success: function(models, results){
+					self.viewBackups({collection: models, database: databaseid});
+					loading.hide();
+				}
+			})
 		},
 
 		// Show all databases in a table
@@ -342,15 +345,29 @@ define(function(require) {
 
 		viewBackups: function(options) {
 			var self = this;
+    	loading.show();
 
-			var viewBackups = new ViewBackups({
-				collection: options.collection
-			});
-			
-			layout.main.show(viewBackups);
-			loading.hide();
+    	// Get the datase model from the collection, this.databasesCollection will be set on the constructor
+    	var database = this.databasesCollection.get(options.database);
+    	self.title.set("Backups for database " + database.toJSON().database_name);
+
+    	// This collection is the databasesUsers collection passed from router_viewUsersView
+    	// Instantiated and after a fetch
+    	var collection = options.collection;
+
+    	// Add the main view and pass the collection
+    	layout.main.show(new ViewBackups({collection: collection}));
+
+    	// Add the menu again because this is a public path
+    	var menu = new MenuDatabaseView({
+      	model: database
+      });
+
+    	// Show the menu
+      layout.menu.show(menu);
+
+    	loading.hide();
 		}
-
 	});
 
 	return Controller;

@@ -2,6 +2,9 @@ define(function(require) {
 	var Backbone = require("backbone");
 	
 	var Backup = Backbone.Model.extend({
+		initialize: function(options) {
+			this.database = options.database;
+		},
 		defaults: {
 			name: "",
 			created: "",
@@ -16,7 +19,10 @@ define(function(require) {
 			strategy: "",
 			expires: "",
 		},
-		idAttribute: "_id"
+		idAttribute: "_id",
+		url: function() {
+			return "/api/databases/" + this.database + "/backups";
+		}
 	});
 	
 	return Backup;

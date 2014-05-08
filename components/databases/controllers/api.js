@@ -641,19 +641,22 @@ exports.postImportDatabase = function(req, res) {
 }
 
 exports.getBackups = function(req, res) {
-	Backups.find()
-	.populate()
-	exec(function(err, results) {
+	var databaseid = req.params.id;
+	Backup.find({database: databaseid})
+	.populate("author")
+	.populate("database")
+	.exec(function(err, results) {
 		if(err) res.send(500, err);
 		if(results) res.send(200, results);
 	});
 }
 
 exports.getBackup = function(req, res) {
-	var id = req.body.id;
+	var databaseid = req.params.id;
+	var backupid = req.params.backupid;
 
-	if(id) {
-		Backups.findOne({_id: id})
+	if(databaseid && backupid) {
+		Backup.findOne({database: databaseid, _id: backupid})
 		.populate()
 		.exec(function(err, result) {
 			if(err) res.send(500, err);
@@ -669,6 +672,7 @@ exports.getBackup = function(req, res) {
 }
 
 exports.postCreateBackup = function(req, res) {
+	var databaseid = req.params.id;
 	var body = req.body;
 	var directoryBackups = "public/backups";
 
@@ -746,15 +750,15 @@ exports.postCreateBackup = function(req, res) {
 		});
 	}
 
-	if(body.name && body.database && body.format) {
-		console.log(body.format);
+	if(body.name && databaseid && body.format) {
+		console.log(body);
 		// if(body.format != "sql" || body.format != "sql.gz") {
 		// 	console.log(body.format);
 		// 	res.send(406, "Only sql and tar formats are available");
 		// 	return;
 		// }
 
-		getDatabase(body.database, function(err, database) {
+		getDatabase(databaseid, function(err, database) {
 			var name = body.name + "-" + Date.now();
 
 			// create a file with the name and the extension depending on the format
@@ -766,7 +770,7 @@ exports.postCreateBackup = function(req, res) {
 
 			var data = {
 				name: name,
-				database: body.database,
+				database: databaseid,
 				author: req.user,
 				fileName: fileName,
 				filePath: filePath,
@@ -803,7 +807,6 @@ exports.postCreateBackup = function(req, res) {
 exports.deleteBackup = function(req, res) {
 
 }
-
 
 /**
  * Administer permissions

@@ -8,6 +8,9 @@ define(function(requiere) {
 		template: "#viewusers-row",
 		initialize: function() {
 			this.model.on("change", this.render, this);
+		},
+		onRender: function() {
+			console.log("@todo implement drop");
 		}
 	});
 
@@ -16,9 +19,6 @@ define(function(requiere) {
 		template: "#viewusers",
 		itemViewContainer: "tbody",
 		emptyView: EmptyView,
-		onRender: function() {
-			
-		}
 	});
 
 	return ViewUsers;

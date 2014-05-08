@@ -5,8 +5,7 @@ define(function(require) {
 	var Backups = Backbone.Collection.extend({
 		model: Backup,
 		initialize: function(options) {
-			this.options = options;
-			this.database = this.options.database;
+			this.database = options.database;
 		},
 		url: function() {
     	return "/api/databases/" + this.database + '/backups';

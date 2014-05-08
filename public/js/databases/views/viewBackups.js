@@ -3,15 +3,19 @@ define(function(require) {
 	var Backbone = require("backbone");
 	var Marionette = require("marionette");
 
-	var ViewBackupRow = require("/js/databases/views/viewBackupRow.js")
+	var EmptyView = require("/js/common/views/empty.js");
+
+	var ViewBackupRow = Backbone.Marionette.ItemView.extend({
+		tagName: "tr",
+		template: "#viewbackups-row"
+	});
 
 	var ViewBackups = Backbone.Marionette.CompositeView.extend({
 		template: "#viewbackups",
 		itemView: ViewBackupRow,
 		itemViewContainer: "tbody",
-		// emptyView: "",
+		emptyView: EmptyView,
 		onRender: function() {
-			console.log("@todo implement emptyView in ViewBackups");
 		}
 	});
 

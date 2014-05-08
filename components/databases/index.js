@@ -36,7 +36,7 @@ app.post("/api/databases/:id/users", isUser, canEdit, api.postDatabaseUser);
 app.delete("/api/databases/:id/users/:userid", isUser, canEdit, api.deleteDatabaseUser);
 
 // no permissions here because we always need an id to check for permissions
-app.get("/api/databases/:id/backups/:backupid", isUser, api.getBackups);
+app.get("/api/databases/:id/backups", isUser, api.getBackups);
 app.get("/api/databases/:id/backups/:backupid", isUser, canView, api.getBackup);
 // no permissions here because we always need an id to check for permissions
 app.post("/api/databases/:id/backups", isUser, api.postCreateBackup);

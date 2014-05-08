@@ -142,15 +142,15 @@ block templates
 
 	script(type="text/template", id="viewbackups-row")
 		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
-			<a href="<%= backup.url %>" class=""><%= backup.name %></a>
-			div Created by: <%= backup.author.fullName %>
-		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.created %>
-		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.type %>
-		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.format %>
-		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= backup.status %>
+			<a href="<%= url %>" class=""><%= name %></a>
+			div Created by: <%= author.fullName %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= created %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= type %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= format %>
+		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= status %>
 		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
-			<% if(backup.url) { %>
-			<a href="<%= backup.url %>" class="btn btn-xs btn-success">Download</a>
+			<% if(url) { %>
+			<a href="<%= url %>" class="btn btn-xs btn-success">Download</a>
 			<% } %>
 
 	script(type="text/template", id="permissionsForm")
@@ -247,14 +247,14 @@ block templates
 
 			<li class="divider"></li>
 			
-			<li><a href="#" class="showAddUserToDatabaseForm">Add user</a></li>
-			<li><a href="#view/<%= _id %>/users">Users</a>
+			<li><a href="#view/<%= _id %>/users">Database users</a>
+			<li><a href="#" class="showAddUserToDatabaseForm">Add database user</a></li>
 			<li><a href="#" class="showUsersInDatabase">Show users in database</a></li>
 
 			<li class="divider"></li>
 
-			<li><a href="#view/<%= _id %>/backups" class="">List backups</a></li>
-			<li><a href="#view/<%= _id %>/createBackup" class="">Create backup</a></li>
+			<li><a href="#view/<%= _id %>/backups" class="viewBackups">Backups</a></li>
+			<li><a class="createBackup">Create backup</a></li>
 			
 			<li class="divider"></li>
 			

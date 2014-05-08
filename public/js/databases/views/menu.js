@@ -10,7 +10,7 @@ define(function(require) {
 			"click a.showAddUserToDatabaseForm": "showAddUserToDatabaseForm",
 			"click a.showTables": "showTables",
 			"click a.showUsersInDatabase": "showUsersInDatabase",
-			"click a.backups": "viewBackups",
+			"click a.viewBackups": "viewBackups",
 			"click a.createBackup": "createBackup",
 			"click a.import": "import",
 			"click a.permissions": "administerPermissions"
@@ -29,7 +29,7 @@ define(function(require) {
 		},
 		viewBackups: function(e) {
 			e.preventDefault();
-			navigate.toPath("#view/" + this.model.toJSON()._id + "/backups");
+			navigate.toPath("#view/" + this.model.toJSON()._id + "/backups", true);
 		},
 		createBackup: function(e) {
 			e.preventDefault();
