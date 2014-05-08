@@ -366,7 +366,7 @@ exports.postUnLockDatabase = function(req, res) {
  Users
 */
 exports.getDatabaseUsers = function(req, res) {
-	var databaseid = req.param.id;
+	var databaseid = req.params.id;
 	DatabaseUser.find({database: databaseid})
 	.exec(function(err, users) {
 		if(err) {
@@ -400,8 +400,10 @@ exports.getDatabaseUser = function(req, res) {
 }
 
 exports.postDatabaseUser = function(req, res) {
-	var databaseid = req.param.id;
+	var databaseid = req.params.id;
 	var body = req.body;
+
+	console.log(body);
 
 	var valuesToSave = {
 		username: body.username,
@@ -502,7 +504,7 @@ exports.postDatabaseUser = function(req, res) {
 		});
 	}
 
-	if(body.username && body.password && body.allowedHosts && databaseid) {
+	if(body.username && body.password && body.allowedHosts && req.params.id) {
 		getDatabase(databaseid, function(err, database) {
 			if(err) res.send(406, "Invalid database");
 			if(database) {
@@ -529,7 +531,7 @@ exports.postDatabaseUser = function(req, res) {
 
 
 exports.deleteDatabaseUser = function(req, res) {
-	var databaseid = req.param.id;
+	var databaseid = req.params.id;
 	var userid = req.params.userid;
 
 	function dropUser(user, database, host, callback) {

@@ -10,7 +10,7 @@ define(function(require) {
 			"click a.showAddUserToDatabaseForm": "showAddUserToDatabaseForm",
 			"click a.showTables": "showTables",
 			"click a.showUsersInDatabase": "showUsersInDatabase",
-			"click a.backups": "backups",
+			"click a.backups": "viewBackups",
 			"click a.createBackup": "createBackup",
 			"click a.import": "import",
 			"click a.permissions": "administerPermissions"
@@ -33,6 +33,7 @@ define(function(require) {
 		},
 		createBackup: function(e) {
 			e.preventDefault();
+			Backbone.trigger("createBackup", {model: this.model});
 		},
 		import: function(e) {
 			e.preventDefault();

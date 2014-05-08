@@ -13,6 +13,7 @@ define([
 		itemViewContainer: "tbody",
 		// emptyView: 
 		onRender: function() {
+			console.log("@todo implement emptyView in ViewServers");
 		}
 	});
 

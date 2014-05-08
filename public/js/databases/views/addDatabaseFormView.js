@@ -4,7 +4,6 @@ define(function(require) {
 	var Marionette = require("marionette");
 
 	var loading = require("/js/lib/loading.js");
-
 	var Database = require("/js/databases/models/database.js");
 
 	var AddDatabaseFormView = Backbone.Marionette.CompositeView.extend({

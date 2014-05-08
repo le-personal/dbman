@@ -1,10 +1,16 @@
 define(function(require) {
 	var Backbone = require("backbone");
-	var DatabaseUser = require("/js/databases/collections/databasesuser.js");
+	var DatabasesUser = require("/js/databases/models/databasesuser.js");
 
 	var DatabaseUsers = Backbone.Collection.extend({
-		model: DatabaseUser,
-		url: "/api/databases/users"
+		model: DatabasesUser,
+		initialize: function(options) {
+			this.options = options;
+			this.database = this.options.database;
+		},
+		url: function() {
+    	return "/api/databases/" + this.database + '/users';
+  	}
 	});
 
 	return DatabaseUsers;

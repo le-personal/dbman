@@ -8,5 +8,10 @@ define(function(require) {
 		Backbone.history.navigate("#" + fragment + "/" + id, {trigger: this.reload});
 	}
 
+	Navigator.prototype.toPath = function(path, reload) {
+		this.reload = reload ? reload : false;
+		Backbone.history.navigate(path, {trigger: this.reload});
+	}
+
 	return new Navigator();
 });

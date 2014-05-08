@@ -103,22 +103,33 @@ block templates
 						<input type="checkbox" name="createDatabase"> Create the database on the server?
 						<div class="help-block">If not checked, the database will only be registered but not created on the server. Use this option if the database already exists and you want to managed it.</div>
 				
-	script(type="text/template", id="listDatabaseUsers-template")
-		div
-			h3 Database users
-			table.table.table-striped.well
-				thead
-					th Username
-					th Allowed Hosts
-				tbody#databaseUsers
+	script(type="text/template", id="viewusers")
+		table.table.table-striped.well
+			thead
+				th Username
+				th Allowed Hosts
+			tbody
 
-	script(type="text/template", id="databaseUserRow-template")
-		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= user.username %>	
-		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= user.allowedHosts %>
+	script(type="text/template", id="viewusers-row")
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= username %>	
+		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 <%= allowedHosts %>
 		td.col-lg-3.col-md-3.col-sm-3.col-xs-3 
 			button.btn.btn-danger.btn-xs.removeDatabaseUser Drop
 
-	script(type="text/template", id="listBackups-template")
+	script(type="text/template", id="add-database-user")
+		form(role="form")
+			<input type="hidden" name="database" value="<%= database._id %>" class="form-control" />
+			div.form-group
+				label(for="username") Username *
+				input(type="text", name="username", id="form-input-database-user", placeholder="Enter the database user to create").form-control
+			div.form-group
+				label(for="password") Password for the database user *
+				input(type="password", name="password", id="form-input-database-password", placeholder="Enter the password for the user").form-control
+			div.form-group
+				label(for="allowedHosts") Allowed hosts
+				input(type="text", name="allowedHosts", id="form-input-allowed-hosts", placeholder="Enter the hosts separated by commas, no spaces").form-control
+
+	script(type="text/template", id="viewbackups")
 		table.table.table-striped.table-hover.well
 			thead
 				th Name
@@ -129,7 +140,7 @@ block templates
 				th Download
 			tbody#backupsList
 
-	script(type="text/template", id="listBackupsRow-template")
+	script(type="text/template", id="viewbackups-row")
 		td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
 			<a href="<%= backup.url %>" class=""><%= backup.name %></a>
 			div Created by: <%= backup.author.fullName %>
@@ -228,32 +239,28 @@ block templates
 				<a href="<%= backup.url %>" class="btn btn-success btn-large btn-block center-block">Download backup</a>
 				div(align="center").help-block.center-block Location of file: <%= backup.url %>
 
-	script(type="text/template", id="addDatabaseUser-template")
-		form(role="form")
-			<input type="hidden" name="database" value="<%= database._id %>" class="form-control" />
-			div.form-group
-				label(for="username") Username *
-				input(type="text", name="username", id="form-input-database-user", placeholder="Enter the database user to create").form-control
-			div.form-group
-				label(for="password") Password for the database user *
-				input(type="password", name="password", id="form-input-database-password", placeholder="Enter the password for the user").form-control
-			div.form-group
-				label(for="allowedhosts") Allowed hosts
-				input(type="text", name="allowedhosts", id="form-input-allowed-hosts", placeholder="Enter the hosts separated by commas, no spaces").form-control
-
 	script(type="text/template", id="database-menu")
 		div.btn-group
 			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
 			<ul class="dropdown-menu" role="menu">
-			<li><a href="#" class="showAddUserToDatabaseForm">Add user</a></li>
-			<li class="divider"></li>
 			<li><a href="#" class="showTables">Show tables</a></li>
-			<li><a href="#" class="showUsersInDatabase">Show users</a></li>
+
 			<li class="divider"></li>
-			<li><a href="#view/<%= _id %>/listBackups" class="">List backups</a></li>
+			
+			<li><a href="#" class="showAddUserToDatabaseForm">Add user</a></li>
+			<li><a href="#view/<%= _id %>/users">Users</a>
+			<li><a href="#" class="showUsersInDatabase">Show users in database</a></li>
+
+			<li class="divider"></li>
+
+			<li><a href="#view/<%= _id %>/backups" class="">List backups</a></li>
 			<li><a href="#view/<%= _id %>/createBackup" class="">Create backup</a></li>
+			
 			<li class="divider"></li>
+			
 			<li><a href="#" class="import">Import</a></li>
+			
 			<li class="divider"></li>
+			
 			<li><a href="#view/<%= _id %>/permissions" class="showPermissions">Permissions</a></li>
 			</ul>

@@ -9,9 +9,14 @@ define(function(require) {
 	var io = require("/js/lib/io.js");
   var loading = require("/js/lib/loading.js");
 
+  // collections
   var DatabasesCollection = require("/js/databases/collections/databases.js");
-  var Database = require("/js/databases/models/database.js");
   var ServersCollection = require("/js/servers/collections/collection.js");
+  var BackupsCollection = require("/js/databases/collections/backups.js");
+  var DatabaseUsersCollection = require("/js/databases/collections/databasesusers.js");
+  
+  // models
+  var Database = require("/js/databases/models/database.js");
 
   var layout = require("/js/common/views/layout.js");
   var Title = require("/js/common/views/title.js");
@@ -24,6 +29,7 @@ define(function(require) {
 	var AddDatabaseFormView = require("/js/databases/views/addDatabaseFormView.js");
 	var AddUserToDatabaseForm = require("/js/databases/views/addUserToDatabaseForm.js");
 	var ViewBackups = require("/js/databases/views/viewBackups.js");
+	var ViewUsers = require("/js/databases/views/viewUsers.js");
 
 	var Controller = Backbone.Marionette.Controller.extend({
 		// application events we should be listenting to here
@@ -37,7 +43,7 @@ define(function(require) {
 			"showAddUserToDatabaseForm": "showAddUserToDatabaseForm",
 			"showTables": "showTables",
 			"showUsersInDatabase": "showUsersInDatabase",
-			"listBackups": "listBackups",
+			"viewBackups": "viewBackups",
 			"createBackup": "createBackup",
 			"import": "import",
 			"permissions": "permissions"
@@ -99,6 +105,31 @@ define(function(require) {
       });
 		},
 
+		router_viewUsersView: function(databaseid) {
+			loading.show();
+
+			var self = this;
+			this.databaseUsersCollection = new DatabaseUsersCollection({database: databaseid});
+
+			this.databaseUsersCollection.fetch({
+				success: function(models, results){
+					self.viewUsers({collection: models, database: databaseid});
+					loading.hide();
+				}
+			})
+		},
+
+		router_viewBackupsView: function(databaseid) {
+			loading.show();
+			var self = this;
+
+			var backupsCollection = new BackupsCollection({database: databaseid});
+			backupsCollection.fetch().done(function() {
+				self.viewBackups({collection: backupsCollection});
+				loading.hide();
+			});
+		},
+
 		// Show all databases in a table
 		viewDatabases: function() {
 			// show loading
@@ -125,7 +156,10 @@ define(function(require) {
       // replace the main region with the ShowServerView and pass the model
       layout.main.show(new ViewDatabase({model: options.model}));
 
-      var menu = new MenuDatabaseView({model: options.model});
+      var menu = new MenuDatabaseView({
+      	model: options.model
+      });
+
       layout.menu.show(menu);
 		},
 
@@ -215,20 +249,7 @@ define(function(require) {
       });
     },
 
-    showAddUserToDatabaseForm: function(options) {
-  		var addUserToDatabaseForm = new AddUserToDatabaseForm();
-  		var modal = new Backbone.BootstrapModal({
-    		title: "Add user to database " + options.model.toJSON().database_name,
-    		content: addUserToDatabaseForm,
-    		modalOptions: {
-    			backdrop: false
-    		}
-    	});
-
-    	layout.modals.show(modal);
-    	loading.hide();
-    	modal.open();
-    },
+    
 
     showTables: function(options) {
     	var self = this;
@@ -274,15 +295,60 @@ define(function(require) {
     	})
     },
 
-		listBackups: function(options) {
+    viewUsers: function(options) {
+    	var self = this;
+    	loading.show();
+
+    	// Get the datase model from the collection, this.databasesCollection will be set on the constructor
+    	var database = this.databasesCollection.get(options.database);
+    	self.title.set("Users with access to database " + database.toJSON().database_name);
+
+    	// This collection is the databasesUsers collection passed from router_viewUsersView
+    	// Instantiated and after a fetch
+    	var collection = options.collection;
+
+    	// Add the main view and pass the collection
+    	layout.main.show(new ViewUsers({collection: collection}));
+
+    	// Add the menu again because this is a public path
+    	var menu = new MenuDatabaseView({
+      	model: database
+      });
+
+    	// Show the menu
+      layout.menu.show(menu);
+
+    	loading.hide();
+    },
+
+    showAddUserToDatabaseForm: function(options) {
+  		var addUserToDatabaseForm = new AddUserToDatabaseForm({
+  			model: options.model, // a database model
+  			collection: this.databaseUsersCollection
+  		});
+
+  		var modal = new Backbone.BootstrapModal({
+    		title: "Add user to database " + options.model.toJSON().database_name,
+    		content: addUserToDatabaseForm,
+    		modalOptions: {
+    			backdrop: false
+    		}
+    	});
+
+    	layout.modals.show(modal);
+    	loading.hide();
+    	modal.open();
+    },
+
+		viewBackups: function(options) {
 			var self = this;
 
 			var viewBackups = new ViewBackups({
-				collection:
+				collection: options.collection
 			});
 			
 			layout.main.show(viewBackups);
-
+			loading.hide();
 		}
 
 	});
