@@ -33,9 +33,10 @@ define(function(require) {
 				}
 			});
 		},
-		showTables: function(id) {
+		showTables: function() {
 			var self = this;
 			var url = this.urlRoot;
+			var id = this.toJSON()._id;
 			jQuery.post(url + "/showtables", {id: id}, function(response) {
 				if(response) {
 					self.trigger("showTables:success", response);

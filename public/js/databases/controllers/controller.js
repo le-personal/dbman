@@ -31,7 +31,13 @@ define(function(require) {
 			"onClick:menu:add": "showAddDatabaseForm",
 			"lockDatabase": "lockDatabase",
 			"unlockDatabase": "unlockDatabase",
-			"removeDatabase": "openModalToConfirmRemovalOfDatabase"
+			"removeDatabase": "openModalToConfirmRemovalOfDatabase",
+			"showTables": "showTables",
+			"showUsersInDatabase": "showUsersInDatabase",
+			"listBackups": "listBackups",
+			"createBackup": "createBackup",
+			"import": "import",
+			"permissions": "permissions"
 		},
 
 		initialize: function() {
@@ -198,7 +204,26 @@ define(function(require) {
         options.model.destroy({wait: true});
         loading.hide();
       });
-    }
+    },
+
+    showTables: function(options) {
+    	var self = this;    	
+
+    	loading.show();
+    	options.model.showTables();
+    	options.model.on("showTables:success", function(data) {
+	    	var dataView = new DataView(data).render();
+
+	    	var modal = new Backbone.BootstrapModal({
+	    		title: "Showing tables in database " + options.model.toJSON().database_name,
+	    		content: dataView
+	    	});
+
+	    	layout.modals.show(modal);
+	    	loading.hide();
+	    	modal.open();
+    	})
+    },
 
 	});
 
