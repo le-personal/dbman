@@ -114,7 +114,10 @@ define(function (require) {
         var modal = new Backbone.BootstrapModal({
           title: "Testing connection to " + model.toJSON().name,
           content: new DataView(data).render(),
-          animate: true
+          animate: true,
+          modalOptions: {
+            backdrop: false
+          }
         });
 
         // Prevent zombie views by forcing the modal to be shown in #modals
@@ -128,7 +131,10 @@ define(function (require) {
       var modal = new Backbone.BootstrapModal({
         title: "Add server",
         content: addServerForm,
-        animate: true
+        animate: true,
+        modalOptions: {
+          backdrop: false
+        }
       });
 
       // Prevent zombie views by forcing the modal to be shown in #modals
@@ -140,7 +146,10 @@ define(function (require) {
       var self = this;
       var modal = new Backbone.BootstrapModal({
         title: "Are you sure you want to delete the server " + options.model.toJSON().name,
-        content: "This action cannot be undone"
+        content: "This action cannot be undone",
+        modalOptions: {
+          backdrop: false
+        }
       });
 
       layout.modals.show(modal);

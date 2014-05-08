@@ -22,6 +22,7 @@ define(function(require) {
 	var ViewDatabases = require("/js/databases/views/viewDatabases.js");
 	var ViewDatabase = require("/js/databases/views/viewDatabase.js");
 	var AddDatabaseFormView = require("/js/databases/views/addDatabaseFormView.js");
+	var AddUserToDatabaseForm = require("/js/databases/views/addUserToDatabaseForm.js");
 
 	var Controller = Backbone.Marionette.Controller.extend({
 		// application events we should be listenting to here
@@ -32,6 +33,7 @@ define(function(require) {
 			"lockDatabase": "lockDatabase",
 			"unlockDatabase": "unlockDatabase",
 			"removeDatabase": "openModalToConfirmRemovalOfDatabase",
+			"showAddUserToDatabaseForm": "showAddUserToDatabaseForm",
 			"showTables": "showTables",
 			"showUsersInDatabase": "showUsersInDatabase",
 			"listBackups": "listBackups",
@@ -140,7 +142,10 @@ define(function(require) {
 	      var modal = new Backbone.BootstrapModal({
 	        title: "Add database",
 	        content: addDatabaseForm,
-	        animate: true
+	        animate: true,
+	        modalOptions: {
+	    			backdrop: false
+	    		}
 	      });
 
 	      // Prevent zombie views by forcing the modal to be shown in #modals
@@ -190,7 +195,10 @@ define(function(require) {
     	var modal = new Backbone.BootstrapModal({
     		title: "Confirm removal of datababase " + options.model.toJSON().database_name,
     		content: "This operation cannot be undone, if you click OK, the database will be removed",
-    		animate: true
+    		animate: true,
+    		modalOptions: {
+    			backdrop: false
+    		}
     	});
 
     	// Prevent zombie views by forcing the modal to be shown in #modals
@@ -206,6 +214,21 @@ define(function(require) {
       });
     },
 
+    showAddUserToDatabaseForm: function(options) {
+  		var addUserToDatabaseForm = new AddUserToDatabaseForm();
+  		var modal = new Backbone.BootstrapModal({
+    		title: "Add user to database " + options.model.toJSON().database_name,
+    		content: addUserToDatabaseForm,
+    		modalOptions: {
+    			backdrop: false
+    		}
+    	});
+
+    	layout.modals.show(modal);
+    	loading.hide();
+    	modal.open();
+    },
+
     showTables: function(options) {
     	var self = this;    	
 
@@ -216,7 +239,32 @@ define(function(require) {
 
 	    	var modal = new Backbone.BootstrapModal({
 	    		title: "Showing tables in database " + options.model.toJSON().database_name,
-	    		content: dataView
+	    		content: dataView,
+	    		modalOptions: {
+	    			backdrop: false
+	    		}
+	    	});
+
+	    	layout.modals.show(modal);
+	    	loading.hide();
+	    	modal.open();
+    	})
+    },
+
+    showUsersInDatabase: function(options) {
+    	var self = this;    	
+
+    	loading.show();
+    	options.model.showUsersInDatabase();
+    	options.model.on("showUsersInDatabase:success", function(data) {
+	    	var dataView = new DataView(data).render();
+
+	    	var modal = new Backbone.BootstrapModal({
+	    		title: "Showing users with access to database " + options.model.toJSON().database_name,
+	    		content: dataView,
+	    		modalOptions: {
+	    			backdrop: false
+	    		}
 	    	});
 
 	    	layout.modals.show(modal);

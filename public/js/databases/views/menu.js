@@ -7,7 +7,7 @@ define(function(require) {
 	var Menu = Backbone.Marionette.ItemView.extend({
 		template: "#database-menu",
 		events: {
-			"click a.addUserToDatabase": "addUserToDatabase",
+			"click a.showAddUserToDatabaseForm": "showAddUserToDatabaseForm",
 			"click a.showTables": "showTables",
 			"click a.showUsersInDatabase": "showUsersInDatabase",
 			"click a.listBackups": "listBackups",
@@ -15,9 +15,9 @@ define(function(require) {
 			"click a.import": "import",
 			"click a.permissions": "administerPermissions"
 		},
-		addUserToDatabase: function(e) {
+		showAddUserToDatabaseForm: function(e) {
 			e.preventDefault();
-			Backbone.trigger("addUserToDatabase", {model: this.model});
+			Backbone.trigger("showAddUserToDatabaseForm", {model: this.model});
 		},
 		showTables: function(e) {
 			e.preventDefault();
@@ -29,7 +29,7 @@ define(function(require) {
 		},
 		listBackups: function(e) {
 			e.preventDefault();
-			
+
 		},
 		createBackup: function(e) {
 			e.preventDefault();

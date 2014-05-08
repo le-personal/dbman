@@ -48,6 +48,7 @@ define(function(require) {
 		showUsersInDatabase: function(id) {
 			var self = this;
 			var url = this.urlRoot;
+			var id = this.toJSON()._id;
 			jQuery.post(url + "/showusersindatabase", {id: id}, function(response) {
 				if(response) {
 					self.trigger("showUsersInDatabase:success", response);
