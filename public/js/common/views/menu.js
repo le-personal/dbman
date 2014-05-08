@@ -18,7 +18,8 @@ define(function(require) {
 		},
 		onClick: function() {
 			var event = "onClick:menu:" + this.options.name;
-			Backbone.trigger(event, {});
+			// include the model passed on instantiation
+			Backbone.trigger(event, {model: this.options.model});
 		}
 	});
 

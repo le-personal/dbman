@@ -39,14 +39,14 @@ define(function(require) {
 			'viewDatabase': 'viewDatabase',
 			'showAddDatabaseForm': 'showAddDatabaseForm',
 			"onClick:menu:add": "showAddDatabaseForm",
+			"onClick:menu:adduser": "showAddUserToDatabaseForm",
+			"onClick:menu:createbackup": "showCreateBackupForm",
 			"lockDatabase": "lockDatabase",
 			"unlockDatabase": "unlockDatabase",
 			"removeDatabase": "openModalToConfirmRemovalOfDatabase",
-			"showAddUserToDatabaseForm": "showAddUserToDatabaseForm",
 			"showTables": "showTables",
 			"showUsersInDatabase": "showUsersInDatabase",
 			"viewBackups": "viewBackups",
-			"showCreateBackupForm": "showCreateBackupForm",
 			"showNewBackupCreatedModal": "showNewBackupCreatedModal",
 			"import": "import",
 			"permissions": "permissions"
@@ -143,7 +143,7 @@ define(function(require) {
       this.title.set("Databases");
 
       // Set the menu
-      layout.menu.show(new MenuView({title: "Add databases", name: "add"}));
+      layout.actionsmenu.show(new MenuView({title: "Add database", name: "add"}));
 
       // add the viewServers to the main region in the layout
       var viewDatabases = new ViewDatabases({collection: this.databasesCollection});
@@ -166,7 +166,7 @@ define(function(require) {
       	model: options.model
       });
 
-      layout.menu.show(menu);
+      layout.dropdownmenu.show(menu);
 		},
 
 		// Shows a form to add a new database
@@ -316,13 +316,20 @@ define(function(require) {
     	// Add the main view and pass the collection
     	layout.main.show(new ViewUsers({collection: collection}));
 
+    	// Set the menu to add a new database
+      layout.actionsmenu.show(new MenuView({
+      	title: "Add database user", 
+      	name: "adduser",
+      	model: database
+      }));
+
     	// Add the menu again because this is a public path
     	var menu = new MenuDatabaseView({
       	model: database
       });
 
     	// Show the menu
-      layout.menu.show(menu);
+      layout.dropdownmenu.show(menu);
 
     	loading.hide();
     },
@@ -330,7 +337,7 @@ define(function(require) {
     showAddUserToDatabaseForm: function(options) {
   		var addUserToDatabaseForm = new AddUserToDatabaseForm({
   			model: options.model, // a database model
-  			collection: this.databaseUsersCollection
+  			collection: this.databaseUsersCollection // this is instantiated on initialize
   		});
 
   		var modal = new Backbone.BootstrapModal({
@@ -404,13 +411,20 @@ define(function(require) {
     	// Add the main view and pass the collection
     	layout.main.show(new ViewBackups({collection: collection}));
 
+    	// Set the menu to add a new database
+      layout.actionsmenu.show(new MenuView({
+      	title: "Create backup", 
+      	name: "createbackup",
+      	model: database
+      }));
+
     	// Add the menu again because this is a public path
     	var menu = new MenuDatabaseView({
       	model: database
       });
 
     	// Show the menu
-      layout.menu.show(menu);
+      layout.dropdownmenu.show(menu);
 
     	loading.hide();
 		}
