@@ -24,11 +24,13 @@ script(type="text/template", id="message")
 //-  */
 script(type="text/template", id="title-template")
 	div.row
-		h1.col-lg-9
-			span.title <%= title %>
-		div.pull-right
-			div#actionsmenu.col-lg-6
-			div#dropdownmenu.col-lg-6
+		h1
+			div.col-lg-9
+				span.title <%= title %>
+			div.col-lg-3
+				div.pull-right
+					div#actionsmenu.col-lg-6
+					div#dropdownmenu.col-lg-6
 	hr
 
 //- /** 

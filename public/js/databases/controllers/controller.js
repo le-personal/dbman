@@ -318,7 +318,7 @@ define(function(require) {
 
     	// Set the menu to add a new database
       layout.actionsmenu.show(new MenuView({
-      	title: "Add database user", 
+      	title: "Add user", 
       	name: "adduser",
       	model: database
       }));
