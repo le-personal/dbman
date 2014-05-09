@@ -48,7 +48,7 @@ define(function(require) {
 			"showUsersInDatabase": "showUsersInDatabase",
 			"viewBackups": "viewBackups",
 			"showNewBackupCreatedModal": "showNewBackupCreatedModal",
-			"import": "import",
+			"import": "showImportModal",
 			"permissions": "permissions"
 		},
 
@@ -427,7 +427,12 @@ define(function(require) {
       layout.dropdownmenu.show(menu);
 
     	loading.hide();
-		}
+		},
+
+    showImportModal: function(options) {
+      var self = this;
+      console.log("@todo, import not implemented yet");
+    }
 	});
 
 	return Controller;

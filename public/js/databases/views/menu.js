@@ -27,6 +27,7 @@ define(function(require) {
 		},
 		import: function(e) {
 			e.preventDefault();
+			Backbone.trigger("import", {model: this.model});
 		},
 		administerPermissions: function(e) {
 			e.preventDefault();
