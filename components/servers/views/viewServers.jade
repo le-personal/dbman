@@ -16,8 +16,9 @@ block templates
 				label(for="ssh_username") SSH Username *
 				input(type="text", name="ssh_username", id="form-input-ssh_username", placeholder="Enter the ssh username to use to connect to this server").form-control
 			div.form-group 
-				label(for="ssh_keypath") SSH Public Key Path *
-				input(type="text", name="ssh_keypath", id="form-input-ssh_keypath", placeholder="Enter the ssh username to use to connect to this server").form-control
+				label(for="ssh_keypath") SSH Private Key Path *
+				input(type="text", name="ssh_keypath", id="form-input-ssh_keypath", placeholder="Enter the path where your ssh private key path is. The public key of this SSH will have to exists in the server.").form-control
+				div.help-block Enter the path where your ssh private key path is. The public key of this SSH will have to exists in the server.
 			div.form-group 
 				label(for="ssh_port") SSH Port *
 				input(type="text", name="ssh_port", id="form-input-ssh_port", placeholder="Enter the ssh port", value="22").form-control
