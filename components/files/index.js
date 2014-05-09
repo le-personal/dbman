@@ -13,6 +13,6 @@ var multipartMiddleware = multipart();
 
 app.get("/api/files", isUser, api.getFiles);
 app.get("/api/files/:id", isUser, api.getFile);
-app.post("/api/files", multipartMiddleware, api.postFile);
+app.post("/api/files", isUser, multipartMiddleware, api.postFile);
 
 

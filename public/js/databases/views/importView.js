@@ -59,18 +59,18 @@ define(function(require) {
 	    };
 	    
 	    xhr.onload = function() {
-	    	self.updateProgressBar(100);
+	    	self._updateProgressBar(100);
 	      loading.hide();
 	      
-	      var newfile = JSON.parse(this.responseText);
-
-	      $("div.newfile").text("File uploaded: " + newfile.filename);
-
+	      // Once the file is uploaded we have an id and we can create a new module and get it
+	      // after that, we trigger the event informing the application to continue
+	      var model = new File(JSON.parse(this.responseText));
 	      $("span.fileinput-button").hide();
-
-	      $("input#fileid").val(newfile._id);
-
-	      self.fileId = newfile._id;
+	     
+	      // $("div.newfile").text("File uploaded: " + newfile.filename);
+	      
+	      // the model is a file
+	      Backbone.trigger("fileUploadedOK", {model: model});
 	    };
 	    
 	    xhr.open('post', '/api/files', true);
