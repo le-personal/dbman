@@ -89,7 +89,7 @@ define(function (require) {
       this.title.set("Servers");
       
       // Set the menu
-      layout.menu.show(new MenuView({title: "Add server", name: "add"}));
+      layout.actionsmenu.show(new MenuView({title: "Add server", name: "add"}));
 
       // add the viewServers to the main region in the layout
       var viewServers = new ViewServers({collection: this.collection});
