@@ -93,11 +93,11 @@ define(function(require) {
 				self.trigger("unlockDatabase:error", response);
 			});
 		},
-		importDatabase: function(dbid, fileid) {
+		importDatabase: function(fileid) {
 			var self = this;
 			var url = this.urlRoot;
 			// the id is needed by the isUnlock library
-			jQuery.post(url + "/import", {id: dbid, file: fileid}, function(response) {
+			jQuery.post(url + "/import", {id: this.toJSON()._id, file: fileid}, function(response) {
 				if(response) {
 					self.trigger("importDatabase:success", response);
 				}

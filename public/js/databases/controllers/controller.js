@@ -32,6 +32,7 @@ define(function(require) {
 	var ViewUsers = require("/js/databases/views/viewUsers.js");
 	var CreateBackupFormView = require("/js/databases/views/createBackupFormView.js");
 	var DownloadBackupLinkView = require("/js/databases/views/downloadBackupLinkView.js");
+  var ImportView = require("/js/databases/views/importView.js");
 
 	var Controller = Backbone.Marionette.Controller.extend({
 		// application events we should be listenting to here
@@ -431,7 +432,22 @@ define(function(require) {
 
     showImportModal: function(options) {
       var self = this;
-      console.log("@todo, import not implemented yet");
+      // send the database as model since options.models is a database model
+      var importView = new ImportView({model: options.model});
+
+      // open a modal with the button
+      var modal = new Backbone.BootstrapModal({
+        title: "Import into database ",
+        content: importView,
+        allowCancel: true,
+        animate: true,
+        modalOptions: {
+          backdrop: false
+        }
+      });
+
+      layout.modals.show(modal);
+      modal.open();
     }
 	});
 
