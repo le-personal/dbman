@@ -66,56 +66,14 @@ define(function(require) {
 	      // after that, we trigger the event informing the application to continue
 	      var model = new File(JSON.parse(this.responseText));
 	      $("span.fileinput-button").hide();
-	     
-	      // $("div.newfile").text("File uploaded: " + newfile.filename);
-	      
+	     	      
 	      // the model is a file
-	      Backbone.trigger("fileUploadedOK", {model: model});
+	      // we also pass the database model
+	      Backbone.trigger("importFileUploadedOK", {file: model, database: self.options.model});
 	    };
 	    
 	    xhr.open('post', '/api/files', true);
 	    xhr.send(formData);
-		},
-
-		importDatabase: function(fileModel) {
-			loading.show();
-			var self = this;
-
-			var file = fileModel.toJSON();
-
-			var db = this.options.model;
-
-			db.importDatabase(file._id);
-
-			db.on("importDatabase:success", function(response) {
-				console.log("@todo implement success message here");
-				loading.hide();
-			})
-
-			db.on("importDatabase:error", function(error) {
-				// alert.error(error.responseText);
-				console.log("@todo implement error here")
-			})
-		},
-
-		// first check if there's a file.
-		okClicked: function() {
-			loading.show();
-			var self = this;
-
-			var fileId = self.fileId;
-			var file = File({id: fileId});
-			file.fetch({
-				success: function(fileModel, response) {
-					// call the import step
-					self.importDatabase(fileModel);
-					loading.hide();
-				},
-				error: function(model, response) {
-					loading.hide();
-				}	
-			});
-
 		}
 	});
 

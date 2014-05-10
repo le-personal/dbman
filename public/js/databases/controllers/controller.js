@@ -50,6 +50,7 @@ define(function(require) {
 			"viewBackups": "viewBackups",
 			"showNewBackupCreatedModal": "showNewBackupCreatedModal",
 			"import": "showImportModal",
+      "importFileUploadedOK": "importFileUploadedOK",
 			"permissions": "permissions"
 		},
 
@@ -437,9 +438,10 @@ define(function(require) {
 
       // open a modal with the button
       var modal = new Backbone.BootstrapModal({
-        title: "Import into database ",
+        title: "Import into database " + options.model.toJSON().database_name,
         content: importView,
-        allowCancel: true,
+        allowCancel: false,
+        okText: "Cancel",
         animate: true,
         modalOptions: {
           backdrop: false
@@ -448,6 +450,59 @@ define(function(require) {
 
       layout.modals.show(modal);
       modal.open();
+
+      // Since we cannot hide the OK button, we hide the cancel and 
+      // use the OK to cancel and close the modal
+      modal.on("ok", this.close());
+    },
+
+    /** 
+     * @param options {object}
+      [options.file] the file model that was just uploaded
+      [options.database] the database model of the destiny database
+     */
+    importFileUploadedOK: function(options) {
+      var self = this;
+      var file = options.file;
+      var database = options.database;
+
+      loading.show();
+      database.importDatabase(file.toJSON()._id);
+      database.on("importDatabase:success", function(response) {
+        loading.hide();
+        
+        var modal = new Backbone.BootstrapModal({
+          title: "Imported successfully the file to the database " + database.toJSON().database_name,
+          content: "The import was successfull",
+          animate: true,
+          allowCancel: false,
+          modalOptions: {
+            backdrop: false
+          }
+        });
+
+
+        layout.modals.show(modal);
+        modal.open();
+      })
+
+      database.on("importDatabase:error", function(error) {
+        loading.hide();
+
+        var modal = new Backbone.BootstrapModal({
+          title: "Error when importing to database " + database.toJSON().database_name,
+          content: error.responseText,
+          animate: true,
+          allowCancel: false,
+          modalOptions: {
+            backdrop: false
+          }
+        });
+
+
+        layout.modals.show(modal);
+        modal.open();
+      })
     }
 	});
 
