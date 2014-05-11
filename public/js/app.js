@@ -21,14 +21,14 @@ define(function (require) {
   var layout = Layout;
   App.contentRegion.show(layout.render());
 
-  App.session.load();
+  App.addInitializer(function () {   
+    App.session.load();
+  });
+
   App.session.on("sessionLoaded", function(user) {
     App.headerRegion.show(new ViewHeader({user: user}));
-  });
-
-  App.addInitializer(function () {   
     Backbone.history.start();
   });
-
+  
   return App;
 });

@@ -4,6 +4,8 @@ define(function (require) {
   var Backbone = require("backbone");
   var Marionette = require("marionette");
   var BootstrapModal = require("backboneBootstrapModal");
+
+  var App = require("/js/app.js");
   
   var Model = require("/js/servers/models/model.js");
   var Collection = require("/js/servers/collections/collection.js");

@@ -6,6 +6,8 @@ define(function(require) {
 	var Marionette = require("marionette");
 	var BootstrapModal = require("backboneBootstrapModal");
 
+  var App = require("/js/app.js");
+
 	var io = require("/js/lib/io.js");
   var loading = require("/js/lib/loading.js");
 
@@ -163,7 +165,9 @@ define(function(require) {
       this.title.set("Databases");
 
       // Set the menu
-      layout.actionsmenu.show(new MenuView({title: "Add database", name: "add"}));
+      if(App.session.isAdmin()) {
+        layout.actionsmenu.show(new MenuView({title: "Add database", name: "add"}));
+      }
 
       // add the viewServers to the main region in the layout
       var viewDatabases = new ViewDatabases({collection: this.databasesCollection});
@@ -337,11 +341,13 @@ define(function(require) {
     	layout.main.show(new ViewUsers({collection: collection}));
 
     	// Set the menu to add a new database
-      layout.actionsmenu.show(new MenuView({
-      	title: "Add user", 
-      	name: "adduser",
-      	model: database
-      }));
+      if(App.session.isAdmin()) {
+        layout.actionsmenu.show(new MenuView({
+        	title: "Add user", 
+        	name: "adduser",
+        	model: database
+        }));
+      } 
 
     	// Add the menu again because this is a public path
     	var menu = new MenuDatabaseView({
@@ -451,27 +457,31 @@ define(function(require) {
 
     showImportModal: function(options) {
       var self = this;
-      // send the database as model since options.models is a database model
-      var importView = new ImportView({model: options.model});
 
-      // open a modal with the button
-      var modal = new Backbone.BootstrapModal({
-        title: "Import into database " + options.model.toJSON().database_name,
-        content: importView,
-        allowCancel: false,
-        okText: "Cancel",
-        animate: true,
-        modalOptions: {
-          backdrop: false
-        }
-      });
+      if(App.session.can("import", options.model)) {
+        // send the database as model since options.models is a database model
+        var importView = new ImportView({model: options.model});
 
-      layout.modals.show(modal);
-      modal.open();
+        // open a modal with the button
+        var modal = new Backbone.BootstrapModal({
+          title: "Import into database " + options.model.toJSON().database_name,
+          content: importView,
+          allowCancel: false,
+          okText: "Cancel",
+          animate: true,
+          modalOptions: {
+            backdrop: false
+          }
+        });
 
-      // Since we cannot hide the OK button, we hide the cancel and 
-      // use the OK to cancel and close the modal
-      modal.on("ok", this.close());
+        layout.modals.show(modal);
+        modal.open();
+
+        // Since we cannot hide the OK button, we hide the cancel and 
+        // use the OK to cancel and close the modal
+        modal.on("ok", this.close());
+      }
+
     },
 
     /** 
