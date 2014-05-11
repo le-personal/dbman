@@ -1,5 +1,8 @@
 extends /layout
 
+block scripts
+	script(src="/vendor/requirejs/require.js", data-main="/js/users/main")
+
 block content
 	div.container
 		div.row
