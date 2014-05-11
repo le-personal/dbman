@@ -33,6 +33,8 @@ define(function(require) {
 	var CreateBackupFormView = require("/js/databases/views/createBackupFormView.js");
 	var DownloadBackupLinkView = require("/js/databases/views/downloadBackupLinkView.js");
   var ImportView = require("/js/databases/views/importView.js");
+  var ViewPermissions = require("/js/databases/views/viewPermissions.js");
+  var PermissionsForm = require("/js/databases/views/permissionsForm.js");
 
 	var Controller = Backbone.Marionette.Controller.extend({
 		// application events we should be listenting to here
@@ -42,6 +44,7 @@ define(function(require) {
 			"onClick:menu:add": "showAddDatabaseForm",
 			"onClick:menu:adduser": "showAddUserToDatabaseForm",
 			"onClick:menu:createbackup": "showCreateBackupForm",
+      "onClick:menu:addpermission": "showModalToAddPermissions",
 			"lockDatabase": "lockDatabase",
 			"unlockDatabase": "unlockDatabase",
 			"removeDatabase": "openModalToConfirmRemovalOfDatabase",
@@ -51,7 +54,7 @@ define(function(require) {
 			"showNewBackupCreatedModal": "showNewBackupCreatedModal",
 			"import": "showImportModal",
       "importFileUploadedOK": "importFileUploadedOK",
-			"permissions": "permissions"
+			"viewPermissions": "viewPermissionsView"
 		},
 
 		initialize: function() {
@@ -137,6 +140,21 @@ define(function(require) {
 				}
 			})
 		},
+   
+    /**
+     * Calls viewPermissionsView method in this controller with the model populated
+     * @param  {string} databaseid id of the database to fetch from the collection
+     * @this this controller
+     * @return {void}
+     */
+    router_viewPermissionsView: function(databaseid) {
+      loading.show();
+
+      var self = this;
+      var model = this.databasesCollection.get(databaseid);
+      self.viewPermissionsView({collection: this.databasesCollection, model: model});
+      loading.hide();
+    },
 
 		// Show all databases in a table
 		viewDatabases: function() {
@@ -499,11 +517,61 @@ define(function(require) {
           }
         });
 
-
         layout.modals.show(modal);
         modal.open();
       })
+    },
+
+    /**
+     * Shows the permissions page for a database.
+     * This method will call the view ViewPermissions
+     * @param  {object} options an options object with a database collection and a database model
+     * - @property {object} options.collection the database collection
+     * - @property {object} options.model the database model
+     * @return {void}
+     */
+    viewPermissionsView: function(options) {
+      this.title.set("Permissions for database " + options.model.toJSON().database_name);
+
+      // Set the menu
+      layout.actionsmenu.show(new MenuView({
+        title: "Add permission", 
+        name: "addpermission", 
+        model: options.model, 
+        collection: options.collection
+      }));
+
+      var viewPermissions = new ViewPermissions({
+        collection: options.collection, 
+        model: options.model
+      });
+
+      layout.main.show(viewPermissions);
+    },
+
+    /**
+     * Shows a modal with a form to add permissions
+     * @param  {object} options includes the collection and current model (database)
+     * @return {void}         
+     */
+    showModalToAddPermissions: function(options) {
+      var modal = new Backbone.BootstrapModal({
+        title: "Add permissions",
+        content: new PermissionsForm({
+          model: options.model,
+          collection: options.collection
+        }), // do not render
+        animate: true,
+        modalOptions: {
+          backdrop: false
+        }
+      });
+
+      layout.modals.show(modal);
+      modal.open();
     }
+
+
 	});
 
 	return Controller;

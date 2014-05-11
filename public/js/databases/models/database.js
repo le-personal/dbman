@@ -106,13 +106,11 @@ define(function(require) {
 				self.trigger("importDatabase:error", response);
 			});
 		},
-		addPermission: function(id, user, permission) {
+		addPermission: function(userid, permission) {
 			var self = this;
 			var url = this.urlRoot;
 
-			var database = id;
-
-			jQuery.post(url + "/permissions", {user: user, permission: permission, database: database, op: "add"}, function(response) {
+			jQuery.post(url + "/permissions", {user: userid, permission: permission, database: this.toJSON()._id, op: "add"}, function(response) {
 				if(response) {
 					self.trigger("addPermission:success", response);
 				}
@@ -122,13 +120,11 @@ define(function(require) {
 				self.trigger("addPermission:error", error);
 			});
 		},
-		removePermission: function(id, user, permission) {
+		removePermission: function(userid, permission) {
 			var self = this;
 			var url = this.urlRoot;
 
-			var database = id;
-
-			jQuery.post(url + "/permissions", {user: user, permission: permission, database: database, op: "remove"}, function(response) {
+			jQuery.post(url + "/permissions", {user: userid, permission: permission, database: this.toJSON()._id, op: "remove"}, function(response) {
 				console.log(response);
 				if(response) {
 					self.trigger("removePermission:success", response);
