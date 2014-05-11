@@ -43,7 +43,6 @@ define(function(require) {
 		initialize: function() {
 			var self = this;
 			this.model.on("change", function() {
-				console.log("Model changed, reseting collection");
 				self.collection.reset();
 			}, this);
 			
