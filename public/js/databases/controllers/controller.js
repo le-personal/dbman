@@ -8,8 +8,9 @@ define(function(require) {
 
   var App = require("/js/app.js");
 
-	var io = require("/js/lib/io.js");
+  var io = require("/js/lib/io.js");
   var loading = require("/js/lib/loading.js");
+  var Navigation = require("/js/lib/navigation.js");
 
   // collections
   var DatabasesCollection = require("/js/databases/collections/databases.js");
@@ -172,6 +173,9 @@ define(function(require) {
       // add the viewServers to the main region in the layout
       var viewDatabases = new ViewDatabases({collection: this.databasesCollection});
       layout.main.show(viewDatabases);
+
+      var navigation = new Navigation();
+      navigation.set.active("databases");
 
       // hide loading
       loading.hide();

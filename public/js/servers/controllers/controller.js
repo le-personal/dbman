@@ -6,12 +6,13 @@ define(function (require) {
   var BootstrapModal = require("backboneBootstrapModal");
 
   var App = require("/js/app.js");
-  
+
   var Model = require("/js/servers/models/model.js");
   var Collection = require("/js/servers/collections/collection.js");
 
   var io = require("/js/lib/io.js");
   var loading = require("/js/lib/loading.js");
+  var Navigation = require("/js/lib/navigation.js");
   
   var layout = require("/js/common/views/layout.js");
   var Title = require("/js/common/views/title.js");
@@ -96,6 +97,9 @@ define(function (require) {
       // add the viewServers to the main region in the layout
       var viewServers = new ViewServers({collection: this.collection});
       layout.main.show(viewServers);
+
+      var navigation = new Navigation();
+      navigation.set.active("servers");
 
       // hide loading
       loading.hide();
