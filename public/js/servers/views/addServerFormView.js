@@ -13,7 +13,7 @@ define(function(require) {
 		ui: {
 			name: 'input[name="name"]',
 			ip: 'input[name="ip"]',
-			ssh_username: 'input[name="ssh_keypath"]',
+			ssh_username: 'input[name="ssh_username"]',
 			ssh_keypath: 'input[name="ssh_keypath"]',
 			ssh_port: 'input[name="ssh_port"]',
 			os: 'select[name="os"]',
