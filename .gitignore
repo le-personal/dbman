@@ -2,6 +2,5 @@ public/vendor
 node_modules
 data
 data/*
-config/config.json
 public/backups/*.sql
 public/backups/*.gz

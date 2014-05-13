@@ -5,7 +5,7 @@
 
 var express = require("express");
 var include = require("includemvc");
-var config = include.path("config", "config.json");
+var config = include.path("config", "config.js");
 var app = module.exports = exports = express();
 var path = require("path");
 var mvc = require("expressjsmvc");
@@ -13,16 +13,14 @@ var flash = require("express-flash");
 var passport = require("passport");
 
 var RedisStore = require('connect-redis')(express);
-var redisOptions = {
-	host: "localhost",
-}
+var redisOptions = config.redis;
 
 // Alloy all configuration to be available in app.config
 app.config = config;
 
 // all environments
 mvc.EnableMultipeViewsFolders(app);
-app.set('port', process.env.PORT || 3000);
+app.set('port', config.port);
 app.set('views', [path.join(__dirname, 'views')]);
 app.set('view engine', 'jade');
 app.locals.basedir = path.join(__dirname, 'views');
@@ -35,7 +33,7 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('keyboard cat'));
 app.use(express.session({ 
 	store: new RedisStore(redisOptions),
-	secret: config.secret,
+	secret: config.secretKey,
 	cookie: { 
 		expires: new Date(Date.now() + 3600000),
 		maxAge: 3600000
