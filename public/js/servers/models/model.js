@@ -11,7 +11,7 @@ define([
 			name: "",
 			ip: "",
 			ssh_username: '',
-			ssh_keyPath: '',
+			ssh_keypath: '',
 			ssh_port: '',
 			os: '',
 			created: '',

@@ -39,7 +39,7 @@ exports.postServer = function(req, res) {
 			name: body.name,
 			ip: body.ip,
 			ssh_username: body.ssh_username,
-			ssh_keyPath: body.ssh_keypath,
+			ssh_keypath: body.ssh_keypath,
 			ssh_port: body.ssh_port,
 			os: body.os,
 			author: user,

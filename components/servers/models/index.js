@@ -5,7 +5,7 @@ var Server = mongoose.model("Server", {
 	name: String,
 	ip: String,
 	ssh_username: String,
-	ssh_keyPath: String,
+	ssh_keypath: String,
 	ssh_port: {type: String, default: 22},
 	os: String,
 	created: {type: Date, default: Date.now},
