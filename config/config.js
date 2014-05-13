@@ -1,7 +1,7 @@
 var config = {}
 
 // Components enabled, do not change
-config.components = ["users", "error", "servers", "databases", "files"];
+config.components = ["installer", "users", "error", "servers", "databases", "files"];
 
 // secret key, change it to encrypt your strings using this key
 config.secretKey = "The monkey is on the tree";
