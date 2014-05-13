@@ -15,17 +15,17 @@ config.enableIO = true;
 
 // mongodb configuration
 config.mongodb = {
-	hostname: process.env.MONGODB_HOSTNAME || "localhost",
+	hostname: process.env.MONGODB_PORT_27017_TCP_ADDR || "localhost",
 	database: process.env.MONGODB_DATABASE || "dbman",
-	port: process.env.MONGODB_PORT || "27017"
+	port: process.env.MONGODB_PORT_27017_TCP_PORT || "27017"
 }
 
 config.mongodburi = "mongodb://" + config.mongodb.hostname + ":" + config.mongodb.port + "/" + config.mongodb.database;
 
 // redis configuration
 config.redis = {
-	host: process.env.REDIS_HOSTNAME || "localhost",
-	port: process.env.REDIS_PORT || "6379"
+	host: process.env.REDIS_PORT_6379_TCP_ADDR || "localhost",
+	port: process.env.REDIS_PORT_6379_TCP_PORT || "6379"
 }
 
 config.port = process.env.PORT || "3000";
