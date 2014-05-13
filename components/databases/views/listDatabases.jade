@@ -170,14 +170,13 @@ block templates
 						option(value="import") Import
 						option(value="remove") Remove
 
-	script(type="text/template" id="permissionRow")
-		tr
-			td
-				strong <%= fullName %>
-			td
-				<a href="#" class="btn btn-danger btn-xs revoke-access-btn" data-permission="<%= permission %>" id="<%= _id %>">Revoke access</a>
+	script(type="text/template" id="permission-view-row")
+		td
+			strong <%= user.fullName %>
+		td
+			<a href="#" class="btn btn-danger btn-xs revoke-access-btn" data-permission="<%= permission %>" id="<%= user._id %>">Revoke access</a>
 
-	script(type="text/template", id="permissionsTemplate")
+	script(type="text/template", id="permissions-view")
 		div
 			table.table.table-striped.table-condensed.table-hover.well
 				thead
@@ -196,7 +195,6 @@ block templates
 					th Remove access
 				tbody#membersWithRemoveAccess
 			hr
-			<a href="#allowaccess/<%= database._id %>" class="btn btn-primary allowAccess">Allow access to user</a>
 
 
 	script(type="text/template", id="import-database")

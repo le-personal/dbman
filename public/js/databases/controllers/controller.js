@@ -6,6 +6,8 @@ define(function(require) {
 	var Marionette = require("marionette");
 	var BootstrapModal = require("backboneBootstrapModal");
 
+  var App = require("/js/app.js");
+
 	var io = require("/js/lib/io.js");
   var loading = require("/js/lib/loading.js");
 
@@ -33,6 +35,8 @@ define(function(require) {
 	var CreateBackupFormView = require("/js/databases/views/createBackupFormView.js");
 	var DownloadBackupLinkView = require("/js/databases/views/downloadBackupLinkView.js");
   var ImportView = require("/js/databases/views/importView.js");
+  var ViewPermissions = require("/js/databases/views/viewPermissions.js");
+  var PermissionsForm = require("/js/databases/views/permissionsForm.js");
 
 	var Controller = Backbone.Marionette.Controller.extend({
 		// application events we should be listenting to here
@@ -42,6 +46,7 @@ define(function(require) {
 			"onClick:menu:add": "showAddDatabaseForm",
 			"onClick:menu:adduser": "showAddUserToDatabaseForm",
 			"onClick:menu:createbackup": "showCreateBackupForm",
+      "onClick:menu:addpermission": "showModalToAddPermissions",
 			"lockDatabase": "lockDatabase",
 			"unlockDatabase": "unlockDatabase",
 			"removeDatabase": "openModalToConfirmRemovalOfDatabase",
@@ -50,7 +55,8 @@ define(function(require) {
 			"viewBackups": "viewBackups",
 			"showNewBackupCreatedModal": "showNewBackupCreatedModal",
 			"import": "showImportModal",
-			"permissions": "permissions"
+      "importFileUploadedOK": "importFileUploadedOK",
+			"viewPermissions": "viewPermissionsView"
 		},
 
 		initialize: function() {
@@ -136,6 +142,21 @@ define(function(require) {
 				}
 			})
 		},
+   
+    /**
+     * Calls viewPermissionsView method in this controller with the model populated
+     * @param  {string} databaseid id of the database to fetch from the collection
+     * @this this controller
+     * @return {void}
+     */
+    router_viewPermissionsView: function(databaseid) {
+      loading.show();
+
+      var self = this;
+      var model = this.databasesCollection.get(databaseid);
+      self.viewPermissionsView({collection: this.databasesCollection, model: model});
+      loading.hide();
+    },
 
 		// Show all databases in a table
 		viewDatabases: function() {
@@ -144,7 +165,9 @@ define(function(require) {
       this.title.set("Databases");
 
       // Set the menu
-      layout.actionsmenu.show(new MenuView({title: "Add database", name: "add"}));
+      if(App.session.isAdmin()) {
+        layout.actionsmenu.show(new MenuView({title: "Add database", name: "add"}));
+      }
 
       // add the viewServers to the main region in the layout
       var viewDatabases = new ViewDatabases({collection: this.databasesCollection});
@@ -318,11 +341,13 @@ define(function(require) {
     	layout.main.show(new ViewUsers({collection: collection}));
 
     	// Set the menu to add a new database
-      layout.actionsmenu.show(new MenuView({
-      	title: "Add user", 
-      	name: "adduser",
-      	model: database
-      }));
+      if(App.session.isAdmin()) {
+        layout.actionsmenu.show(new MenuView({
+        	title: "Add user", 
+        	name: "adduser",
+        	model: database
+        }));
+      } 
 
     	// Add the menu again because this is a public path
     	var menu = new MenuDatabaseView({
@@ -432,14 +457,120 @@ define(function(require) {
 
     showImportModal: function(options) {
       var self = this;
-      // send the database as model since options.models is a database model
-      var importView = new ImportView({model: options.model});
 
-      // open a modal with the button
+      if(App.session.can("import", options.model)) {
+        // send the database as model since options.models is a database model
+        var importView = new ImportView({model: options.model});
+
+        // open a modal with the button
+        var modal = new Backbone.BootstrapModal({
+          title: "Import into database " + options.model.toJSON().database_name,
+          content: importView,
+          allowCancel: false,
+          okText: "Cancel",
+          animate: true,
+          modalOptions: {
+            backdrop: false
+          }
+        });
+
+        layout.modals.show(modal);
+        modal.open();
+
+        // Since we cannot hide the OK button, we hide the cancel and 
+        // use the OK to cancel and close the modal
+        modal.on("ok", this.close());
+      }
+
+    },
+
+    /** 
+     * @param options {object}
+      [options.file] the file model that was just uploaded
+      [options.database] the database model of the destiny database
+     */
+    importFileUploadedOK: function(options) {
+      var self = this;
+      var file = options.file;
+      var database = options.database;
+
+      loading.show();
+      database.importDatabase(file.toJSON()._id);
+      database.on("importDatabase:success", function(response) {
+        loading.hide();
+        
+        var modal = new Backbone.BootstrapModal({
+          title: "Imported successfully the file to the database " + database.toJSON().database_name,
+          content: "The import was successfull",
+          animate: true,
+          allowCancel: false,
+          modalOptions: {
+            backdrop: false
+          }
+        });
+
+
+        layout.modals.show(modal);
+        modal.open();
+      })
+
+      database.on("importDatabase:error", function(error) {
+        loading.hide();
+
+        var modal = new Backbone.BootstrapModal({
+          title: "Error when importing to database " + database.toJSON().database_name,
+          content: error.responseText,
+          animate: true,
+          allowCancel: false,
+          modalOptions: {
+            backdrop: false
+          }
+        });
+
+        layout.modals.show(modal);
+        modal.open();
+      })
+    },
+
+    /**
+     * Shows the permissions page for a database.
+     * This method will call the view ViewPermissions
+     * @param  {object} options an options object with a database collection and a database model
+     * - @property {object} options.collection the database collection
+     * - @property {object} options.model the database model
+     * @return {void}
+     */
+    viewPermissionsView: function(options) {
+      this.title.set("Permissions for database " + options.model.toJSON().database_name);
+
+      // Set the menu
+      layout.actionsmenu.show(new MenuView({
+        title: "Add permission", 
+        name: "addpermission", 
+        model: options.model, 
+        collection: options.collection
+      }));
+
+      var viewPermissions = new ViewPermissions({
+        collection: options.collection, 
+        model: options.model
+      });
+
+      layout.main.show(viewPermissions);
+    },
+
+    /**
+     * Shows a modal with a form to add permissions
+     * @param  {object} options includes the collection and current model (database)
+     * @return {void}         
+     */
+    showModalToAddPermissions: function(options) {
       var modal = new Backbone.BootstrapModal({
-        title: "Import into database ",
-        content: importView,
-        allowCancel: true,
+        title: "Add permissions",
+        content: new PermissionsForm({
+          model: options.model,
+          collection: options.collection
+        }), // do not render
         animate: true,
         modalOptions: {
           backdrop: false
@@ -449,6 +580,8 @@ define(function(require) {
       layout.modals.show(modal);
       modal.open();
     }
+
+
 	});
 
 	return Controller;
