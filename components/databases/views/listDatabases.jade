@@ -41,13 +41,13 @@ block templates
 		</td>
 		<td>
 		<div class="btn-group">
+		<a data-id="<%= _id %>" href="/databases#view/<%= _id %>" class="viewDatabase btn btn-xs btn-primary">View</a>
 		<% if(isLocked) { %>
 		<button class="unlockDatabase btn btn-xs btn-warning">Unlock</button>
 		<% } else { %>
 		<button class="lockDatabase btn btn-xs btn-success">Lock</button>
-		<% } %>
-		<a data-id="<%= _id %>" href="/databases#view/<%= _id %>" class="viewDatabase btn btn-xs btn-primary">View</a>
 		<button class="removeDatabase btn btn-xs btn-danger"> Delete</button>
+		<% } %>
 		</div>
 		</td>
 
