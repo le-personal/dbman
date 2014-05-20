@@ -1,0 +1,55 @@
+# Fig configuration file to start DBMan
+# To Use just run: fig up
+# If you want to daemonize use: fig up -d
+# 
+# The configuration file assumes that the code (the whole project) is at:
+# /var/www/dbman, if not, change it, also the ssh keys of /root/.ssh will be included,
+# if you need another keys, you probably want to chaange this
+# 
+# You also need to create data-only containers which are not created by this fig file
+# To do it do:
+# 
+# sudo docker run -v /var/files --name DBMAN_FILES busybox true
+# sudo docker run -v /data/db --name DBMAN_DBDATA busybox true
+#
+# Adapt the name of those containers if you want but do not change the -v paths
+# 
+# CHANGES NEEDED BEFORE RUNNING THE APPLICATION:
+# web: volumes
+# - set the directory where dbman code is
+# - set the directory of your ssh keys
+# - set the directory of logs in case you want to access the supervisor logs outside the container
+# 
+# web: volumes_from
+# - set the name of the data-only container you created for the application files
+# 
+# 
+# mongodb: volums_from
+# - set the name of the data-only container you created for the database files
+#
+web:
+  build: .
+  links:
+   - mongodb:mongodb
+   - redis:redis
+  ports:
+   - "8000:3000"
+  volumes:
+   - "/var/www/dbman:/var/www"
+   - "/home/luis/.ssh:/root/.ssh"
+   - "/var/log/docker:/var/log/supervisor"
+  volumes_from:
+   - DBMAN_FILES
+  environment:
+   - MONGODB_DATABASE: dbman
+   - PORT: 3000
+   - EXPOSE_CONFIG: true
+redis:
+  image: dockerfile/redis
+  expose:
+   - "6379:6379"
+mongodb:
+  image: luis/mongodb
+  expose:
+   - "27017"
+  volumes_from: DBMAN_DBDATA
