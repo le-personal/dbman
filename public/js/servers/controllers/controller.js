@@ -28,7 +28,8 @@ define(function (require) {
       "showServerView": "showServerView",
       "testConnection": "testConnection",
       "onClick:menu:add": "showAddServerForm",
-      "showDeleteServerConfirmationForm": "showDeleteServerConfirmationForm"
+      "showDeleteServerConfirmationForm": "showDeleteServerConfirmationForm",
+      "showDatabasesOnServer": "showDatabasesOnServer"
     },
     initialize:function (options) {
       var self = this;
@@ -166,6 +167,30 @@ define(function (require) {
         // destroy the model
         options.model.destroy({wait: true});
         loading.hide();
+      });
+    },
+
+    showDatabasesOnServer: function(options) {
+      var model = options.model;
+
+      loading.show();
+      var model = options.model;
+      model.showDatabases();
+      model.on("showDatabases:success", function(data) {
+        loading.hide();
+        var modal = new Backbone.BootstrapModal({
+          title: "Databases on server: " + model.toJSON().name,
+          content: new DataView(data).render(),
+          animate: true,
+          modalOptions: {
+            backdrop: false
+          }
+        });
+
+        // Prevent zombie views by forcing the modal to be shown in #modals
+        // and let Marionette handle the $el and closing
+        layout.modals.show(modal);
+        modal.open();
       });
     }
   });

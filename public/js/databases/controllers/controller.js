@@ -585,7 +585,6 @@ define(function(require) {
       modal.open();
     }
 
-
 	});
 
 	return Controller;

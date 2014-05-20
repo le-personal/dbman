@@ -9,7 +9,8 @@ define(function(require) {
 		events: {
 			"click .lockDatabase": "lockDatabase",
 			"click .unlockDatabase": "unlockDatabase",
-			"click .removeDatabase": "removeDatabase"
+			"click .removeDatabase": "removeDatabase",
+			"click .showDatabasesOnServer": "showDatabasesOnServer"
 		},
 		initialize: function() {
 			// force a render when the model changes
@@ -24,6 +25,9 @@ define(function(require) {
 		},
 		removeDatabase: function() {
 			Backbone.trigger("removeDatabase", {model: this.model});
+		},
+		showDatabasesOnServer: function() {
+			Backbone.trigger("showDatabasesOnServer", {model: this.model});
 		}
 	});
 

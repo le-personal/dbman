@@ -33,7 +33,22 @@ define([
 			}, "json").fail(function(error) {
 				self.trigger("testConnection:error", error);
 			});
-		}
+		},
+
+		showDatabases: function() {
+			// Get the databases on a server
+			var self = this;
+			var url = this.urlRoot;
+			var server = this.toJSON()._id;
+
+			jQuery.post("/api/databases/showdatabases", {server: server}, function(response) {
+				if(response) {
+					self.trigger("showDatabases:success", response);
+				}
+			}, "json").fail(function(error) {
+				self.trigger("showDatabases:error", error);
+			});
+		},
 	});
 
 	return Model;

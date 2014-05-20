@@ -57,17 +57,6 @@ define(function(require) {
 				self.trigger("showUsersInDatabase:error", error);
 			});
 		},
-		showDatabases: function(server) {
-			var self = this;
-			var url = this.urlRoot;
-			jQuery.post(url + "/showdatabases", {server: server}, function(response) {
-				if(response) {
-					self.trigger("showDatabases:success", response);
-				}
-			}, "json").fail(function(error) {
-				self.trigger("showDatabases:error", error);
-			});
-		},
 		lockDatabase: function() {
 			var self = this;
 			var url = this.urlRoot;
