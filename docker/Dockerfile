@@ -2,7 +2,7 @@ FROM ubuntu:14.04
 MAINTAINER Luis Elizondo "lelizondo@gmail.com"
 
 RUN apt-get update
-RUN apt-get install -y python python-software-properties curl
+RUN apt-get install -y python python3-software-properties curl
 RUN apt-get -qq update
 RUN apt-get install -y nodejs npm
 RUN npm install -g expressjsmvc express bower
