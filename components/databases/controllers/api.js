@@ -675,7 +675,7 @@ exports.getBackup = function(req, res) {
 exports.postCreateBackup = function(req, res) {
 	var databaseid = req.params.id;
 	var body = req.body;
-	var directoryBackups = "public/backups";
+	var directoryBackups = config.directoryUploads;
 
 	function getDatabase(id, callback) {
 		Database.findOne({_id: id})
