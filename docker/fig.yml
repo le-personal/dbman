@@ -26,6 +26,8 @@
 # 
 # mongodb: volums_from
 # - set the name of the data-only container you created for the database files
+# 
+# BROKEN WITH DOCKER 0.11
 #
 web:
   build: .
@@ -33,17 +35,18 @@ web:
    - mongodb:mongodb
    - redis:redis
   ports:
-   - "8000:3000"
+   - "8000:80"
+   - "3000:3000"
   volumes:
-   - "/var/www/dbman:/var/www"
+   - "../:/var/www"
    - "/home/luis/.ssh:/root/.ssh"
    - "/var/log/docker:/var/log/supervisor"
   volumes_from:
    - DBMAN_FILES
   environment:
-   - MONGODB_DATABASE: dbman
-   - PORT: 3000
-   - EXPOSE_CONFIG: true
+   MONGODB_DATABASE: dbman
+   PORT: 3000
+   EXPOSE_CONFIG: true
 redis:
   image: dockerfile/redis
   expose:
