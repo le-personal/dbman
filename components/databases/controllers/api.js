@@ -143,6 +143,7 @@ exports.postDatabase = function(req, res) {
 					var db = {
 						database_name: body.database_name,
 						database_type: serviceType,
+						description: body.description,
 						server: serverId,
 						author: user,
 						permissions: {

@@ -6,6 +6,7 @@ define(function(require) {
 		urlRoot: "/api/databases",
 		defaults: {
 			database_name: "",
+			description: "",
 			created: '',
 			server: '',
 			author: '',

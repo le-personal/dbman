@@ -11,6 +11,7 @@ var Schema = mongoose.Schema;
 var Database = mongoose.model("Database", {
 	database_name: String,
 	database_type: String,
+	description: String,
 	created: {type: Date, default: Date.now},
 	server: {type: Schema.Types.ObjectId, ref: "Server"},
 	author: {type: Schema.Types.ObjectId, ref: "User"},

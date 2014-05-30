@@ -60,6 +60,9 @@ block templates
 					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 
 						strong <%= database_name %>
 				tr
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Description:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= description %>
+				tr
 					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Created:
 					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= created %>
 				tr
@@ -95,6 +98,9 @@ block templates
 			div.form-group
 				label(for="database_name") Database name *
 				input(type="text", name="database_name", id="form-input-name", placeholder="Enter a name for this database").form-control
+			div.form-group
+				label(for="description") Description *
+				input(type="text", name="description", id="form-input-description", placeholder="Enter a description for this database").form-control
 			div.form-group
 				div.checkbox
 					label
