@@ -31,13 +31,13 @@ http {
     listen 80;
     server_name localhost;
 
-    location ~ ^/(public/) {
-      root /var/www/public;
-      access_log off;
-      expires max;
+    #  static content
+    location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|xml|sql|gz)$ {
+      # access_log        off;
+      expires           15d;
     }
 
-    location ~ ^/(files/) {
+    location ~ ^/(backups/) {
       root /var/files;
       access_log off;
       expires max;
