@@ -35,7 +35,7 @@ web:
    - mongodb:mongodb
    - redis:redis
   ports:
-   - "8000:80"
+   - "3001:80"
    - "3000:3000"
   volumes:
    - "../:/var/www"
