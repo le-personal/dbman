@@ -33,13 +33,19 @@ http {
 
     #  static content
     location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|xml|sql|gz)$ {
-      # access_log        off;
+      access_log        on;
       expires           15d;
     }
 
+    location ~T ^/(images/|js/|css/|vendor/|favicon.ico) {
+      root /var/www/public;
+      access_log on;
+      expires max;
+    } 
+
     location ~ ^/(backups/) {
       root /var/files;
-      access_log off;
+      access_log on;
       expires max;
     }
 
@@ -55,15 +61,17 @@ http {
       proxy_cache one;
       proxy_cache_key ghost$request_uri$scheme;
       proxy_pass         http://dbman;
+      proxy_redirect off;
     }
-
-    gzip on;
-    gzip_comp_level 2;
-    gzip_proxied any;
-    gzip_min_length  1000;
-    gzip_disable     "MSIE [1-6]\."
-    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
   }
+
+  gzip  on;
+  gzip_comp_level 6;
+  gzip_vary on;
+  gzip_min_length 1000;
+  gzip_proxied any;
+  gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+  gzip_buffers 16 8k;
 
   access_log /var/log/nginx/access.log;
   error_log /var/log/nginx/error.log;
