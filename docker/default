@@ -56,6 +56,13 @@ http {
       proxy_cache_key ghost$request_uri$scheme;
       proxy_pass         http://dbman;
     }
+
+    gzip on;
+    gzip_comp_level 2;
+    gzip_proxied any;
+    gzip_min_length  1000;
+    gzip_disable     "MSIE [1-6]\."
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
   }
 
   access_log /var/log/nginx/access.log;
