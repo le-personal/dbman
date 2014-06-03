@@ -50,7 +50,8 @@ app.use(function(req, res, next) {
 })
 
 app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+// don't use static, we'll use nginx!
+// app.use(express.static(path.join(__dirname, 'public')));
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });

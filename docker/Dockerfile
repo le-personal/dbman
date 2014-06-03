@@ -17,7 +17,6 @@ ADD ./config/nginx.conf /etc/nginx/nginx.conf
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 EXPOSE 80
-EXPOSE 3000
 
 ENV MONGODB_DATABASE dbman
 ENV PORT 3000

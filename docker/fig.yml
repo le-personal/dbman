@@ -1,11 +1,8 @@
-# Fig configuration file to start DBMan
+# @file Fig configuration file to start DBMan
 # To Use just run: fig up
 # If you want to daemonize use: fig up -d
 # 
-# The configuration file assumes that the code (the whole project) is at:
-# /var/www/dbman, if not, change it, also the ssh keys of /root/.ssh will be included,
-# if you need another keys, you probably want to chaange this
-# 
+# DATA CONTAINERS
 # You also need to create data-only containers which are not created by this fig file
 # To do it do:
 # 
@@ -14,21 +11,18 @@
 #
 # Adapt the name of those containers if you want but do not change the -v paths
 # 
-# CHANGES NEEDED BEFORE RUNNING THE APPLICATION:
-# web: volumes
-# - set the directory where dbman code is
-# - set the directory of your ssh keys
-# - set the directory of logs in case you want to access the supervisor logs outside the container
+# MAPPING OF VOLUMES
+# This file maps several directories:
 # 
-# web: volumes_from
-# - set the name of the data-only container you created for the application files
+# /var/www this is where the application exists inside the container
+# /root/.ssh the ssh keys needed to connect to servers must be here
+# /var/log/supervisor in case you need to access the supervisor logs, which contains nginx and nodejs logs
+# /var/files this is where the database backup files will live inside the container
 # 
+# ACCESS THE APPLICATION:
+# http://localhost:3001 which will map to the port 80 inside the container running nginx.
+# The node.js app is running on port 3000 but we don't expose that port
 # 
-# mongodb: volums_from
-# - set the name of the data-only container you created for the database files
-# 
-# BROKEN WITH DOCKER 0.11
-#
 web:
   build: .
   links:
@@ -36,17 +30,15 @@ web:
    - redis:redis
   ports:
    - "3001:80"
-   - "3000:3000"
   volumes:
    - "../:/var/www"
-   - "/home/luis/.ssh:/root/.ssh"
+   - "~/.ssh:/root/.ssh"
    - "/var/log/docker:/var/log/supervisor"
-  volumes_from:
-   - DBMAN_FILES
+   - "/var/files:/var/files"
+  # volumes_from:
+  #  - DBMAN_FILES uncomment when this works with fig
   environment:
    MONGODB_DATABASE: dbman
-   PORT: 3000
-   EXPOSE_CONFIG: true
 redis:
   image: dockerfile/redis
   expose:
