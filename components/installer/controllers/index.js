@@ -5,96 +5,8 @@ var path = require("path");
 var Secure = include.lib("secure")
 var Model = include.model("users");
 
-function SecretKey() {
-	this.secretKey = "";
-	this.algorithm = "aes256";
-
-	this.get = function() {
-		return {
-			secretKey: this.secretKey,
-			algorithm: this.algorithm
-		}
-	}
-
-	this.set = function(secretKey) {
-		this.secretKey = secretKey;
-	}
-}
-
-var secretKey = new SecretKey();
-
-exports.getInstallConfig = function(req, res) {
-	res.render("config", {
-		title: "Welcome to the installer"
-	});
-}
-
-exports.postInstallConfig = function(req, res) {
-	var body = req.body;
-
-	// Save the config file
-	function saveConfigFile(data, callback) {
-		fs.writeFile(path.join(__dirname, "../../../", "config", "config.json"), JSON.stringify(data), function(err) {
-			if(err) {
-				req.flash("error", "Can't save the config file, please check that the directory config exists and that it's writeable");
-				console.log(err);
-				res.redirect("/install/config");
-			}
-			else {
-				callback(err, true);
-			}
-		})
-	} 
-
-	if(!body.secretkey || !body.directoryUploads || !body.mongodburi) {
-		req.flash("error", "All fields are required");
-		res.redirect("/install/config");
-	}
-	else {
-		var config = {
-			mongodburi: body.mongodburi,
-			secretKey: body.secretkey,
-			directoryUploads: body.directoryUploads,
-			enableIO: true,
-			components: [
-				"users",
-				"error",
-				"servers",
-				"databases",
-				"files"
-			]
-		}
-
-
-		// save the secureKey
-		secretKey.set(config.secretKey);
-
-		mongoose.connect(config.mongodburi);
-		var db = mongoose.connection;
-		db.on("error", function(data) {
-			req.flash("error", "There was a problem connecting to MongoDB, please check your settings");
-			res.redirect("/install/config");
-		});
-
-		db.on("connected", function(data) {
-			saveConfigFile(config, function(err, result) {
-				req.flash("success", "Configuration file saved");
-				res.redirect("/install/user");
-			});
-		});
-
-		// setTimeout(function() {
-		// 	req.flash("error", "Timeouted while trying to connect to MongoDB, please check your settings");
-		// 	res.redirect("/install/config");
-		// }, 10000);
-	}
-}
-
-
-
-
 /** 
- * this 
+ * Shows page to create the first user 
  */
 exports.getCreateFirstUser = function(req, res) {
 	res.render("user", {
@@ -103,7 +15,7 @@ exports.getCreateFirstUser = function(req, res) {
 }
 
 /** 
- * this 
+ * POST, create the first user 
  */
 exports.postCreateFirstUser = function(req, res) {
 	var body = req.body;

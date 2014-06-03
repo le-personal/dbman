@@ -7,9 +7,6 @@ app.get("/install", function(req, res) {
 	res.redirect("/install/user");
 });
 
-// app.get("/install/config", controller.getInstallConfig);
-// app.post("/install/config", controller.postInstallConfig);
-
 app.get("/install/user", firstUserExists, controller.getCreateFirstUser);
 app.post("/install/user", firstUserExists, controller.postCreateFirstUser);
 
