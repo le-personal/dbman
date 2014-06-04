@@ -94,13 +94,14 @@ MySQL.prototype.showUsersInDatabase = function() {
 }
 
 MySQL.prototype.dumpDatabase = function(filename, format) {
+	console.log("Creating database with format %s", format);
 	var database = this.database_name;
-	var command = 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " > " + filename; 
 	if(format == "sql") {
-		return command;
+		var command = 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " > " + filename; 
 	}
+
 	if(format == "sql.gz") {
-		command = command + " | gzip > " + filename;
+		var command = 'mysqldump -u' + this.username + " -p" + this.password + " --opt --port " + this.port + " " + database + " | gzip -9 > " + filename;
 	}
 
 	return command;
