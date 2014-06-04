@@ -9,3 +9,6 @@ sudo docker run -itd --volumes-from=DBMAN_FILES -v /root/.ssh:/root/.ssh -v /var
 
 # Or go to the docker directory inside the project and run
 fig up
+
+# To purge expired backups run from the root directory
+fig run web /var/www/bin/purgebackups

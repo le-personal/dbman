@@ -49,4 +49,6 @@ mongodb:
    - "27017:27017"
   expose:
    - "27017"
-  volumes_from: DBMAN_DBDATA
+  # volumes_from: DBMAN_DBDATA
+  volumes:
+   - "/home/docker/mongodb:/data/db"

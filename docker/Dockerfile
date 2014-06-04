@@ -13,6 +13,8 @@ ADD ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN apt-get install -y nginx
 ADD ./config/nginx.conf /etc/nginx/nginx.conf
 
+RUN ln -s /usr/bin/nodejs /usr/local/bin/node
+
 # Cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
