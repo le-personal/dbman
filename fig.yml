@@ -24,15 +24,15 @@
 # The node.js app is running on port 3000 but we don't expose that port
 # 
 web:
-  build: .
+  build: ./docker
   links:
    - mongodb:mongodb
    - redis:redis
   ports:
    - "3001:80"
   volumes:
-   - "../:/var/www"
-   - "~/.ssh:/root/.ssh"
+   - "/var/www/dbman:/var/www"
+   - "/root/.ssh:/root/.ssh"
    - "/var/log/docker:/var/log/supervisor"
    - "/var/files:/var/files"
   # volumes_from:
@@ -45,6 +45,8 @@ redis:
    - "6379:6379"
 mongodb:
   image: luis/mongodb
+  ports:
+   - "27017:27017"
   expose:
    - "27017"
   volumes_from: DBMAN_DBDATA

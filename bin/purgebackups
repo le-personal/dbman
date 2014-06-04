@@ -1,0 +1,91 @@
+#!/usr/bin/env node
+
+var include = require("includemvc");
+var config = require("../config/config");
+var models = require("../components/databases/models");
+var Database = models.Database;
+var Backup = models.Backup;
+var mongoose = require('mongoose');
+var fs = require("fs");
+
+function fileExists(path, callback) {
+	console.log("Checking if file %s exists", path);
+	fs.open(path, 'r', function(err, exists) {
+		return callback(err, exists);
+	});
+}
+
+function removeBackup(backup, callback) {
+	console.log("Removing backup with id: %s and filePath %s", backup._id, backup.filePath);
+	fileExists(backup.filePath, function(err, exists) {
+		if(err) {
+			console.log("File %s does not exists, ommiting", backup.filePath);
+		}
+		else {
+			fs.unlinkSync(backup.filePath);
+		}
+		
+		backup.remove(function(err, result) {
+			if(err) console.log(err);
+			callback(err)
+		});
+	})
+}
+
+function getBackups(callback) {
+	var now = getCurrentDate();
+	console.log("Getting backups older than %d/%d/%d", now.month, now.day, now.year);
+
+	Backup.find({
+		"expires": {
+			$lt: new Date(),
+		}
+	})
+	.exec(function(err, results) {
+		if(err) {
+			console.log(err);
+		}
+
+		if(results.length > 0) {
+			var total = results.length;
+			var count = 0;
+			console.log("Removing %d backups", total);
+			results.forEach(function(result) {
+				removeBackup(result, function(err) {
+					count++;
+					if(total == count) {
+						callback(err, results);
+					}
+				})
+			});
+		}
+
+		else {
+			console.log("No backups to remove");
+			callback(false, true);
+		}
+	});
+}
+
+function getCurrentDate() {
+	var today = new Date();
+	var now = {
+		day: today.getDate(),
+		month: today.getMonth()+1,
+		year: today.getFullYear()
+	}
+
+	return now;
+}
+
+function main() {
+	if(config.mongodburi) {
+		console.log("Connecting to: " + config.mongodburi);
+		mongoose.connect(config.mongodburi);
+		getBackups(function() {
+			process.exit();
+		});
+	}
+}
+
+main();
