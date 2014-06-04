@@ -32,9 +32,7 @@ exports.postCreateFirstUser = function(req, res) {
 		res.redirect("/install/user");
 	}
 	else {
-		console.log(secretKey.get());
-		var secure = new Secure(secretKey.get());
-
+		var secure = new Secure();
 		var user = {
 			username: body.username,
 			email: body.email,
