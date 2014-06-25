@@ -22,6 +22,7 @@ define(function (require) {
   var ViewServers = require("/js/servers/views/viewServers.js");
   var ShowServerView = require("/js/servers/views/showServer.js");
   var AddServerFormView = require("/js/servers/views/addServerFormView.js")
+  var EditServerFormView = require("/js/servers/views/editServerFormView.js");
 
   var Controller = Backbone.Marionette.Controller.extend({
     listenTo: {
@@ -29,7 +30,8 @@ define(function (require) {
       "testConnection": "testConnection",
       "onClick:menu:add": "showAddServerForm",
       "showDeleteServerConfirmationForm": "showDeleteServerConfirmationForm",
-      "showDatabasesOnServer": "showDatabasesOnServer"
+      "showDatabasesOnServer": "showDatabasesOnServer",
+      "showEditServerForm": "showEditServerForm"
     },
     initialize:function (options) {
       var self = this;
@@ -189,6 +191,33 @@ define(function (require) {
 
         // Prevent zombie views by forcing the modal to be shown in #modals
         // and let Marionette handle the $el and closing
+        layout.modals.show(modal);
+        modal.open();
+      });
+    },
+
+    showEditServerForm: function(options) {
+      var self = this;
+      var server = options.model.toJSON();
+      
+      var collection = new Collection();
+
+      collection.fetch().done(function() {
+        var editServerForm = new EditServerFormView({
+          collection: collection,
+          model: options.model
+        });
+
+        var modal = new Backbone.BootstrapModal({
+          title: "Edit server " + server.name,
+          content: editServerForm,
+          animate: true,
+          okText: "Update",
+          modalOptions: {
+            backdrop: false,
+          }
+        });
+
         layout.modals.show(modal);
         modal.open();
       });

@@ -67,17 +67,51 @@ exports.postServer = function(req, res) {
 
 exports.putServer = function(req, res) {
 	var id = req.params.id;
+	var body = req.body;
 
-	console.log("updating %s", id);
+	
+	function getServer(id, callback) {
+		Model.findOne({_id: id})
+		.exec(function(err, server) {
+			callback(err, server);
+		});
+	}
 
-	res.send(201);
-	// var model = new Model();
-	// model.save(function(err, result) {
-	// 	if(err) throw err;
-	// 	if(result) {
-	// 		res.send(201, result);
-	// 	}	
-	// });
+	getServer(id, function(err, server) {
+		if(err) {
+			res.send(404);
+		}
+		if(server) {
+			var data = body;
+			
+			// Protect some data	
+			delete data.ip;
+			delete data.service.type;
+			delete data._id;
+			delete data.created;
+			delete data.__v;
+			delete data.author;
+
+			if(body.service.password) {
+				data.service.password = secure.encrypt(body.service.password);
+			}
+			else {
+				data.service.password = server.service.password;
+			}
+
+			data.service.type = server.service.type;
+
+			Model.update({_id: id}, data, function(err, result) {
+				console.log(err);
+				if(err) {
+					res.send(406, err);
+				}
+				if(result) {
+					res.send(201, result);
+				}
+			});
+		}
+	})
 }
 
 exports.deleteServer = function(req, res) {

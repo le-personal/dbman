@@ -11,6 +11,7 @@ define(function(require) {
 		events: {
 			"click .view": "showServerView",
 			"click .test": "testConnection",
+			"click .edit": "showEditServerForm",
 			"click .remove": "showDeleteServerConfirmationForm"
 		},
 		showServerView: function() {
@@ -21,6 +22,9 @@ define(function(require) {
 		},
 		showDeleteServerConfirmationForm: function() {
 			Backbone.trigger("showDeleteServerConfirmationForm", {model: this.model});
+		},
+		showEditServerForm: function() {
+			Backbone.trigger("showEditServerForm", {model: this.model});
 		}
 	});
 
