@@ -4,6 +4,7 @@ define(function(require) {
 	var Marionette = require("marionette");
 	var Backup = require("/js/databases/models/backup.js");
 	var loading = require("/js/lib/loading.js");
+	var alert = require("/js/lib/alert.js");
 
 	var CreateBackupFormView = Backbone.Marionette.CompositeView.extend({
 		template: _.template($("#create-backup").html()),
@@ -33,8 +34,7 @@ define(function(require) {
 					Backbone.trigger("showNewBackupCreatedModal", {model: m});
 				},
 				error: function(m, error) {
-					console.log("@todo: implement the error messages like alert.error");
-					// alert.error(error.responseText);
+					alert.error(error.responseText);
 				}
 			});
 		}

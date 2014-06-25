@@ -13,6 +13,8 @@ define(function (require) {
   var io = require("/js/lib/io.js");
   var loading = require("/js/lib/loading.js");
   var Navigation = require("/js/lib/navigation.js");
+
+  var alert = require("/js/lib/alert.js");
   
   var layout = require("/js/common/views/layout.js");
   var Title = require("/js/common/views/title.js");

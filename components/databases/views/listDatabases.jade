@@ -24,7 +24,7 @@ block templates
 		<td>
 		<a href="/databases#view/<%= _id %>" class="viewDatabase"><%= database_name %></a>
 		</td>
-		<td><%= server.name %></td>
+		<td><% if(server) { server.name } %></td>
 		<td><%= database_type %></td>
 		<td class="database-status-<%= _id %>">
 		<% if(isLocked) { %>
@@ -79,10 +79,10 @@ block templates
 			tbody
 				tr
 					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server name:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.name %>	
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <% if(server) { server.name } %>
 				tr
-					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server:
-					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <%= server.ip %>
+					td.col-lg-3.col-md-3.col-sm-3.col-xs-3 Server IP:
+					td.col-lg-9.col-md-9.col-sm-9.col-xs-9 <% if(server) { server.ip } %>
 		div#databaseUsersContainer
 
 	script(type="text/template", id="add-database")

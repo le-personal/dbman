@@ -3,6 +3,7 @@ define(function(require) {
 	var Marionette = require("marionette");
 	var Server = require("/js/servers/models/model.js");
 	var loading = require("/js/lib/loading.js");
+  var alert = require("/js/lib/alert.js");
 
 	var EddServerFormView = Backbone.Marionette.ItemView.extend({
 		template: function(model) {

@@ -3,6 +3,7 @@ define(function(require) {
 	var Marionette = require("marionette");
 	var DatabasesUser = require("/js/databases/models/databasesuser.js");
 	var loading = require("/js/lib/loading.js");
+  var alert = require("/js/lib/alert.js");
 
 	var AddUserToDatabaseForm = Backbone.Marionette.CompositeView.extend({
 		template: _.template($("#add-database-user").html()),
@@ -30,8 +31,7 @@ define(function(require) {
 					self.collection.add(m);
 				},
 				error: function(m, error) {
-					console.log("@todo: implement the error messages like alert.error");
-					// alert.error(error.responseText);
+					alert.error(error.responseText);
 				}
 			});
 		}

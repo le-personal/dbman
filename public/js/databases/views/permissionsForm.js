@@ -5,6 +5,8 @@ define(function(require){
 	var Users = require("/js/users/collections/users.js");
 	var jqueryui = require("jqueryui");
 
+	var alert = require("/js/lib/alert.js");
+
 	var PermissionForm = Backbone.Marionette.ItemView.extend({
 		template: "#permissionsForm",
 		initialize: function() {
@@ -15,7 +17,7 @@ define(function(require){
 					return self.render();
 				},
 				error: function(models, error) {
-
+  				alert.error(error.responseText);
 				}
 			});
 

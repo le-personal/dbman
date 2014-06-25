@@ -3,6 +3,8 @@ define(function(require) {
 	var Backbone = require("backbone");
 	var Marionette = require("marionette");
 
+	var alert = require("/js/lib/alert.js");
+
 	var loading = require("/js/lib/loading.js");
 	var Database = require("/js/databases/models/database.js");
 
@@ -41,8 +43,7 @@ define(function(require) {
 					self.collection.add(m);
 				},
 				error: function(m, error) {
-					console.log("@todo: implement the error messages like alert.error");
-					// alert.error(error.responseText);
+					alert.error(error.responseText);
 				}
 			});
 		}
