@@ -14,6 +14,7 @@ app.get("/databases", isUser, controller.getDatabases);
 app.get("/api/databases", isUser, api.getDatabases);
 app.get("/api/databases/:id", isUser, canView, api.getDatabase);
 app.post("/api/databases", isUser, isAdmin, api.postDatabase);
+app.put("/api/databases/:id", isUser, canRemove, isUnlocked, api.putDatabase);
 app.delete("/api/databases/:id", isUser, canRemove, isUnlocked, api.deleteDatabase);
 
 // actions

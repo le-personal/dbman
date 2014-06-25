@@ -44,7 +44,8 @@ block templates
 		<button class="unlockDatabase btn btn-xs btn-warning">Unlock</button>
 		<% } else { %>
 		<button class="lockDatabase btn btn-xs btn-success">Lock</button>
-		<button class="removeDatabase btn btn-xs btn-danger"> Delete</button>
+		<button class="editDatabase btn btn-xs btn-warning">Edit</button>
+		<button class="removeDatabase btn btn-xs btn-danger">Delete</button>
 		<% } %>
 		</div>
 		</td>
@@ -106,7 +107,21 @@ block templates
 					label
 						<input type="checkbox" name="createDatabase"> Create the database on the server?
 						<div class="help-block">If not checked, the database will only be registered but not created on the server. Use this option if the database already exists and you want to managed it.</div>
-				
+	
+	script(type="text/template", id="edit-database")
+		form(role="form")
+			div.form-group 
+				label(for="server") Destination Server *
+				div.form-control <%= database.server.name %>
+				div.help-block The server cannot be changed
+			div.form-group
+				label(for="database_name") Database name *
+				div.form-control <%= database.database_name %>
+				div.help-block The database name cannot be changed
+			div.form-group
+				label(for="description") Description *
+				<input type="text" name="description" value="<%= database.description %>" id="form-input-description" placeholder="Enter a description for this database" class="form-control" />
+			
 	script(type="text/template", id="viewusers")
 		table.table.table-striped.well
 			thead

@@ -10,7 +10,8 @@ define(function(require) {
 			"click .lockDatabase": "lockDatabase",
 			"click .unlockDatabase": "unlockDatabase",
 			"click .removeDatabase": "removeDatabase",
-			"click .showDatabasesOnServer": "showDatabasesOnServer"
+			"click .showDatabasesOnServer": "showDatabasesOnServer",
+			"click .editDatabase": "editDatabase"
 		},
 		initialize: function() {
 			// force a render when the model changes
@@ -28,6 +29,9 @@ define(function(require) {
 		},
 		showDatabasesOnServer: function() {
 			Backbone.trigger("showDatabasesOnServer", {model: this.model});
+		},
+		editDatabase: function() {
+			Backbone.trigger("showEditDatabaseForm", {model: this.model});
 		}
 	});
 

@@ -30,6 +30,7 @@ define(function(require) {
 	var ViewDatabases = require("/js/databases/views/viewDatabases.js");
 	var ViewDatabase = require("/js/databases/views/viewDatabase.js");
 	var AddDatabaseFormView = require("/js/databases/views/addDatabaseFormView.js");
+  var EditDatabaseFormView = require("/js/databases/views/editDatabaseFormView.js");
 	var AddUserToDatabaseForm = require("/js/databases/views/addUserToDatabaseForm.js");
 	var ViewBackups = require("/js/databases/views/viewBackups.js");
 	var ViewUsers = require("/js/databases/views/viewUsers.js");
@@ -57,7 +58,8 @@ define(function(require) {
 			"showNewBackupCreatedModal": "showNewBackupCreatedModal",
 			"import": "showImportModal",
       "importFileUploadedOK": "importFileUploadedOK",
-			"viewPermissions": "viewPermissionsView"
+			"viewPermissions": "viewPermissionsView",
+      "showEditDatabaseForm": "showEditDatabaseForm"
 		},
 
 		initialize: function() {
@@ -583,6 +585,36 @@ define(function(require) {
 
       layout.modals.show(modal);
       modal.open();
+    },
+
+    showEditDatabaseForm: function(options) {
+      var self = this;
+
+      var database = options.model.toJSON();
+
+      var serversCollection = new ServersCollection();
+      serversCollection.fetch().done(function() {
+        var editDatabaseForm = new EditDatabaseFormView({
+          collection: self.databasesCollection,
+          servers: serversCollection,
+          model: options.model
+        });
+
+        var modal = new Backbone.BootstrapModal({
+          title: "Edit database " + database.database_name,
+          content: editDatabaseForm,
+          animate: true,
+          okText: "Update",
+          modalOptions: {
+            backdrop: false,
+          }
+        });
+
+        // Prevent zombie views by forcing the modal to be shown in #modals
+        // and let Marionette handle the $el and closing
+        layout.modals.show(modal);
+        modal.open();
+      });
     }
 
 	});

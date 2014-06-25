@@ -113,6 +113,21 @@ exports.getDatabase = function(req, res) {
 	});
 }
 
+exports.putDatabase = function(req, res) {
+	var body = req.body;
+	var id = req.params.id;
+
+	var description = body.description;
+
+	Database.update({_id: id}, {description: description}, function(err, updated) {
+		console.log("Finishsed updating");
+		if(err) {
+			res.send(406, err);
+		}
+		
+		res.send(201, updated);
+	});
+}
 
 exports.postDatabase = function(req, res) {
 	var body = req.body;
