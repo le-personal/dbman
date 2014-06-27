@@ -24,7 +24,7 @@ block templates
 		<td>
 		<a href="/databases#view/<%= _id %>" class="viewDatabase"><%= database_name %></a>
 		</td>
-		<td><% if(server) { server.name } %></td>
+		<td><% if(server) { %><%= server.name %><% } %></td>
 		<td><%= database_type %></td>
 		<td class="database-status-<%= _id %>">
 		<% if(isLocked) { %>
