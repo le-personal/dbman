@@ -238,8 +238,7 @@ define(function(require) {
 			})
 
 			options.model.on("lockDatabase:error", function(error) {
-				console.log("@todo implement the alert error");
-				// alert.error(error.responseText);
+				alert.error(error.responseText);
 			});
     },
 
@@ -255,8 +254,7 @@ define(function(require) {
 			})
 
 			options.model.on("unlockDatabase:error", function(error) {
-				console.log("@todo implement the alert error");
-				// alert.error(error.responseText);
+				alert.error(error.responseText);
 			});
     },
 

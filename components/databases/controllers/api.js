@@ -472,7 +472,6 @@ exports.postDatabaseUser = function(req, res) {
 			// commands
 			var createUserCommand = mysql.createUser(user.username, user.password, host);
 
-			console.log("Executing user command");
 			connection.executeAsync(createUserCommand, function(stderr, stdout) {
 				counter++;
 
@@ -528,6 +527,11 @@ exports.postDatabaseUser = function(req, res) {
 					if(err) res.send(406, err);
 					if(newUser) {
 						res.send(201, newUser);
+
+						// we need to send the password unencrypted to the createUser function
+						// because we can't unencrypt later for some reason (I'm not a crypto expert I guess)
+						newUser.password = body.password;
+
 						createUser(newUser, database, function() {
 							assignPermissions(newUser, database, function() {
 								flush(newUser, database, function() {

@@ -50,9 +50,8 @@ MySQL.prototype.dropUser = function(user, host) {
 
 MySQL.prototype.createUser = function(user, password, hostname) {
 	var database = this.database_name;	
-	var pass = secure.decrypt(password);
 
-	var query = 'CREATE USER \'' + user + '\'@' + '\'' + hostname + '\' IDENTIFIED BY \''+ pass +'\'';
+	var query = 'CREATE USER \'' + user + '\'@' + '\'' + hostname + '\' IDENTIFIED BY \''+ password +'\'';
 	var command = 'mysql' +
 	' -u' + this.username +
 	' -p' + this.password +

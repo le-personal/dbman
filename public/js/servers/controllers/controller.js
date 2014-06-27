@@ -136,6 +136,11 @@ define(function (require) {
         layout.modals.show(modal);
         modal.open();
       });
+
+      model.on("testConnection:error", function(data) {
+        console.log(data);
+        alert.error(data);
+      })
     },
     showAddServerForm: function(options) {
       var addServerForm = new AddServerFormView({collection: this.collection});

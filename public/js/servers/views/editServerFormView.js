@@ -43,7 +43,12 @@ define(function(require) {
 
 			var model = this.model;
 			model.set(data);
-			model.save();
+			model.save({}, {
+				success: function(model, response) {},
+				error: function(model, response) {
+					// alert.error(response.responseText);
+				}
+			});
 
 			self.collection.set(model);
 			self.collection.reset();
