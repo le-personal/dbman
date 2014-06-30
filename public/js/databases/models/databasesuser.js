@@ -20,6 +20,21 @@ define(function(require) {
 		idAttribute: "_id",
 		url: function() {
 			return "/api/databases/" + this.database + "/users";
+		},
+		delete: function(userid, callback) {
+			var url = this.url() + "/" + userid;
+			
+			$.ajax({
+				url: url,
+				dataType: "json",
+				type: "DELETE",
+				success: function(response, status) {
+					callback(null, response);
+				},
+				error: function(c, status, error) {
+					callback(error, null);
+				}
+			});
 		}
 	});
 

@@ -419,7 +419,8 @@ exports.postDatabaseUser = function(req, res) {
 	var databaseid = req.params.id;
 	var body = req.body;
 
-	console.log(body);
+	// translate body.sync
+	var sync = body.sync == "on" ? true : false;
 
 	var valuesToSave = {
 		username: body.username,
@@ -437,6 +438,8 @@ exports.postDatabaseUser = function(req, res) {
 	}
 
 	function saveUser(body, callback) {
+		console.log(body);
+
 		var values = {
 			username: body.username,
 			password: secure.encrypt(body.password),
@@ -528,17 +531,21 @@ exports.postDatabaseUser = function(req, res) {
 					if(newUser) {
 						res.send(201, newUser);
 
-						// we need to send the password unencrypted to the createUser function
-						// because we can't unencrypt later for some reason (I'm not a crypto expert I guess)
-						newUser.password = body.password;
 
-						createUser(newUser, database, function() {
-							assignPermissions(newUser, database, function() {
-								flush(newUser, database, function() {
-									console.log("Finished running all commands");
+						// if there's no order to NOT create the user, then create it
+						if(!sync) {
+							// we need to send the password unencrypted to the createUser function
+							// because we can't unencrypt later for some reason (I'm not a crypto expert I guess)
+							newUser.password = body.password;
+
+							createUser(newUser, database, function() {
+								assignPermissions(newUser, database, function() {
+									flush(newUser, database, function() {
+										console.log("Finished running all commands");
+									});
 								});
 							});
-						});
+						}
 					}
 				})
 			}
@@ -579,7 +586,15 @@ exports.deleteDatabaseUser = function(req, res) {
 					user.allowedHosts.forEach(function(host) {
 						dropUser(user, database, host, function(stderr, stdout) {
 							if(stderr) {
-								res.send(406, stderr);
+								// if it fails, Try to remove it anyway
+								user.remove(function(err, result) {
+									if(err) {
+										res.send(406, stderr);
+									}
+									if(result) {
+										res.send(200, user);
+									}
+								});
 							}
 							else {
 								user.remove(function(err, result) {

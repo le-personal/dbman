@@ -147,6 +147,12 @@ block templates
 			div.form-group
 				label(for="allowedHosts") Allowed hosts
 				input(type="text", name="allowedHosts", id="form-input-allowed-hosts", placeholder="Enter the hosts separated by commas, no spaces").form-control
+			div.checkbox
+				<label>
+				<input name="sync" type="checkbox" />Do not create the user on the service, only sync
+				</label>
+				<div class="help-block">Use this option if the user already exists on the service. Notice that the password you enter, will not change the current password for the user.</div>
+
 
 	script(type="text/template", id="viewbackups")
 		table.table.table-striped.table-hover.well
