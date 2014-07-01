@@ -757,7 +757,7 @@ exports.postCreateBackup = function(req, res) {
 				updateStatus(backupid, "error", function(err, response) {
 					res.send(500, stderr);
 					return;
-				})
+				});
 			}
 			else {
 				updateStatus(backupid, "created", function(err, response) {
@@ -817,16 +817,26 @@ exports.postCreateBackup = function(req, res) {
 			}
 
 			saveBackup(data, function(err, backup) {
+				if(err) {
+					res.send(500, err);
+				}
 				if(backup) {
+					// respond and execute backup job later
+					res.send(201, backup);
+
 					createBackupOnServer(backup._id, database, fileName, format, function(stderr, stdout) {
-						console.log("Downloading file");
 						downloadFile(backup._id, database.server, fileName, function(stderr, stdout) {
+							var status = "";
 							if(stderr) {
-								res.send(500, stderr);
+								status = "error";
 							}
 							else {
-								res.send(201, backup);
+								status = "finished";
 							}
+							
+							updateStatus(backup._id, status, function() {
+
+							});
 						});
 					});
 				}
