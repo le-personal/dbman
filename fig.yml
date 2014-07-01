@@ -59,10 +59,11 @@ mongodb:
 lb:
   image: luis/nginx-lb
   ports:
-    - "8001:80"
+    - "80:80"
   links:
     - serf:serf
   volumes:
+   - "/var/nginx/db.iiiepe.net:/etc/nginx/sites-enabled"
    - "/var/www/dbman:/var/www"
    - "/var/log/docker:/var/log/supervisor"
    - "/var/files:/var/files"
