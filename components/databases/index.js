@@ -8,14 +8,13 @@ var isUnlocked = include.lib("isUnlocked", "databases");
 var canView = include.lib("canView", "databases");
 var canImport = include.lib("canImport", "databases");
 var canEdit = include.lib("canEdit", "databases");
-var canRemove = include.lib("canRemove", "databases");
 
 app.get("/databases", isUser, controller.getDatabases);
 app.get("/api/databases", isUser, api.getDatabases);
 app.get("/api/databases/:id", isUser, canView, api.getDatabase);
 app.post("/api/databases", isUser, isAdmin, api.postDatabase);
-app.put("/api/databases/:id", isUser, canRemove, isUnlocked, api.putDatabase);
-app.delete("/api/databases/:id", isUser, canRemove, isUnlocked, api.deleteDatabase);
+app.put("/api/databases/:id", isUser, canEdit, isUnlocked, api.putDatabase);
+app.delete("/api/databases/:id", isUser, isAdmin, isUnlocked, api.deleteDatabase);
 
 // actions
 app.post("/api/databases/showdatabases", isUser, isAdmin, api.postShowDatabases);
