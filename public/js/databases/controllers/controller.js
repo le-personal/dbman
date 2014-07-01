@@ -413,7 +413,7 @@ define(function(require) {
 
 			// open a modal with the button
 			var modal = new Backbone.BootstrapModal({
-				title: "Backup ready!",
+				title: "Backup is processing!",
 				content: content,
 				allowCancel: false,
 				animate: true,
