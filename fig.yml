@@ -23,32 +23,46 @@
 # http://localhost:3001 which will map to the port 80 inside the container running nginx.
 # The node.js app is running on port 3000 but we don't expose that port
 # 
+serf:
+  image: luis/serf
+  expose:
+   - "7373"
+   - "7946"
+  ports: 
+   - "7373:7373"
+   - "7946:7946"
 web:
-  build: ./docker
+  image: luis/nodejs-serf
   links:
+   - serf:serf
    - mongodb:mongodb
    - redis:redis
-  ports:
-   - "3001:80"
+  expose:
+   - "3000"
   volumes:
    - "/var/www/dbman:/var/www"
    - "/root/.ssh:/root/.ssh"
    - "/var/log/docker:/var/log/supervisor"
    - "/var/files:/var/files"
-  # volumes_from:
-  #  - DBMAN_FILES uncomment when this works with fig
   environment:
    MONGODB_DATABASE: dbman
 redis:
   image: dockerfile/redis
   expose:
-   - "6379:6379"
+   - "6379"
 mongodb:
   image: luis/mongodb
-  ports:
-   - "27017:27017"
   expose:
    - "27017"
-  # volumes_from: DBMAN_DBDATA
   volumes:
    - "/home/docker/mongodb:/data/db"
+lb:
+  image: luis/nginx-lb
+  ports:
+    - "8001:80"
+  links:
+    - serf:serf
+  volumes:
+   - "/var/www/dbman:/var/www"
+   - "/var/log/docker:/var/log/supervisor"
+   - "/var/files:/var/files"
