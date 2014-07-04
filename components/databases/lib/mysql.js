@@ -10,6 +10,8 @@ function MySQL(options) {
 	this.password = secure.decrypt(options._server.service.password);
 	this.port = options._server.service.port || "3306";
 	this.database_name = options.database_name || null;
+	this.database_encoding = options.database_encoding || "utf8";
+	this.database_collate = options.database_collate || "utf8_unicode_ci";
 }
 
 module.exports = exports = MySQL;
@@ -29,7 +31,9 @@ MySQL.prototype.showTables = function() {
 
 MySQL.prototype.createDatabase = function() {
 	var database = this.database_name;
-	return 'mysqladmin -u' + this.username + " -p" + this.password + " --port " + this.port + " CREATE " + database;
+	var encoding = this.database_encoding;
+	var collate = this.database_collate;
+	return 'echo "CREATE DATABASE ' + database + ' DEFAULT CHARACTER SET '+ encoding +' COLLATE '+ collate +';" | mysql -u' + this.username + " -p" + this.password + " --port " + this.port;
 }
 
 MySQL.prototype.dropDatabase = function() {

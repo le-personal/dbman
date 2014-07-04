@@ -155,9 +155,15 @@ exports.postDatabase = function(req, res) {
 				if(result) {
 					var serviceType = server.service.type;
 
+					// set db encoding
+					var database_encoding = body.database_encoding ? body.database_encoding : "utf8";
+					var database_collate = body.database_collate ? body.database_collate : "utf8_general_ci";
+
 					var db = {
 						database_name: body.database_name,
 						database_type: serviceType,
+						database_encoding: database_encoding,
+						database_collate: database_collate,
 						description: body.description,
 						server: serverId,
 						author: user,

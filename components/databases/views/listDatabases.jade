@@ -103,6 +103,21 @@ block templates
 				label(for="description") Description *
 				input(type="text", name="description", id="form-input-description", placeholder="Enter a description for this database").form-control
 			div.form-group
+				label(for="database_encoding") Database encoding *
+				select(name="database_encoding", id="database_encoding", class="form-control")
+						options
+							option(value="utf8") UTF-8
+							option(value="ucs2") UCS-2
+							option(value="utf16") UTF-16
+							option(value="utf32") UTF-32
+			div.form-group
+				label(for="database_collate") Collate *
+				select(name="database_collate", id="database_collate", class="form-control")
+						options
+							option(value="utf8_general_ci") utf8_general_ci
+							option(value="utf8_unicode_ci") utf8_unicode_ci
+
+			div.form-group
 				div.checkbox
 					label
 						<input type="checkbox" name="createDatabase"> Create the database on the server?
