@@ -1,6 +1,6 @@
 require.config({
   paths : {
-    backbone : '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.min',
+    backbone : '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
     underscore : '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
     jquery : '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min',
     wreqr: '//cdnjs.cloudflare.com/ajax/libs/backbone.wreqr/0.1.0/backbone.wreqr.min',
