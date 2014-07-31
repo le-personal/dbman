@@ -1,14 +1,14 @@
 require.config({
   paths : {
-    backbone : '/vendor/backbone/backbone-min',
-    underscore : '/vendor/underscore/underscore-min',
-    jquery : '/vendor/jquery/dist/jquery.min',
-    wreqr: '/vendor/backbone.wreqr/lib/backbone.wreqr.min',
-    marionette : '/vendor/backbone.marionette/lib/backbone.marionette',
-    bootstrap: "/vendor/bootstrap/dist/js/bootstrap.min",
+    backbone : '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+    underscore : '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
+    jquery : '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min',
+    wreqr: '//cdnjs.cloudflare.com/ajax/libs/backbone.wreqr/0.1.0/backbone.wreqr.min',
+    marionette : '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.0.3/backbone.marionette.min',
+    bootstrap: "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min",
     jqueryIframeTransport: "/vendor/jquery.iframe-transport/jquery.iframe-transport",
     backboneBootstrapModal: "/vendor/backbone.bootstrap-modal/src/backbone.bootstrap-modal",
-    jqueryui: "/vendor/jquery-ui/ui/jquery-ui"
+    jqueryui: "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min"
   },
   shim : {
     jquery : {

@@ -5,7 +5,7 @@ define(function (require) {
   var _ = require("underscore");
   var ViewTitle = require("/js/common/views/title.js");
   var Session = require("/js/lib/session.js");
-  var Layout = require("/js/common/views/layout.js");
+  var layout = require("/js/common/views/layout.js");
   var ViewHeader = require("/js/common/views/header.js");
  
   var App = new Backbone.Marionette.Application();
@@ -18,7 +18,6 @@ define(function (require) {
     contentRegion: "#maincontent"
   });
 
-  var layout = Layout;
   App.contentRegion.show(layout.render());
 
   App.addInitializer(function () {   

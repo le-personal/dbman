@@ -5,7 +5,7 @@ define(function(require) {
 	var Backbone = require("backbone");
 	var Marionette = require("marionette");
 
-	var LayoutView = Backbone.Marionette.Layout.extend({
+	var LayoutView = Backbone.Marionette.LayoutView.extend({
 		template: "#layout",
 		regions: {
 			main: "#main",
