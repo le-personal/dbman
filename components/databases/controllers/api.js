@@ -834,6 +834,12 @@ exports.postCreateBackup = function(req, res) {
 				}
 				if(backup) {
 					createBackupOnServer(backup._id, database, fileName, format, function(stderr, stdout) {
+
+						console.log("Downloading file");
+						console.log("Filename %s, with format %s", fileName, format);
+						console.log("Backup");
+						console.log(backup);
+
 						downloadFile(backup._id, database.server, fileName, function(stderr, stdout) {
 							var status = "";
 							if(stderr) {
@@ -844,7 +850,7 @@ exports.postCreateBackup = function(req, res) {
 							}
 							
 							updateStatus(backup._id, status, function() {
-
+								console.log("Status updated with status: %s", status);
 							});
 						});
 					});
