@@ -754,7 +754,10 @@ exports.postCreateBackup = function(req, res) {
 		var remoteFilename = path.join("/tmp", fileName);
 		var command = mysql.dumpDatabase(remoteFilename, format);
 		connection.executeAsync(command, function(stderr, stdout) {
+			console.log("executeAsync");
+			console.log("stderr");
 			console.log(stderr);
+			console.log("stdout");
 			console.log(stdout);
 
 			if(stderr) {
@@ -783,7 +786,10 @@ exports.postCreateBackup = function(req, res) {
 		var connection = new Connection(backupid, server);
 		connection.downloadAsync(remoteFilename, localFilename, function(stderr, stdout) {
 			var status = stderr ? "error" : "finished";
+			console.log("downloadFile");
+			console.log("stderr");
 			console.log(stderr);
+			console.log("stdout");
 			console.log(stdout);
 			updateStatus(backupid, status, function(err, result) {
 				return callback(stderr, stdout);
@@ -827,9 +833,6 @@ exports.postCreateBackup = function(req, res) {
 					res.send(500, err);
 				}
 				if(backup) {
-					// respond and execute backup job later
-					res.send(201, backup);
-
 					createBackupOnServer(backup._id, database, fileName, format, function(stderr, stdout) {
 						downloadFile(backup._id, database.server, fileName, function(stderr, stdout) {
 							var status = "";
@@ -845,9 +848,11 @@ exports.postCreateBackup = function(req, res) {
 							});
 						});
 					});
+					
+					// respond and execute backup job later
+					res.send(201, backup);
 				}
 			})
-
 		});
 	}
 	else {
