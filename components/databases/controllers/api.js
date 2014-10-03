@@ -828,11 +828,17 @@ exports.postCreateBackup = function(req, res) {
 				url: url
 			}
 
+			console.log("Data to create a backup");
+			console.log(data);
+
 			saveBackup(data, function(err, backup) {
 				if(err) {
+					console.log(err);
 					res.send(500, err);
 				}
 				if(backup) {
+					console.log("Backup created");
+					console.log(backup);
 					createBackupOnServer(backup._id, database, fileName, format, function(stderr, stdout) {
 
 						console.log("Downloading file");
