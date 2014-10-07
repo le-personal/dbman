@@ -8,12 +8,12 @@ var models = include.model("databases");
 var Database = models.Database;
 var Backup = models.Backup;
 var DatabaseUser = models.DatabaseUser;
-var Connection = include.lib("connection");
 var Secure = include.lib("secure");
 var secure = new Secure();
 var File = include.model("files");
 var config = app.config;
 var path = require("path");
+var BackupLib = include.lib("backup", "databases");
 
 exports.getDatabases = function(req, res) {
 	Database.find()
@@ -715,156 +715,29 @@ exports.getBackup = function(req, res) {
 exports.postCreateBackup = function(req, res) {
 	var databaseid = req.params.id;
 	var body = req.body;
-	var directoryBackups = config.directoryUploads;
-
-	function getDatabase(id, callback) {
-		Database.findOne({_id: id})
-		.populate("server")
-		.exec(function(err, result) {
-			if(err) res.send(404);
-			else {
-				return callback(err, result);
-			}
-		});
-	}
-
-	function saveBackup(data, callback) {
-		var model = new Backup(data);
-		model.save(function(err, result) {
-			if(err) {
-				res.send(500, err);
-			}
-			if(result) {
-				return callback(err, result);
-			}
-		});
-	}
-
-	function updateStatus(id, status, callback) {
-		Backup.update({_id: id}, {status: status}, function(err, result) {
-			callback(err, result);
-		});
-	}
-
-	function createBackupOnServer(backupid, database, fileName, format, callback) {
-		var connection = new Connection(backupid, database.server);
-		database._server = database.server;
-		var mysql = new MySQL(database);
-
-		var remoteFilename = path.join("/tmp", fileName);
-		var command = mysql.dumpDatabase(remoteFilename, format);
-		connection.executeAsync(command, function(stderr, stdout) {
-			console.log("executeAsync");
-			console.log("stderr");
-			console.log(stderr);
-			console.log("stdout");
-			console.log(stdout);
-
-			if(stderr) {
-				console.log("Updating status with error");
-				// if there's an error, update status and exit
-				updateStatus(backupid, "error", function(err, response) {
-					res.send(500, stderr);
-					return;
-				});
-			}
-			else {
-				updateStatus(backupid, "created", function(err, response) {
-					return callback(stderr, stdout);
-				})
-			}
-		})
-	}
-
-	/**
-	 * @param filename string the name and extension of the file
-	 * qparam database object the database object
-	 */
-	function downloadFile(backupid, server, fileName, callback) {
-		var remoteFilename = path.join("/tmp", fileName);
-		var localFilename = path.join(directoryBackups, fileName);
-		var connection = new Connection(backupid, server);
-		connection.downloadAsync(remoteFilename, localFilename, function(stderr, stdout) {
-			var status = stderr ? "error" : "finished";
-			console.log("downloadFile");
-			console.log("stderr");
-			console.log(stderr);
-			console.log("stdout");
-			console.log(stdout);
-			updateStatus(backupid, status, function(err, result) {
-				return callback(stderr, stdout);
-			})
-		});
-	}
+	var backupsDirectory = config.directoryUploads;
 
 	if(body.name && databaseid && body.format) {
-		console.log(body);
-		// if(body.format != "sql" || body.format != "sql.gz") {
-		// 	console.log(body.format);
-		// 	res.send(406, "Only sql and tar formats are available");
-		// 	return;
-		// }
+		var options ={
+			name: body.name,
+			databaseid: databaseid,
+			author: req.user,
+			format: body.format,
+			backupsDirectory: backupsDirectory
+		};
 
-		getDatabase(databaseid, function(err, database) {
-			var name = body.name + "-" + Date.now();
+		var backup = new BackupLib(options);
+		backup.on("backup:error", function(err) {
+			app.emit("backup:error", err);
+		});
 
-			// create a file with the name and the extension depending on the format
-			var fileName = name + "." + body.format;
-			var filePath = path.join(directoryBackups, fileName);
-			var databaseType = database.server.service.type;
-			var format = body.format;
-			var url = "/backups/" + fileName;
+		backup.on("backup:done", function(result) {
+			app.emit("backup:done", result);
+		});
 
-			var data = {
-				name: name,
-				database: databaseid,
-				author: req.user,
-				fileName: fileName,
-				filePath: filePath,
-				type: databaseType,
-				format: format,
-				status: "processing",
-				expires: new Date(Date.now() + 6.048e+8),
-				url: url
-			}
-
-			console.log("Data to create a backup");
-			console.log(data);
-
-			saveBackup(data, function(err, backup) {
-				if(err) {
-					console.log(err);
-					res.send(500, err);
-				}
-				if(backup) {
-					console.log("Backup created");
-					console.log(backup);
-					createBackupOnServer(backup._id, database, fileName, format, function(stderr, stdout) {
-
-						console.log("Downloading file");
-						console.log("Filename %s, with format %s", fileName, format);
-						console.log("Backup");
-						console.log(backup);
-
-						downloadFile(backup._id, database.server, fileName, function(stderr, stdout) {
-							var status = "";
-							if(stderr) {
-								status = "error";
-							}
-							else {
-								status = "finished";
-							}
-							
-							updateStatus(backup._id, status, function() {
-								console.log("Status updated with status: %s", status);
-							});
-						});
-					});
-					
-					// respond and execute backup job later
-					res.send(201, backup);
-				}
-			})
+		backup.init(function(err, backup) {
+			if(err) return res.send(400, err);
+			return res.send(201, backup);
 		});
 	}
 	else {
