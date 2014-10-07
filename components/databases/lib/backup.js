@@ -37,6 +37,8 @@ function Backup(options) {
 	});
 
 	this.on("createBackupOnServer:done", function(result) {
+		console.log("Created backup on server, starting download");
+		console.log(result);
 		// if there's a result, execute the method
 		self.downloadFileFromServer();
 	});
@@ -53,6 +55,9 @@ function Backup(options) {
 	});
 
 	this.on("downloadFileFromServer:done", function(result) {
+		console.log("Downloaded file from server");
+		console.log(result);
+		console.log(self.backup);
 		return self.emit("backup:done", self.backup);
 	});
 }
