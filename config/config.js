@@ -4,7 +4,7 @@ var config = {}
 config.components = ["installer", "users", "error", "servers", "databases", "files"];
 
 // secret key, change it to encrypt your strings using this key
-config.secretKey = "The monkey is on the tree";
+config.secretKey = process.env.SECRET || "The monkey is on the tree";
 
 // directory where you want to save the uploaded files, make sure the user 
 // running the node process has permissions to write in this directory
