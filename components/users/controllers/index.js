@@ -8,8 +8,8 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 passport.use(new LocalStrategy(
-  function(email, password, done) {
-    Model.findOne({ email: email }, function(err, user) {
+  function(username, password, done) {
+    Model.findOne({ email: username }, function(err, user) {
       if (err) { 
       	return done(err); 
       }
@@ -47,9 +47,31 @@ exports.postLogin = function(req, res) {
   });
 }
 
+exports.postAPILogin = function(req, res) {
+	passport.authenticate("local", function(err, user, info) {
+		if (err) { 
+    	return res.send(406);
+    }
+
+    if (!user) {
+      return res.send(403);
+    }
+		
+		req.logIn(user, function(err) {
+			if(err) return res.send(403);
+			return res.send(200, true);
+		});
+  })(req, res);
+}
+
 exports.getLogout = function(req, res) {
 	req.logout();
   res.redirect('/login');
+}
+
+exports.getAPILogout = function(req, res) {
+	req.logout();
+	res.send(200);
 }
 
 /** 

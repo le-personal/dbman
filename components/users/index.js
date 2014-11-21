@@ -44,3 +44,6 @@ app.post("/admin/users/delete/:id", isUser, isAdmin, controller.postAdminDeleteU
 app.get("/api/users", isUser, controller.apiGetUsers);
 
 app.get("/api/session", isUser, controller.apiGetSession);
+
+app.post("/api/login", isNotUser, controller.postAPILogin);
+app.get("/api/logout", isUser, controller.getAPILogout);

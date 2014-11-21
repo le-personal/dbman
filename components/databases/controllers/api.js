@@ -697,8 +697,7 @@ exports.getBackup = function(req, res) {
 	var backupid = req.params.backupid;
 
 	if(databaseid && backupid) {
-		Backup.findOne({database: databaseid, _id: backupid})
-		.populate()
+		Backup.findOne({_id: backupid})
 		.exec(function(err, result) {
 			if(err) res.send(500, err);
 			if(result) res.send(200, result);
