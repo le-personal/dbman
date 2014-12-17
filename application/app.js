@@ -67,11 +67,12 @@ components.forEach(function(component) {
 	mvc.addView(app, path.join(__dirname, "components", component));
 });
 
-console.log(app.get("env"));
+console.log("Running on: " + app.get("env"));
+app.use(express.static(path.join(__dirname, '/public')));
+
 // development only
 if ('development' == app.get('env')) {
 	console.log("On development");
-	app.use(express.static(path.join(__dirname, '/public')));
 	app.use(express.errorHandler());
 }
 
