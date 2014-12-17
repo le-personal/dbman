@@ -3,12 +3,12 @@ web:
   links:
    - mongodb:mongodb
    - redis:redis
-  expose:
-   - "3000"
+  ports:
+   - "3000:3000"
   volumes:
    - application:/var/www
    - "/root/.ssh:/root/.ssh"
-   - "/var/log/docker:/var/log/supervisor"
+   - "/var/log/docker/dbman:/var/log/supervisor"
    - "/storage-pool/files/dbman:/var/files"
   environment:
    MONGODB_DATABASE: dbman
