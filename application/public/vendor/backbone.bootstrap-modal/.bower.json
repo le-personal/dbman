@@ -1,0 +1,12 @@
+{
+  "name": "backbone.bootstrap-modal",
+  "_cacheHeaders": {
+    "ETag": "\"a7513a211ac9732530cdc0df85eeb1ac96731c64\"",
+    "Content-Type": "application/zip",
+    "Content-Disposition": "attachment; filename=backbone.bootstrap-modal-bootstrap3.zip"
+  },
+  "_release": "e-tag:a7513a211",
+  "_source": "https://github.com/powmedia/backbone.bootstrap-modal/archive/bootstrap3.zip",
+  "_target": "*",
+  "_originalSource": "https://github.com/powmedia/backbone.bootstrap-modal/archive/bootstrap3.zip"
+}
