@@ -4,3 +4,4 @@ data/*
 public/backups/*.sql
 public/backups/*.gz
 fig.yml
+application/npm-debug.log
