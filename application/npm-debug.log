@@ -1,0 +1,630 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'install' ]
+2 info using npm@1.3.10
+3 info using node@v0.10.25
+4 verbose readDependencies using package.json deps
+5 verbose install where, deps [ '/var/www',
+5 verbose install   [ 'express',
+5 verbose install     'expressjsmvc',
+5 verbose install     'mongoose',
+5 verbose install     'socket.io',
+5 verbose install     'moment',
+5 verbose install     'passport',
+5 verbose install     'passport-local',
+5 verbose install     'express-flash',
+5 verbose install     'includemvc',
+5 verbose install     'jade',
+5 verbose install     'connect-redis',
+5 verbose install     'ssh2',
+5 verbose install     'connect-multiparty',
+5 verbose install     'underscore',
+5 verbose install     'superagent',
+5 verbose install     'async',
+5 verbose install     'commander',
+5 verbose install     'request',
+5 verbose install     'cli-table' ] ]
+6 info preinstall application-name@0.1.0
+7 verbose readDependencies using package.json deps
+8 verbose cache add [ 'mongoose@*', null ]
+9 verbose cache add name=undefined spec="mongoose@*" args=["mongoose@*",null]
+10 verbose parsed url { protocol: null,
+10 verbose parsed url   slashes: null,
+10 verbose parsed url   auth: null,
+10 verbose parsed url   host: null,
+10 verbose parsed url   port: null,
+10 verbose parsed url   hostname: null,
+10 verbose parsed url   hash: null,
+10 verbose parsed url   search: null,
+10 verbose parsed url   query: null,
+10 verbose parsed url   pathname: 'mongoose@*',
+10 verbose parsed url   path: 'mongoose@*',
+10 verbose parsed url   href: 'mongoose@*' }
+11 verbose cache add name="mongoose" spec="*" args=["mongoose","*"]
+12 verbose parsed url { protocol: null,
+12 verbose parsed url   slashes: null,
+12 verbose parsed url   auth: null,
+12 verbose parsed url   host: null,
+12 verbose parsed url   port: null,
+12 verbose parsed url   hostname: null,
+12 verbose parsed url   hash: null,
+12 verbose parsed url   search: null,
+12 verbose parsed url   query: null,
+12 verbose parsed url   pathname: '*',
+12 verbose parsed url   path: '*',
+12 verbose parsed url   href: '*' }
+13 verbose addNamed [ 'mongoose', '*' ]
+14 verbose addNamed [ null, '*' ]
+15 verbose cache add [ 'moment@*', null ]
+16 verbose cache add name=undefined spec="moment@*" args=["moment@*",null]
+17 verbose parsed url { protocol: null,
+17 verbose parsed url   slashes: null,
+17 verbose parsed url   auth: null,
+17 verbose parsed url   host: null,
+17 verbose parsed url   port: null,
+17 verbose parsed url   hostname: null,
+17 verbose parsed url   hash: null,
+17 verbose parsed url   search: null,
+17 verbose parsed url   query: null,
+17 verbose parsed url   pathname: 'moment@*',
+17 verbose parsed url   path: 'moment@*',
+17 verbose parsed url   href: 'moment@*' }
+18 verbose cache add name="moment" spec="*" args=["moment","*"]
+19 verbose parsed url { protocol: null,
+19 verbose parsed url   slashes: null,
+19 verbose parsed url   auth: null,
+19 verbose parsed url   host: null,
+19 verbose parsed url   port: null,
+19 verbose parsed url   hostname: null,
+19 verbose parsed url   hash: null,
+19 verbose parsed url   search: null,
+19 verbose parsed url   query: null,
+19 verbose parsed url   pathname: '*',
+19 verbose parsed url   path: '*',
+19 verbose parsed url   href: '*' }
+20 verbose addNamed [ 'moment', '*' ]
+21 verbose addNamed [ null, '*' ]
+22 verbose cache add [ 'socket.io@*', null ]
+23 verbose cache add name=undefined spec="socket.io@*" args=["socket.io@*",null]
+24 verbose parsed url { protocol: null,
+24 verbose parsed url   slashes: null,
+24 verbose parsed url   auth: null,
+24 verbose parsed url   host: null,
+24 verbose parsed url   port: null,
+24 verbose parsed url   hostname: null,
+24 verbose parsed url   hash: null,
+24 verbose parsed url   search: null,
+24 verbose parsed url   query: null,
+24 verbose parsed url   pathname: 'socket.io@*',
+24 verbose parsed url   path: 'socket.io@*',
+24 verbose parsed url   href: 'socket.io@*' }
+25 verbose cache add name="socket.io" spec="*" args=["socket.io","*"]
+26 verbose parsed url { protocol: null,
+26 verbose parsed url   slashes: null,
+26 verbose parsed url   auth: null,
+26 verbose parsed url   host: null,
+26 verbose parsed url   port: null,
+26 verbose parsed url   hostname: null,
+26 verbose parsed url   hash: null,
+26 verbose parsed url   search: null,
+26 verbose parsed url   query: null,
+26 verbose parsed url   pathname: '*',
+26 verbose parsed url   path: '*',
+26 verbose parsed url   href: '*' }
+27 verbose addNamed [ 'socket.io', '*' ]
+28 verbose addNamed [ null, '*' ]
+29 verbose cache add [ 'passport@*', null ]
+30 verbose cache add name=undefined spec="passport@*" args=["passport@*",null]
+31 verbose parsed url { protocol: null,
+31 verbose parsed url   slashes: null,
+31 verbose parsed url   auth: null,
+31 verbose parsed url   host: null,
+31 verbose parsed url   port: null,
+31 verbose parsed url   hostname: null,
+31 verbose parsed url   hash: null,
+31 verbose parsed url   search: null,
+31 verbose parsed url   query: null,
+31 verbose parsed url   pathname: 'passport@*',
+31 verbose parsed url   path: 'passport@*',
+31 verbose parsed url   href: 'passport@*' }
+32 verbose cache add name="passport" spec="*" args=["passport","*"]
+33 verbose parsed url { protocol: null,
+33 verbose parsed url   slashes: null,
+33 verbose parsed url   auth: null,
+33 verbose parsed url   host: null,
+33 verbose parsed url   port: null,
+33 verbose parsed url   hostname: null,
+33 verbose parsed url   hash: null,
+33 verbose parsed url   search: null,
+33 verbose parsed url   query: null,
+33 verbose parsed url   pathname: '*',
+33 verbose parsed url   path: '*',
+33 verbose parsed url   href: '*' }
+34 verbose addNamed [ 'passport', '*' ]
+35 verbose addNamed [ null, '*' ]
+36 silly lockFile e0858070-mongoose mongoose@*
+37 verbose lock mongoose@* /.npm/e0858070-mongoose.lock
+38 silly lockFile 7a3a09df-moment moment@*
+39 verbose lock moment@* /.npm/7a3a09df-moment.lock
+40 silly lockFile 141fbf03-socket-io socket.io@*
+41 verbose lock socket.io@* /.npm/141fbf03-socket-io.lock
+42 verbose cache add [ 'passport-local@*', null ]
+43 verbose cache add name=undefined spec="passport-local@*" args=["passport-local@*",null]
+44 verbose parsed url { protocol: null,
+44 verbose parsed url   slashes: null,
+44 verbose parsed url   auth: null,
+44 verbose parsed url   host: null,
+44 verbose parsed url   port: null,
+44 verbose parsed url   hostname: null,
+44 verbose parsed url   hash: null,
+44 verbose parsed url   search: null,
+44 verbose parsed url   query: null,
+44 verbose parsed url   pathname: 'passport-local@*',
+44 verbose parsed url   path: 'passport-local@*',
+44 verbose parsed url   href: 'passport-local@*' }
+45 verbose cache add name="passport-local" spec="*" args=["passport-local","*"]
+46 verbose parsed url { protocol: null,
+46 verbose parsed url   slashes: null,
+46 verbose parsed url   auth: null,
+46 verbose parsed url   host: null,
+46 verbose parsed url   port: null,
+46 verbose parsed url   hostname: null,
+46 verbose parsed url   hash: null,
+46 verbose parsed url   search: null,
+46 verbose parsed url   query: null,
+46 verbose parsed url   pathname: '*',
+46 verbose parsed url   path: '*',
+46 verbose parsed url   href: '*' }
+47 verbose addNamed [ 'passport-local', '*' ]
+48 verbose addNamed [ null, '*' ]
+49 silly lockFile 167189b1-passport-local passport-local@*
+50 verbose lock passport-local@* /.npm/167189b1-passport-local.lock
+51 verbose cache add [ 'express-flash@0.0.2', null ]
+52 verbose cache add name=undefined spec="express-flash@0.0.2" args=["express-flash@0.0.2",null]
+53 verbose parsed url { protocol: null,
+53 verbose parsed url   slashes: null,
+53 verbose parsed url   auth: null,
+53 verbose parsed url   host: null,
+53 verbose parsed url   port: null,
+53 verbose parsed url   hostname: null,
+53 verbose parsed url   hash: null,
+53 verbose parsed url   search: null,
+53 verbose parsed url   query: null,
+53 verbose parsed url   pathname: 'express-flash@0.0.2',
+53 verbose parsed url   path: 'express-flash@0.0.2',
+53 verbose parsed url   href: 'express-flash@0.0.2' }
+54 verbose cache add name="express-flash" spec="0.0.2" args=["express-flash","0.0.2"]
+55 verbose parsed url { protocol: null,
+55 verbose parsed url   slashes: null,
+55 verbose parsed url   auth: null,
+55 verbose parsed url   host: null,
+55 verbose parsed url   port: null,
+55 verbose parsed url   hostname: null,
+55 verbose parsed url   hash: null,
+55 verbose parsed url   search: null,
+55 verbose parsed url   query: null,
+55 verbose parsed url   pathname: '0.0.2',
+55 verbose parsed url   path: '0.0.2',
+55 verbose parsed url   href: '0.0.2' }
+56 verbose addNamed [ 'express-flash', '0.0.2' ]
+57 verbose addNamed [ '0.0.2', '0.0.2' ]
+58 silly lockFile bb4652b0-express-flash-0-0-2 express-flash@0.0.2
+59 verbose lock express-flash@0.0.2 /.npm/bb4652b0-express-flash-0-0-2.lock
+60 verbose cache add [ 'includemvc@*', null ]
+61 verbose cache add name=undefined spec="includemvc@*" args=["includemvc@*",null]
+62 verbose parsed url { protocol: null,
+62 verbose parsed url   slashes: null,
+62 verbose parsed url   auth: null,
+62 verbose parsed url   host: null,
+62 verbose parsed url   port: null,
+62 verbose parsed url   hostname: null,
+62 verbose parsed url   hash: null,
+62 verbose parsed url   search: null,
+62 verbose parsed url   query: null,
+62 verbose parsed url   pathname: 'includemvc@*',
+62 verbose parsed url   path: 'includemvc@*',
+62 verbose parsed url   href: 'includemvc@*' }
+63 verbose cache add name="includemvc" spec="*" args=["includemvc","*"]
+64 verbose parsed url { protocol: null,
+64 verbose parsed url   slashes: null,
+64 verbose parsed url   auth: null,
+64 verbose parsed url   host: null,
+64 verbose parsed url   port: null,
+64 verbose parsed url   hostname: null,
+64 verbose parsed url   hash: null,
+64 verbose parsed url   search: null,
+64 verbose parsed url   query: null,
+64 verbose parsed url   pathname: '*',
+64 verbose parsed url   path: '*',
+64 verbose parsed url   href: '*' }
+65 verbose addNamed [ 'includemvc', '*' ]
+66 verbose addNamed [ null, '*' ]
+67 silly lockFile 169d2e81-includemvc includemvc@*
+68 verbose lock includemvc@* /.npm/169d2e81-includemvc.lock
+69 verbose cache add [ 'jade@*', null ]
+70 verbose cache add name=undefined spec="jade@*" args=["jade@*",null]
+71 verbose parsed url { protocol: null,
+71 verbose parsed url   slashes: null,
+71 verbose parsed url   auth: null,
+71 verbose parsed url   host: null,
+71 verbose parsed url   port: null,
+71 verbose parsed url   hostname: null,
+71 verbose parsed url   hash: null,
+71 verbose parsed url   search: null,
+71 verbose parsed url   query: null,
+71 verbose parsed url   pathname: 'jade@*',
+71 verbose parsed url   path: 'jade@*',
+71 verbose parsed url   href: 'jade@*' }
+72 verbose cache add name="jade" spec="*" args=["jade","*"]
+73 verbose parsed url { protocol: null,
+73 verbose parsed url   slashes: null,
+73 verbose parsed url   auth: null,
+73 verbose parsed url   host: null,
+73 verbose parsed url   port: null,
+73 verbose parsed url   hostname: null,
+73 verbose parsed url   hash: null,
+73 verbose parsed url   search: null,
+73 verbose parsed url   query: null,
+73 verbose parsed url   pathname: '*',
+73 verbose parsed url   path: '*',
+73 verbose parsed url   href: '*' }
+74 verbose addNamed [ 'jade', '*' ]
+75 verbose addNamed [ null, '*' ]
+76 silly lockFile ad03ed78-jade jade@*
+77 verbose lock jade@* /.npm/ad03ed78-jade.lock
+78 verbose cache add [ 'connect-redis@1.4.7', null ]
+79 verbose cache add name=undefined spec="connect-redis@1.4.7" args=["connect-redis@1.4.7",null]
+80 verbose parsed url { protocol: null,
+80 verbose parsed url   slashes: null,
+80 verbose parsed url   auth: null,
+80 verbose parsed url   host: null,
+80 verbose parsed url   port: null,
+80 verbose parsed url   hostname: null,
+80 verbose parsed url   hash: null,
+80 verbose parsed url   search: null,
+80 verbose parsed url   query: null,
+80 verbose parsed url   pathname: 'connect-redis@1.4.7',
+80 verbose parsed url   path: 'connect-redis@1.4.7',
+80 verbose parsed url   href: 'connect-redis@1.4.7' }
+81 verbose cache add name="connect-redis" spec="1.4.7" args=["connect-redis","1.4.7"]
+82 verbose parsed url { protocol: null,
+82 verbose parsed url   slashes: null,
+82 verbose parsed url   auth: null,
+82 verbose parsed url   host: null,
+82 verbose parsed url   port: null,
+82 verbose parsed url   hostname: null,
+82 verbose parsed url   hash: null,
+82 verbose parsed url   search: null,
+82 verbose parsed url   query: null,
+82 verbose parsed url   pathname: '1.4.7',
+82 verbose parsed url   path: '1.4.7',
+82 verbose parsed url   href: '1.4.7' }
+83 verbose addNamed [ 'connect-redis', '1.4.7' ]
+84 verbose addNamed [ '1.4.7', '1.4.7' ]
+85 silly lockFile ed673c42-connect-redis-1-4-7 connect-redis@1.4.7
+86 verbose lock connect-redis@1.4.7 /.npm/ed673c42-connect-redis-1-4-7.lock
+87 verbose cache add [ 'ssh2@*', null ]
+88 verbose cache add name=undefined spec="ssh2@*" args=["ssh2@*",null]
+89 verbose parsed url { protocol: null,
+89 verbose parsed url   slashes: null,
+89 verbose parsed url   auth: null,
+89 verbose parsed url   host: null,
+89 verbose parsed url   port: null,
+89 verbose parsed url   hostname: null,
+89 verbose parsed url   hash: null,
+89 verbose parsed url   search: null,
+89 verbose parsed url   query: null,
+89 verbose parsed url   pathname: 'ssh2@*',
+89 verbose parsed url   path: 'ssh2@*',
+89 verbose parsed url   href: 'ssh2@*' }
+90 verbose cache add name="ssh2" spec="*" args=["ssh2","*"]
+91 verbose parsed url { protocol: null,
+91 verbose parsed url   slashes: null,
+91 verbose parsed url   auth: null,
+91 verbose parsed url   host: null,
+91 verbose parsed url   port: null,
+91 verbose parsed url   hostname: null,
+91 verbose parsed url   hash: null,
+91 verbose parsed url   search: null,
+91 verbose parsed url   query: null,
+91 verbose parsed url   pathname: '*',
+91 verbose parsed url   path: '*',
+91 verbose parsed url   href: '*' }
+92 verbose addNamed [ 'ssh2', '*' ]
+93 verbose addNamed [ null, '*' ]
+94 silly lockFile a747542e-ssh2 ssh2@*
+95 verbose lock ssh2@* /.npm/a747542e-ssh2.lock
+96 verbose cache add [ 'connect-multiparty@*', null ]
+97 verbose cache add name=undefined spec="connect-multiparty@*" args=["connect-multiparty@*",null]
+98 verbose parsed url { protocol: null,
+98 verbose parsed url   slashes: null,
+98 verbose parsed url   auth: null,
+98 verbose parsed url   host: null,
+98 verbose parsed url   port: null,
+98 verbose parsed url   hostname: null,
+98 verbose parsed url   hash: null,
+98 verbose parsed url   search: null,
+98 verbose parsed url   query: null,
+98 verbose parsed url   pathname: 'connect-multiparty@*',
+98 verbose parsed url   path: 'connect-multiparty@*',
+98 verbose parsed url   href: 'connect-multiparty@*' }
+99 verbose cache add name="connect-multiparty" spec="*" args=["connect-multiparty","*"]
+100 verbose parsed url { protocol: null,
+100 verbose parsed url   slashes: null,
+100 verbose parsed url   auth: null,
+100 verbose parsed url   host: null,
+100 verbose parsed url   port: null,
+100 verbose parsed url   hostname: null,
+100 verbose parsed url   hash: null,
+100 verbose parsed url   search: null,
+100 verbose parsed url   query: null,
+100 verbose parsed url   pathname: '*',
+100 verbose parsed url   path: '*',
+100 verbose parsed url   href: '*' }
+101 verbose addNamed [ 'connect-multiparty', '*' ]
+102 verbose addNamed [ null, '*' ]
+103 silly lockFile 6773224c-connect-multiparty connect-multiparty@*
+104 verbose lock connect-multiparty@* /.npm/6773224c-connect-multiparty.lock
+105 silly lockFile 55e2d188-passport passport@*
+106 verbose lock passport@* /.npm/55e2d188-passport.lock
+107 verbose cache add [ 'underscore@*', null ]
+108 verbose cache add name=undefined spec="underscore@*" args=["underscore@*",null]
+109 verbose parsed url { protocol: null,
+109 verbose parsed url   slashes: null,
+109 verbose parsed url   auth: null,
+109 verbose parsed url   host: null,
+109 verbose parsed url   port: null,
+109 verbose parsed url   hostname: null,
+109 verbose parsed url   hash: null,
+109 verbose parsed url   search: null,
+109 verbose parsed url   query: null,
+109 verbose parsed url   pathname: 'underscore@*',
+109 verbose parsed url   path: 'underscore@*',
+109 verbose parsed url   href: 'underscore@*' }
+110 verbose cache add name="underscore" spec="*" args=["underscore","*"]
+111 verbose parsed url { protocol: null,
+111 verbose parsed url   slashes: null,
+111 verbose parsed url   auth: null,
+111 verbose parsed url   host: null,
+111 verbose parsed url   port: null,
+111 verbose parsed url   hostname: null,
+111 verbose parsed url   hash: null,
+111 verbose parsed url   search: null,
+111 verbose parsed url   query: null,
+111 verbose parsed url   pathname: '*',
+111 verbose parsed url   path: '*',
+111 verbose parsed url   href: '*' }
+112 verbose addNamed [ 'underscore', '*' ]
+113 verbose addNamed [ null, '*' ]
+114 silly lockFile 67e8a6a2-underscore underscore@*
+115 verbose lock underscore@* /.npm/67e8a6a2-underscore.lock
+116 verbose cache add [ 'superagent@~0.21.0', null ]
+117 verbose cache add name=undefined spec="superagent@~0.21.0" args=["superagent@~0.21.0",null]
+118 verbose parsed url { protocol: null,
+118 verbose parsed url   slashes: null,
+118 verbose parsed url   auth: null,
+118 verbose parsed url   host: null,
+118 verbose parsed url   port: null,
+118 verbose parsed url   hostname: null,
+118 verbose parsed url   hash: null,
+118 verbose parsed url   search: null,
+118 verbose parsed url   query: null,
+118 verbose parsed url   pathname: 'superagent@~0.21.0',
+118 verbose parsed url   path: 'superagent@~0.21.0',
+118 verbose parsed url   href: 'superagent@~0.21.0' }
+119 verbose cache add name="superagent" spec="~0.21.0" args=["superagent","~0.21.0"]
+120 verbose parsed url { protocol: null,
+120 verbose parsed url   slashes: null,
+120 verbose parsed url   auth: null,
+120 verbose parsed url   host: null,
+120 verbose parsed url   port: null,
+120 verbose parsed url   hostname: null,
+120 verbose parsed url   hash: null,
+120 verbose parsed url   search: null,
+120 verbose parsed url   query: null,
+120 verbose parsed url   pathname: '~0.21.0',
+120 verbose parsed url   path: '~0.21.0',
+120 verbose parsed url   href: '~0.21.0' }
+121 verbose addNamed [ 'superagent', '~0.21.0' ]
+122 verbose addNamed [ null, '>=0.21.0-0 <0.22.0-0' ]
+123 silly lockFile b7b4de61-superagent-0-21-0 superagent@~0.21.0
+124 verbose lock superagent@~0.21.0 /.npm/b7b4de61-superagent-0-21-0.lock
+125 verbose cache add [ 'async@~0.9.0', null ]
+126 verbose cache add name=undefined spec="async@~0.9.0" args=["async@~0.9.0",null]
+127 verbose parsed url { protocol: null,
+127 verbose parsed url   slashes: null,
+127 verbose parsed url   auth: null,
+127 verbose parsed url   host: null,
+127 verbose parsed url   port: null,
+127 verbose parsed url   hostname: null,
+127 verbose parsed url   hash: null,
+127 verbose parsed url   search: null,
+127 verbose parsed url   query: null,
+127 verbose parsed url   pathname: 'async@~0.9.0',
+127 verbose parsed url   path: 'async@~0.9.0',
+127 verbose parsed url   href: 'async@~0.9.0' }
+128 verbose cache add name="async" spec="~0.9.0" args=["async","~0.9.0"]
+129 verbose parsed url { protocol: null,
+129 verbose parsed url   slashes: null,
+129 verbose parsed url   auth: null,
+129 verbose parsed url   host: null,
+129 verbose parsed url   port: null,
+129 verbose parsed url   hostname: null,
+129 verbose parsed url   hash: null,
+129 verbose parsed url   search: null,
+129 verbose parsed url   query: null,
+129 verbose parsed url   pathname: '~0.9.0',
+129 verbose parsed url   path: '~0.9.0',
+129 verbose parsed url   href: '~0.9.0' }
+130 verbose addNamed [ 'async', '~0.9.0' ]
+131 verbose addNamed [ null, '>=0.9.0-0 <0.10.0-0' ]
+132 silly lockFile 38be4a8c-async-0-9-0 async@~0.9.0
+133 verbose lock async@~0.9.0 /.npm/38be4a8c-async-0-9-0.lock
+134 verbose cache add [ 'commander@~2.5.0', null ]
+135 verbose cache add name=undefined spec="commander@~2.5.0" args=["commander@~2.5.0",null]
+136 verbose parsed url { protocol: null,
+136 verbose parsed url   slashes: null,
+136 verbose parsed url   auth: null,
+136 verbose parsed url   host: null,
+136 verbose parsed url   port: null,
+136 verbose parsed url   hostname: null,
+136 verbose parsed url   hash: null,
+136 verbose parsed url   search: null,
+136 verbose parsed url   query: null,
+136 verbose parsed url   pathname: 'commander@~2.5.0',
+136 verbose parsed url   path: 'commander@~2.5.0',
+136 verbose parsed url   href: 'commander@~2.5.0' }
+137 verbose cache add name="commander" spec="~2.5.0" args=["commander","~2.5.0"]
+138 verbose parsed url { protocol: null,
+138 verbose parsed url   slashes: null,
+138 verbose parsed url   auth: null,
+138 verbose parsed url   host: null,
+138 verbose parsed url   port: null,
+138 verbose parsed url   hostname: null,
+138 verbose parsed url   hash: null,
+138 verbose parsed url   search: null,
+138 verbose parsed url   query: null,
+138 verbose parsed url   pathname: '~2.5.0',
+138 verbose parsed url   path: '~2.5.0',
+138 verbose parsed url   href: '~2.5.0' }
+139 verbose addNamed [ 'commander', '~2.5.0' ]
+140 verbose addNamed [ null, '>=2.5.0-0 <2.6.0-0' ]
+141 silly lockFile 75ec716e-commander-2-5-0 commander@~2.5.0
+142 verbose lock commander@~2.5.0 /.npm/75ec716e-commander-2-5-0.lock
+143 verbose cache add [ 'request@~2.48.0', null ]
+144 verbose cache add name=undefined spec="request@~2.48.0" args=["request@~2.48.0",null]
+145 verbose parsed url { protocol: null,
+145 verbose parsed url   slashes: null,
+145 verbose parsed url   auth: null,
+145 verbose parsed url   host: null,
+145 verbose parsed url   port: null,
+145 verbose parsed url   hostname: null,
+145 verbose parsed url   hash: null,
+145 verbose parsed url   search: null,
+145 verbose parsed url   query: null,
+145 verbose parsed url   pathname: 'request@~2.48.0',
+145 verbose parsed url   path: 'request@~2.48.0',
+145 verbose parsed url   href: 'request@~2.48.0' }
+146 verbose cache add name="request" spec="~2.48.0" args=["request","~2.48.0"]
+147 verbose parsed url { protocol: null,
+147 verbose parsed url   slashes: null,
+147 verbose parsed url   auth: null,
+147 verbose parsed url   host: null,
+147 verbose parsed url   port: null,
+147 verbose parsed url   hostname: null,
+147 verbose parsed url   hash: null,
+147 verbose parsed url   search: null,
+147 verbose parsed url   query: null,
+147 verbose parsed url   pathname: '~2.48.0',
+147 verbose parsed url   path: '~2.48.0',
+147 verbose parsed url   href: '~2.48.0' }
+148 verbose addNamed [ 'request', '~2.48.0' ]
+149 verbose addNamed [ null, '>=2.48.0-0 <2.49.0-0' ]
+150 silly lockFile d056344e-request-2-48-0 request@~2.48.0
+151 verbose lock request@~2.48.0 /.npm/d056344e-request-2-48-0.lock
+152 verbose cache add [ 'cli-table@~0.2.0', null ]
+153 verbose cache add name=undefined spec="cli-table@~0.2.0" args=["cli-table@~0.2.0",null]
+154 verbose parsed url { protocol: null,
+154 verbose parsed url   slashes: null,
+154 verbose parsed url   auth: null,
+154 verbose parsed url   host: null,
+154 verbose parsed url   port: null,
+154 verbose parsed url   hostname: null,
+154 verbose parsed url   hash: null,
+154 verbose parsed url   search: null,
+154 verbose parsed url   query: null,
+154 verbose parsed url   pathname: 'cli-table@~0.2.0',
+154 verbose parsed url   path: 'cli-table@~0.2.0',
+154 verbose parsed url   href: 'cli-table@~0.2.0' }
+155 verbose cache add name="cli-table" spec="~0.2.0" args=["cli-table","~0.2.0"]
+156 verbose parsed url { protocol: null,
+156 verbose parsed url   slashes: null,
+156 verbose parsed url   auth: null,
+156 verbose parsed url   host: null,
+156 verbose parsed url   port: null,
+156 verbose parsed url   hostname: null,
+156 verbose parsed url   hash: null,
+156 verbose parsed url   search: null,
+156 verbose parsed url   query: null,
+156 verbose parsed url   pathname: '~0.2.0',
+156 verbose parsed url   path: '~0.2.0',
+156 verbose parsed url   href: '~0.2.0' }
+157 verbose addNamed [ 'cli-table', '~0.2.0' ]
+158 verbose addNamed [ null, '>=0.2.0-0 <0.3.0-0' ]
+159 silly lockFile cb7ccf1d-cli-table-0-2-0 cli-table@~0.2.0
+160 verbose lock cli-table@~0.2.0 /.npm/cb7ccf1d-cli-table-0-2-0.lock
+161 verbose cache add [ 'express@3.4.8', null ]
+162 verbose cache add name=undefined spec="express@3.4.8" args=["express@3.4.8",null]
+163 verbose parsed url { protocol: null,
+163 verbose parsed url   slashes: null,
+163 verbose parsed url   auth: null,
+163 verbose parsed url   host: null,
+163 verbose parsed url   port: null,
+163 verbose parsed url   hostname: null,
+163 verbose parsed url   hash: null,
+163 verbose parsed url   search: null,
+163 verbose parsed url   query: null,
+163 verbose parsed url   pathname: 'express@3.4.8',
+163 verbose parsed url   path: 'express@3.4.8',
+163 verbose parsed url   href: 'express@3.4.8' }
+164 verbose cache add name="express" spec="3.4.8" args=["express","3.4.8"]
+165 verbose parsed url { protocol: null,
+165 verbose parsed url   slashes: null,
+165 verbose parsed url   auth: null,
+165 verbose parsed url   host: null,
+165 verbose parsed url   port: null,
+165 verbose parsed url   hostname: null,
+165 verbose parsed url   hash: null,
+165 verbose parsed url   search: null,
+165 verbose parsed url   query: null,
+165 verbose parsed url   pathname: '3.4.8',
+165 verbose parsed url   path: '3.4.8',
+165 verbose parsed url   href: '3.4.8' }
+166 verbose addNamed [ 'express', '3.4.8' ]
+167 verbose addNamed [ '3.4.8', '3.4.8' ]
+168 silly lockFile 15cb8528-express-3-4-8 express@3.4.8
+169 verbose lock express@3.4.8 /.npm/15cb8528-express-3-4-8.lock
+170 verbose cache add [ 'expressjsmvc@*', null ]
+171 verbose cache add name=undefined spec="expressjsmvc@*" args=["expressjsmvc@*",null]
+172 verbose parsed url { protocol: null,
+172 verbose parsed url   slashes: null,
+172 verbose parsed url   auth: null,
+172 verbose parsed url   host: null,
+172 verbose parsed url   port: null,
+172 verbose parsed url   hostname: null,
+172 verbose parsed url   hash: null,
+172 verbose parsed url   search: null,
+172 verbose parsed url   query: null,
+172 verbose parsed url   pathname: 'expressjsmvc@*',
+172 verbose parsed url   path: 'expressjsmvc@*',
+172 verbose parsed url   href: 'expressjsmvc@*' }
+173 verbose cache add name="expressjsmvc" spec="*" args=["expressjsmvc","*"]
+174 verbose parsed url { protocol: null,
+174 verbose parsed url   slashes: null,
+174 verbose parsed url   auth: null,
+174 verbose parsed url   host: null,
+174 verbose parsed url   port: null,
+174 verbose parsed url   hostname: null,
+174 verbose parsed url   hash: null,
+174 verbose parsed url   search: null,
+174 verbose parsed url   query: null,
+174 verbose parsed url   pathname: '*',
+174 verbose parsed url   path: '*',
+174 verbose parsed url   href: '*' }
+175 verbose addNamed [ 'expressjsmvc', '*' ]
+176 verbose addNamed [ null, '*' ]
+177 silly lockFile 40dbc351-expressjsmvc expressjsmvc@*
+178 verbose lock expressjsmvc@* /.npm/40dbc351-expressjsmvc.lock
+179 silly lockFile 7a3a09df-moment moment@*
+180 error Error: EACCES, open '/.npm/7a3a09df-moment.lock'
+180 error  { [Error: EACCES, open '/.npm/7a3a09df-moment.lock'] errno: 3, code: 'EACCES', path: '/.npm/7a3a09df-moment.lock' }
+181 error Please try running this command again as root/Administrator.
+182 error System Linux 3.11.0-18-generic
+183 error command "/usr/bin/nodejs" "/usr/bin/npm" "install"
+184 error cwd /var/www
+185 error node -v v0.10.25
+186 error npm -v 1.3.10
+187 error path /.npm/7a3a09df-moment.lock
+188 error code EACCES
+189 error errno 3
+190 error stack Error: EACCES, open '/.npm/7a3a09df-moment.lock'
+191 verbose exit [ 3, true ]

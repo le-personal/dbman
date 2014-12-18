@@ -1,8 +1,7 @@
 CURRENT_DIRECTORY := $(shell pwd)
+CURRENT_USER := $(shell whoami)
 install:
-	@docker run --rm \
-	-v $(CURRENT_DIRECTORY)/application:/var/www \
-	luis/nodejs npm install
+	@cd $(CURRENT_DIRECTORY)/application ; npm install	
 
 up:
 	@fig up -d
